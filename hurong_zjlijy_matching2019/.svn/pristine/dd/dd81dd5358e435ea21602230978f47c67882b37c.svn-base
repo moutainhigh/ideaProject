@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm.dividend.dao.CmFeeRecordDao">
+
+	<!-- 查询选中id中数据手续费总数-->
+    <select id="findFeeSumByIds" parameterType="java.util.Map"
+             resultType="java.math.BigDecimal">
+        SELECT
+			SUM(cfr.bonusMoney)
+		FROM
+			cm_fee_record cfr
+        <where>
+            1=1 
+            and cfr.id IN 
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+	            #{item,jdbcType=BIGINT }
+	        </foreach>
+        </where>
+    </select>
+
+</mapper>

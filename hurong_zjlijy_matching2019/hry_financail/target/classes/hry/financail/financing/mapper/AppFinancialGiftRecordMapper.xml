@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.financail.financing.dao.AppFinancialGiftRecordDao">
+
+
+
+
+    <select id="findUserRedAccount" resultType="hry.remote.model.AppFinancialGiftRecord" parameterType="java.util.Map">
+       SELECT
+			SUM(CASE WHEN afgr1.state = 0 THEN 0 ELSE afgr1.giftMoney END ) AS giftMoney,
+			coinCode,
+			SUM(CASE WHEN afgr1.state = 0 THEN 1 ELSE 0 END) AS redCount
+		FROM
+			app_financial_gift_record afgr1
+		WHERE
+			1=1
+		AND afgr1.customerId = #{customerId}
+		GROUP BY
+			afgr1.coinCode
+    </select>
+
+    <select id="findUserGiftRecordList" resultType="hry.financail.financing.model.AppFinancialGiftRecord"
+            parameterType="java.util.Map">
+        select * from  app_financial_gift_record afgr
+        <where>
+            <if test="customerId != null and customerId != ''">
+               and afgr.customerId = #{customerId}
+            </if>
+            <if test="coinCode != null and coinCode != ''">
+                and afgr.coinCode = #{coinCode}
+            </if>
+            <if test="giftType != null and giftType != ''">
+                and afgr.giftType = #{giftType}
+            </if>
+            <if test="created_LT != null and created_LT != ''">
+                and afgr.created >= #{created_LT}
+            </if>
+            <if test="created_GT != null and created_GT != ''">
+                and <![CDATA[  afgr.created <  #{created_GT} ]]>
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectAllUnreceived" parameterType="java.util.Map" resultType="hry.financail.financing.model.AppFinancialGiftRecord">
+        select * from app_financial_gift_record as afpr
+        <where>
+            afpr.overTime >= NOW()
+            <if test="customerId != null and customerId != ''">
+                and afpr.customerId = #{customerId}
+            </if>
+            <if test="coinCode != null and coinCode != ''">
+                and afpr.coinCode = #{coinCode}
+            </if>
+            <if test="state != null and state != ''">
+                and afpr.state = #{state}
+            </if>
+        </where>
+    </select>
+
+</mapper>

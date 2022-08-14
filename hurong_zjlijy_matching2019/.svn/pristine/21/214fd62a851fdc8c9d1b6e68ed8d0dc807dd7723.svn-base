@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <bean id="remoteCm2MinerServiceImpl" class="hry.cm2.remote.RemoteCmMinerServiceImpl" />
+    <dubbo:service ref="remoteCm2MinerServiceImpl"  interface="hry.cm2.remote.RemoteCmMinerService"  />
+
+    <bean id="remoteCm2CustomerMinerServiceImpl" class="hry.cm2.remote.RemoteCmCustomerMinerServiceImpl" />
+    <dubbo:service ref="remoteCm2CustomerMinerServiceImpl"  interface="hry.cm2.remote.RemoteCmCustomerMinerService"  />
+
+    <bean id="remoteCm2OrderServiceImpl" class="hry.cm2.remote.RemoteCmOrderServiceImpl" />
+    <dubbo:service ref="remoteCm2OrderServiceImpl"  interface="hry.cm2.remote.RemoteCmOrderService"  />
+
+    <bean id="remoteCm2AccountServiceImpl" class="hry.cm2.remote.RemoteCmAccountServiceImpl" />
+    <dubbo:service ref="remoteCm2AccountServiceImpl"  interface="hry.cm2.remote.RemoteCmAccountService"  />
+
+    <bean id="remoteCm2CustomerServiceImpl" class="hry.cm2.remote.RemoteCmCustomerServiceImpl" />
+    <dubbo:service ref="remoteCm2CustomerServiceImpl"  interface="hry.cm2.remote.RemoteCmCustomerService"  />
+
+
+    <bean id="remoteCm2ListenerServiceImpl" class="hry.cm2.remote.RemoteCmListenerServiceImpl" />
+    <dubbo:service ref="remoteCm2ListenerServiceImpl"  interface="hry.cm2.remote.RemoteCmListenerService"  />
+
+    <bean id="remoteCm2DividendServiceImpl" class="hry.cm2.remote.RemoteCmDividendServiceImpl" />
+    <dubbo:service ref="remoteCm2DividendServiceImpl"  interface="hry.cm2.remote.RemoteCmDividendService"  />
+	
+
+</beans>  

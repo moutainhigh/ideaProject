@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.vip.dao.SocialVipTradeRecordDao">
+
+    <select id="findPageList" parameterType="java.util.Map" resultType="hry.social.manage.remote.model.vip.SocialVipTradeRecord">
+        SELECT
+            svtr.id,
+            svtr.orderNum,
+            svtr.customerId,
+            svtr.additionRatio,
+            svtr.oldVipName,
+            svtr.oldVipNum,
+            svtr.oldEndTime,
+            svtr.nowVipName,
+            svtr.nowVipNum,
+            svtr.nowEndTime,
+            svtr.states,
+            svtr.price,
+            svtr.coinCode,
+            svtr.payNum,
+            svtr.coinMarket,
+            svtr.payAmount,
+            svtr.created
+        FROM
+            social_vip_trade_record svtr
+        LEFT JOIN app_person_info api ON svtr.customerId = api.customerId
+        <where>
+            1=1
+            <if test="orderNum!=null and orderNum!='' ">
+                AND svtr.orderNum LIKE #{orderNum}
+            </if>
+            <if test="nowVipName!=null and nowVipName!='' ">
+                AND svtr.nowVipName LIKE #{nowVipName}
+            </if>
+            <if test="nowVipNum!=null and nowVipNum!='' ">
+                AND svtr.nowVipNum = #{nowVipNum}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                AND svtr.coinCode = #{coinCode}
+            </if>
+            <if test="created_GT!=null and created_GT!='' ">
+                AND svtr.created &gt;= #{created_GT}
+            </if>
+            <if test="created_LT!=null and created_LT!='' ">
+                AND svtr.created &lt;= #{created_LT}
+            </if>
+            <if test="nowEndTime_GT!=null and nowEndTime_GT!='' ">
+                AND svtr.nowEndTime &gt;= #{nowEndTime_GT}
+            </if>
+            <if test="nowEndTime_LT!=null and nowEndTime_LT!='' ">
+                AND svtr.nowEndTime &lt;= #{nowEndTime_LT}
+            </if>
+            <if test="email!=null and email!='' ">
+                AND api.email LIKE #{email}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+        </where>
+        ORDER BY
+        svtr.created DESC
+    </select>
+</mapper>

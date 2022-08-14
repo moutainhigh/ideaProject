@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.shake.dao.SocialShakeFansDao">
+    <!--分页查询-->
+    <select id="findPageList" resultType="hry.social.manage.remote.model.shake.SocialShakeFans" parameterType="java.util.Map">
+        SELECT
+        ssf.*,
+        apiFans.nickName AS fansName,
+        apiFans.headPortrait AS headPortrait
+        FROM
+        social_shake_fans ssf
+        LEFT JOIN app_person_info apiFans ON ssf.fansId = apiFans.customerId
+        <where>
+            <if test="shakeId!=null and shakeId!='' ">
+                AND ssf.shakeId = #{shakeId}
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                AND ssf.customerId = #{customerId}
+            </if>
+            <if test="status!=null and status!='' ">
+                AND ssf.status = #{status}
+            </if>
+        </where>
+        ORDER BY ssf.created DESC
+    </select>
+
+    <update id="updateRecord" parameterType="hry.social.manage.remote.model.shake.SocialShakeFans">
+        UPDATE social_shake_fans
+        SET modified = #{modified},`states` = #{states}
+        WHERE
+        shakeId = #{shakeId}
+        <if test="states==1 ">
+            AND fansId = #{fansId}
+        </if>
+    </update>
+
+</mapper>

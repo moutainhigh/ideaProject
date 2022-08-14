@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.financail.customer.dao.AppCustomerDao">
+    <resultMap id="BaseResultMap" type="hry.financail.customer.model.AppCustomer">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+        <result column="states" property="states" javaType="java.lang.Integer" />
+        <result column="hasEmail" property="hasEmail" javaType="java.lang.Integer" />
+        <result column="username" property="username" javaType="java.lang.String" />
+        <result column="isMarketTransactions" property="isMarketTransactions" javaType="java.lang.Integer" />
+        <result column="passWord" property="passWord" javaType="java.lang.String" />
+        <result column="accountPassWord" property="accountPassWord" javaType="java.lang.String" />
+        <result column="isLock" property="isLock" javaType="java.lang.Integer" />
+        <result column="lockTime" property="lockTime" javaType="java.util.Date" />
+        <result column="isDelete" property="isDelete" javaType="java.lang.Integer" />
+        <result column="isReal" property="isReal" javaType="java.lang.Integer" />
+        <result column="salt" property="salt" javaType="java.lang.String" />
+        <result column="fishingCode" property="fishingCode" javaType="java.lang.String" />
+        <result column="userCode" property="userCode" javaType="java.lang.String" />
+        <result column="isChange" property="isChange" javaType="java.lang.Integer" />
+        <result column="googleState" property="googleState" javaType="java.lang.Integer" />
+        <result column="phoneState" property="phoneState" javaType="java.lang.Integer" />
+        <result column="isGag" property="isGag" javaType="java.lang.Integer" />
+        <result column="gagDate" property="gagDate" javaType="java.util.Date" />
+        <result column="isAdmin" property="isAdmin" javaType="java.lang.Integer" />
+        <result column="gagTime" property="gagTime" javaType="java.lang.Integer" />
+        <result column="commonLanguage" property="commonLanguage" javaType="java.lang.String" />
+    </resultMap>
+
+
+<select id="findAppCustomerByReferralCode" resultType="hry.financail.customer.model.AppCustomer" parameterType="java.lang.String">
+    SELECT * FROM  app_customer where referralCode = #{referralCode}
+</select>
+
+
+</mapper>

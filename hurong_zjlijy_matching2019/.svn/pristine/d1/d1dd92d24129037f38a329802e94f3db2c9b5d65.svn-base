@@ -1,0 +1,128 @@
+/**
+ * Copyright:   
+ * @author:      luyue
+ * @version:     V1.0 
+ * @Date:        2019-11-28 17:24:59 
+ */
+package hry.mall.rebate.service.impl;
+
+import hry.bean.JsonResult;
+import hry.mall.integral.model.IntegralRebateConfig;
+import hry.mall.integral.service.IntegralRebateConfigService;
+import hry.mall.merchant.model.Merchant;
+import hry.mall.merchant.service.MerchantService;
+import hry.mall.order.model.Order;
+import hry.mall.order.model.OrderCoin;
+import hry.mall.order.service.OrderCoinService;
+import hry.mall.order.service.OrderService;
+import hry.mall.rebate.model.RebateDetail;
+import hry.mall.rebate.service.RebateDetailService;
+import hry.core.mvc.dao.base.BaseDao;
+import hry.core.mvc.service.base.impl.BaseServiceImpl;
+import javax.annotation.Resource;
+
+import hry.util.DateUtils;
+import hry.util.QueryFilter;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * <p> RebateDetailService </p>
+ * @author:         luyue
+ * @Date :          2019-11-28 17:24:59  
+ */
+@Service("rebateDetailService")
+public class RebateDetailServiceImpl extends BaseServiceImpl<RebateDetail, Long> implements RebateDetailService{
+	
+	@Resource(name="rebateDetailDao")
+	@Override
+	public void setDao(BaseDao<RebateDetail, Long> dao) {
+		super.dao = dao;
+	}
+	@Resource
+	public OrderService orderService;
+	@Resource
+	public MerchantService  merchantService;
+	@Resource
+	public OrderCoinService orderCoinService;
+	@Resource
+	public IntegralRebateConfigService integralRebateConfigService;
+	@Resource
+	public RebateDetailService rebateDetailService;
+
+
+
+	@Override
+	public JsonResult addDetail(long orderId) {
+		JsonResult jsonObject = new JsonResult();
+		try{
+			//1、查询订单信息
+			Order order=orderService.get(orderId);
+			//查询商户信息
+			Merchant merchant=merchantService.get(order.getMerchantId());
+			//2、查询冻结时间
+			IntegralRebateConfig integralRebateConfig = integralRebateConfigService.get((long) 1);
+			Integer shopAfter = integralRebateConfig.getShopAfter();
+			String s= DateUtils.getDateAddDays(shopAfter);
+			String strDateFormat = "yyyy-MM-dd HH:mm:ss";
+			SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+			Date gdate=sdf.parse(s);//解冻时间
+
+			//查询币支付的汇总记录
+			QueryFilter filter=new QueryFilter(OrderCoin.class);
+			filter.addFilter("orderId=",orderId);
+			List<OrderCoin> list=orderCoinService.find(filter);
+			//3、保存返佣、结算等数据
+			for(OrderCoin coin:list){
+				//保存结算记录
+				this.saveDetail(order,coin,gdate,1,"");//1商户结算，2购物返利，3推荐返佣，4创新商品奖励
+			    //保存一级返佣
+				this.saveDetail(order,coin,gdate,3,"1");//1商户结算，2购物返利，3推荐返佣，4创新商品奖励
+				//保存二级返佣
+				this.saveDetail(order,coin,gdate,3,"2");//1商户结算，2购物返利，3推荐返佣，4创新商品奖励
+			}
+			/**
+			 * 确定购物返利的逻辑后再添加购物返利记录
+			 */
+			jsonObject.setSuccess(true).setMsg("处理成功");
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+	public void saveDetail(Order order,OrderCoin coin,Date estimateDate,int type,String level){
+		BigDecimal count=new BigDecimal("0");
+		if(1==type){
+			count=coin.getStoreCount();//结算数量
+		}else if(3==type){
+			if("1".equals(level)){//一级返佣
+				count=coin.getOneLevelCount();
+
+			}else{
+                count=coin.getTwoLevelCount();//二级返佣
+			}
+		}
+		//保存结算记录
+		RebateDetail detail=new RebateDetail();
+		detail.setMemberId(order.getMemberId());
+		detail.setMemberName(order.getUserName());
+		detail.setCoinId(coin.getId());
+		detail.setType(type);//1商户结算，2购物返利，3推荐返佣，4创新商品奖励
+		detail.setRecordType(1);//1增加 2减少
+		detail.setCoinCode(coin.getCoinCode());
+		detail.setCoinCount(count);
+		detail.setOrderId(order.getId());
+		detail.setOrderMoney(order.getOrderAmount());
+		detail.setOrderSn(order.getOrderSn());
+		detail.setOrderDate(order.getCreated());
+		detail.setEstimateDate(estimateDate);
+		detail.setRewardLevel(level);//返佣级别
+		detail.setStatus(0);
+		rebateDetailService.save(detail);
+	}
+}

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:c="http://www.springframework.org/schema/c" xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:lang="http://www.springframework.org/schema/lang" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+
+
+    <!-- 自定义域 -->
+    <bean id="MyRealm" class="hry.core.shiro.MyRealm">
+    </bean>
+
+
+    <bean id="sessionStorageEvaluator"  class="org.apache.shiro.mgt.DefaultSessionStorageEvaluator">
+        <property name="sessionStorageEnabled" value="false" />
+    </bean>
+
+    <bean id="subjectDAO" class="org.apache.shiro.mgt.DefaultSubjectDAO" >
+        <property name="sessionStorageEvaluator" ref="sessionStorageEvaluator" />
+    </bean>
+
+    <!-- shiro安全管理器 -->
+    <bean id="securitManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="MyRealm"></property>
+        <property name="subjectDAO" ref="subjectDAO" />
+    </bean>
+
+
+    <!-- 退出会话过滤器 -->
+    <bean id="logout" class="hry.core.shiro.MyLogoutFilter">
+        <property name="redirectUrl" value="/index"></property>
+    </bean>
+
+   <bean id="jwtFilter" class="hry.app.jwt.JWTFilter" />
+
+    <!-- 自定义验证拦截器 -->
+    <!-- 核心配置 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securitManager"></property>
+        <property name="loginUrl" value="/login"></property>
+        <property name="filters">
+            <util:map>
+                 <entry key="jwt" value-ref="jwtFilter" />
+            </util:map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /**/user/**=jwt
+            </value>
+        </property>
+    </bean>
+
+    <!-- Shiro生命周期处理器 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- 开通注解权限功能 -->
+    <!-- <aop:config proxy-target-class="true"></aop:config> -->
+    <aop:config></aop:config>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securitManager"/>
+    </bean>
+
+
+</beans>

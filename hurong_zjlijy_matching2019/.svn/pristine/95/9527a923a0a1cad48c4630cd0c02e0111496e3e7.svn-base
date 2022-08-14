@@ -1,0 +1,382 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>hry.zjlijy.matching2019</groupId>
+        <artifactId>hurong_zjlijy_matching2019</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>hry_mall</artifactId>
+    <packaging>war</packaging>
+
+    <properties>
+        <!-- 指定项目是JDK1.8版本 -->
+        <java-version>1.8</java-version>
+        <!--指定Maven用什么编码来读取源码及文档 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--指定Maven用什么编码来呈现 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+
+        <!-- ***************************基础包依赖(开始)***************************** -->
+        <dependency>
+            <groupId>hry.common2018</groupId>
+            <artifactId>hry_base_core</artifactId>
+            <version>${hry.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>hry.common2018</groupId>
+                    <artifactId>hry_base_utils</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>hry.common2018</groupId>
+            <artifactId>hry_base_redis</artifactId>
+            <version>${hry.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>hry.common2018</groupId>
+                    <artifactId>hry_base_utils</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>hry.common2018</groupId>
+            <artifactId>hry_base_utils</artifactId>
+            <version>${hry.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>hry.common2018</groupId>
+                    <artifactId>hry_plugin_ueditor</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- ***************************基础包依赖(结束)***************************** -->
+
+
+        <!-- ***************************业务包依赖(开始)***************************** -->
+        <dependency>
+            <artifactId>hry_mall_api</artifactId>
+            <groupId>hry.zjlijy.matching2019</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+   <!--     <dependency>
+            <artifactId>hry_single_api</artifactId>
+            <groupId>hry.zjlijy.matching2019</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>  --> 
+          <dependency>
+            <artifactId>hry_web_service_api</artifactId>
+            <groupId>hry.zjlijy.parent</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>hry_cloudmining_api</artifactId>
+            <groupId>hry.zjlijy.matching2019</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+         <dependency>
+            <groupId>hry.zjlijy.matching2019</groupId>
+            <artifactId>hry_web_trade_api</artifactId>
+            <version>${hry.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>hry.common2018</groupId>
+                    <artifactId>hry_plugin_ueditor</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- ***************************业务包依赖(结束)***************************** -->
+
+        <!-- ***************************三方包依赖(开始)***************************** -->
+        <!-- 对接SaaS快递业务-->
+        <dependency>
+            <groupId>hry.interfaces</groupId>
+            <artifactId>hry_interfaces</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.ws</groupId>
+                    <artifactId>spring-ws-core</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>commons-httpclient</groupId>
+                    <artifactId>commons-httpclient</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>hry.third</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.alibaba</groupId>
+                    <artifactId>fastjson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xpp3</groupId>
+                    <artifactId>xpp3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jdom</groupId>
+                    <artifactId>jdom</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>joda-time</groupId>
+                    <artifactId>joda-time</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.aliyun</groupId>
+                    <artifactId>aliyun-java-sdk-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.aliyun</groupId>
+                    <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.aliyun</groupId>
+                    <artifactId>aliyun-java-sdk-green</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>stax</groupId>
+                    <artifactId>stax-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sf.json-lib</groupId>
+                    <artifactId>json-lib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- ***************************三方包依赖(结束)***************************** -->
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
+        <scope>test</scope>
+    </dependency>
+    </dependencies>
+    <profiles>
+        <!-- 默认 -->
+        <profile>
+            <id>main</id>
+            <properties>
+                <profile.active>main</profile.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <!--65国际版商城-->
+        <profile>
+            <id>demo_65</id>
+            <properties>
+                <profile.active>demo_65</profile.active>
+            </properties>
+        </profile>
+		<!--厦门自由客-->
+        <profile>
+            <id>fjxmzyk</id>
+            <properties>
+                <profile.active>fjxmzyk</profile.active>
+            </properties>
+        </profile>
+		<!--胡一茗商城-->
+		<profile>
+			<id>ahhym_shangc</id>
+			<properties>
+				<profile.active>ahhym_shangc</profile.active>
+			</properties>
+		</profile>
+		<!--胡一茗商城测试-->
+		<profile>
+			<id>ahhym_cs</id>
+			<properties>
+				<profile.active>ahhym_cs</profile.active>
+			</properties>
+		</profile>	
+		<!--崔小龙电商+社交测试系统-->
+        <profile>
+            <id>sxcuixl_ceshi</id>
+            <properties>
+                <profile.active>sxcuixl_ceshi</profile.active>
+            </properties>
+        </profile>
+		
+		<!--崔小龙电商+社交-->
+        <profile>
+            <id>sxcuixl</id>
+            <properties>
+                <profile.active>sxcuixl</profile.active>
+            </properties>
+        </profile>
+
+                                <!--张某（老挝）-->
+        <profile>
+            <id>lwzhang</id>
+            <properties>
+                <profile.active>lwzhang</profile.active>
+            </properties>
+        </profile>
+                                <!--李凯社交电商-->
+        <profile>
+            <id>lksd</id>
+            <properties>
+                <profile.active>lksd</profile.active>
+            </properties>
+        </profile>	
+
+            <!--尚诚电子tjscdz-->
+     <profile>
+      <id>tjscdz</id>
+      <properties>
+        <profile.active>tjscdz</profile.active>
+      </properties>
+     </profile>
+	
+		
+    </profiles>
+    <build>
+        <!-- 最终打包的名称 -->
+        <finalName>mall</finalName>
+        <resources>
+            <resource>
+                <directory>src/${profile.active}/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- 编译的时候使用JDK7和UTF8编码 -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.19.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+
+            <plugin>
+                <groupId>hry_cash_base</groupId>
+                <artifactId>hry-maven-plugin</artifactId>
+                <version>0.0.2-SNAPSHOT</version>
+            </plugin>
+
+
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.financail.financing.dao.AppFinancialRecommendDao">
+
+
+<select id="findFinancialRecommendList" resultType="hry.remote.model.AppFinancialRecommend" parameterType="java.util.HashMap">
+    SELECT
+        api.email,
+        api.mobilePhone,
+        chi.vipLevel,
+        chi.`level`,
+        (CASE WHEN cardId IS null THEN '否' ELSE '是' END) AS ifRealName,
+        count(afu.id) AS productCount
+        FROM
+            (
+            SELECT
+                id,
+                uid,
+                pid,
+                vipLevel,
+                `level`
+            FROM
+              app_financial_recommend
+            WHERE
+                pid = #{customerId}
+            ) chi
+      LEFT JOIN app_person_info api ON chi.uid = api.customerId
+      LEFT JOIN app_financial_user afu on afu.customerId = chi.uid
+      GROUP BY chi.uid
+</select>
+
+<select id="findOne" resultType="hry.remote.model.AppFinancialRecommend" parameterType="java.lang.Long">
+    SELECT
+        *
+    FROM
+        app_financial_recommend
+    WHERE
+    uid = #{customerId}
+</select>
+
+    <select id="findOne2" resultType="hry.financail.financing.model.AppFinancialRecommend" parameterType="java.lang.Long">
+    SELECT
+        *
+    FROM
+        app_financial_recommend
+    WHERE
+    uid = #{customerId}
+</select>
+
+
+<select id="findFinancialRecommendTransactionList" resultType="hry.remote.model.AppFinancialRecommendTransaction" parameterType="java.util.HashMap">
+    SELECT
+        *
+    FROM
+        app_financial_recommend_transaction
+    WHERE customerId = #{customerId}
+
+</select>
+
+<select id="findTeamFinancialList" resultType="hry.remote.model.AppFinancialRecommendVo" parameterType="java.lang.String">
+  SELECT
+            afr.id,
+            afr.pid,
+            afr.uid,
+            afr.vipLevel,
+            afr.rewardRatio,
+            afr.`level`,
+            SUM(IFNULL(afu.coinMoney,0)) AS coinMoney,
+            afu.redPacketsMoney,
+            afu.poundage,
+            afu.realIncome,
+            afu.coinCode
+        FROM
+            (
+                SELECT
+                    id,
+                    uid,
+                    pid,
+                    vipLevel,
+                    `level`,
+                    rewardRatio,
+                    pendingMoney,
+					issuedMoney
+                FROM
+                  app_financial_recommend
+                WHERE
+                    FIND_IN_SET(pid,#{customerId})
+            ) afr
+        LEFT JOIN app_financial_user afu ON afr.uid = afu.customerId
+        GROUP BY afu.coinCode
+</select>
+
+
+    <select id="findVipLevelUser" resultType="hry.financail.financing.model.AppFinancialRecommend" parameterType="java.lang.Integer">
+        SELECT
+        T1.id,
+        T1.vipLevel,
+        T1.parent_id as uid,
+        COUNT(afr.id) AS recommendNumber,
+        COUNT(afu.customerId) AS financialOderNumber,
+        SUM(
+        CASE
+        WHEN afr.vipLevel = T1.vipLevel THEN
+        1
+        ELSE
+        0
+        END
+        ) AS directReferrerLevelNumber
+        FROM
+        (
+        SELECT
+        id,
+        vipLevel,
+        uid AS parent_id
+        FROM
+        app_financial_recommend
+        ) T1
+        LEFT JOIN app_financial_recommend afr ON T1.parent_id = afr.pid
+        LEFT JOIN (
+        SELECT
+        customerId
+        FROM
+        app_financial_user
+        where endTime > NOW()
+        GROUP BY
+        customerId
+        ) afu ON afu.customerId = afr.uid
+        <!--  AND afr.vipLevel = ( CASE WHEN T1.vipLevel = 0 THEN 1 ELSE T1.vipLevel END - 1 ) -->
+        GROUP BY
+        T1.parent_id
+        <if test="pageSize != null and pageSize != ''">
+            LIMIT #{currentPage},#{pageSize}
+        </if>
+    </select>
+
+
+    <select id="findVipLevelUserCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+          SELECT
+               COUNT(1)
+            FROM
+                (
+                    SELECT
+                        id,
+                        uid AS parent_id
+                    FROM
+                        app_financial_recommend
+                    WHERE
+                        vipLevel = #{vipLevel}
+                ) T1
+            LEFT JOIN app_financial_recommend afr ON T1.parent_id = afr.pid
+            LEFT JOIN (
+                SELECT
+                    count(1) AS cou,
+                    customerId
+                FROM
+                    app_financial_user
+                    where endTime > NOW()
+                GROUP BY
+                    customerId
+            ) afu ON afu.customerId = afr.uid
+
+    </select>
+
+    <select id="findPageBySql" resultType="hry.financail.financing.model.AppFinancialRecommend" parameterType="java.util.HashMap">
+        SELECT
+        afrt.id,
+        api.email,
+        api.mobilePhone,
+        afr.vipLevel,
+        afrt.coinCode,
+        afrt.money as pendingMoney,
+        afrt.issuedMoney
+        FROM
+        app_financial_recommend afr
+        LEFT JOIN app_person_info api ON afr.uid = api.customerId
+        LEFT JOIN app_financial_recommend_transaction afrt ON afrt.customerId = afr.uid
+        <where>
+            <if test="email != null and email != ''">
+                and api.email Like #{email}
+            </if>
+            <if test="mobilePhone != null and mobilePhone != ''">
+                and api.mobilePhone like #{mobilePhone}
+            </if>
+        </where>
+    </select>
+
+    <select id="findPidIsNullListCount" resultType="java.lang.Integer" >
+        SELECT
+            count(1)
+        FROM
+            app_financial_recommend afr
+    </select>
+
+    <select id="findPidIsNullList" resultType="hry.financail.financing.model.AppFinancialRecommend" >
+        SELECT
+        afr.id,
+        afr.pid,
+        afr.uid,
+        afr.vipLevel,
+        afr.`level`,
+        afr.rewardRatio
+        FROM
+        app_financial_recommend afr
+        <if test="pageSize != null and pageSize != ''">
+            LIMIT #{pageSize}
+        </if>
+    </select>
+
+    <select id="findOneLevelList" resultType="hry.financail.financing.model.AppFinancialRecommend" parameterType="java.util.HashMap">
+        SELECT
+        afr.id,
+        afr.pid,
+        afr.uid,
+        afr.vipLevel,
+        afr.`level`,
+        afr.rewardRatio
+        FROM
+        app_financial_recommend afr
+        WHERE
+        afr.pid = #{pid}
+        <!--<foreach collection="list" index="index" item="id" open="(" separator="," close=")">-->
+            <!--#{id}-->
+        <!--</foreach>-->
+        <if test="limitSize != null and limitSize != ''">
+            LIMIT #{limitSize}
+        </if>
+    </select>
+
+    <select id="findUserFinancialOrderList" resultType="hry.remote.model.AppFinancialRecommendVo" parameterType="java.lang.String">
+        SELECT
+            afr.id,
+            afr.pid,
+            afr.uid,
+            afr.vipLevel,
+            afr.rewardRatio,
+            afr.`level`,
+            afr.pendingMoney,
+            afr.issuedMoney,
+            afu.coinMoney,
+            afu.redPacketsMoney,
+            afu.poundage,
+            afu.realIncome,
+            afu.coinCode,
+            afu.id as afuId
+        FROM
+            (
+                SELECT
+                    id,
+                    uid,
+                    pid,
+                    vipLevel,
+                    `level`,
+                    rewardRatio,
+                    pendingMoney,
+					issuedMoney
+                FROM
+                  app_financial_recommend
+                WHERE
+                    FIND_IN_SET(uid,#{pid})
+            ) afr
+        LEFT JOIN app_financial_user afu ON afr.uid = afu.customerId
+        and afu.states = 1
+        and afu.ifRecommend = 0
+    </select>
+
+
+    <select id="findTopOneList" resultType="hry.remote.model.AppFinancialRecommendVo" parameterType="java.util.HashMap">
+        SELECT
+        afr.id,
+        afr.pid,
+        afr.uid,
+        afr.vipLevel,
+        afr.rewardRatio,
+        api.mobilePhone,
+        api.email,
+        SUM(IFNULL(afu.coinMoney, 0)) AS pendingMoney,
+        afu.coinCode
+        FROM
+        app_financial_recommend afr
+        LEFT JOIN app_person_info api ON afr.uid = api.customerId
+        LEFT JOIN app_financial_user afu ON afu.customerId = afr.uid
+        <where>
+            <if test="customerId != null and customerId != ''">
+                afr.uid = #{customerId}
+            </if>
+            <if test="mobilePhone != null and mobilePhone != ''">
+                api.mobilePhone = #{mobilePhone}
+            </if>
+        </where>
+        GROUP by afu.coinCode
+    </select>
+
+
+    <select id="findUserSuperiorNumber" resultType="java.lang.Integer" parameterType="java.lang.Long">
+         SELECT level FROM app_financial_recommend where  uid = #{customerId}
+    </select>
+
+    <select id="findAllChilds" resultType="hry.financail.financing.model.AppFinancialRecommend" parameterType="java.lang.String">
+        SELECT
+            id,
+            uid,
+            pid,
+            vipLevel,
+            `level`,
+            rewardRatio,
+            pendingMoney,
+            issuedMoney
+        FROM
+          app_financial_recommend
+        WHERE
+            FIND_IN_SET(pid,#{customerId})
+    </select>
+
+    <select id="findAllChilds_Str" resultType="java.lang.String" parameterType="java.lang.Long">
+        SELECT getRecommendChild_all (#{customerId});
+    </select>
+
+    <select id="findAllChildsLevel_Str" resultType="java.lang.String" parameterType="java.util.HashMap">
+        SELECT getRecommendChild(#{pid},#{pageSize})
+    </select>
+
+    <select id="findPidIsNullListCountRenew" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM
+            app_financial_recommend afr
+            where pid  is null
+    </select>
+
+    <select id="findPidIsNullListRenew" resultType="hry.financail.financing.model.AppFinancialRecommend" parameterType="java.util.HashMap">
+        SELECT
+        afr.id,
+        afr.pid,
+        afr.uid,
+        afr.vipLevel,
+        afr.level,
+        afr.rewardRatio
+        FROM
+        app_financial_recommend afr
+        <if test="pageSize != null and pageSize != ''">
+            LIMIT #{currentPage},#{pageSize}
+        </if>
+    </select>
+
+    <select id="findShipCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+       SELECT
+                COUNT(1)
+            FROM
+              app_financial_recommend
+            WHERE
+                FIND_IN_SET(pid,#{customerId})
+    </select>
+
+    <select id="findBetweenProduct" resultType="java.lang.Integer">
+      SELECT count(1) FROM `app_financial_user` WHERE realIncome > 0 AND NOW()>modified AND ifRecommend = 0
+    </select>
+
+</mapper>

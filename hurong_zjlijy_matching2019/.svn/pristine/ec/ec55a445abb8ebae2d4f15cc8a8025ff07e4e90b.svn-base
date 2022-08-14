@@ -1,0 +1,7 @@
+##
+app.name=hurong_single
+app.url=http://www.yisc.vip/app
+
+###########################authorization#################################
+app.oauthKey=8d9bc97c4152412d9cb29f62448c2b30
+app.oauthIp=172.31.222.45

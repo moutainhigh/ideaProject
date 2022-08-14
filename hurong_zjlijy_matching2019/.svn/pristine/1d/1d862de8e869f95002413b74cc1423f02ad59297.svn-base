@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="hry_mall:war">
+    <output-path>$PROJECT_DIR$/hry_mall/target</output-path>
+    <root id="archive" name="hry_mall.war">
+      <element id="artifact" artifact-name="hry_mall:war exploded" />
+    </root>
+  </artifact>
+</component>

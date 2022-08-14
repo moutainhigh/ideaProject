@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.sns.dao.SocialSnsTopicDao">
+
+    <select id="topicInfo" parameterType="java.util.Map" resultType="hry.social.manage.remote.model.sns.SocialSnsTopic">
+        SELECT
+        *
+        FROM
+        social_sns_topic
+        WHERE
+        states = 1
+        <if test="customerId!=null and customerId!='' ">
+            AND customerId = #{customerId}
+        </if>
+        ORDER BY
+        sortNum,
+        created DESC
+    </select>
+    <select id="getSortNum" resultType="java.lang.Integer">
+        SELECT
+            IFNULL(MAX(sortNum), 0)
+        FROM
+            social_sns_topic
+    </select>
+</mapper>

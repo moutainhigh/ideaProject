@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- 应用管理-具体的实现bean -->
+    <bean id="remoteApplyServiceImpl" class="hry.social.manage.remote.apply.RemoteApplyServiceImpl"/>
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service ref="remoteApplyServiceImpl" interface="hry.social.manage.remote.api.apply.RemoteApplyService"/>
+</beans>  

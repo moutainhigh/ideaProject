@@ -1,0 +1,31 @@
+/**
+ * Copyright:   
+ * @author:      zhouming
+ * @version:     V1.0 
+ * @Date:        2020-01-08 14:15:35 
+ */
+package hry.cm5.log.service.impl;
+
+import hry.cm5.log.model.Cm5TaskLog;
+import hry.cm5.log.service.Cm5TaskLogService;
+import hry.core.mvc.dao.base.BaseDao;
+import hry.core.mvc.service.base.impl.BaseServiceImpl;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p> Cm5TaskLogService </p>
+ * @author:         zhouming
+ * @Date :          2020-01-08 14:15:35  
+ */
+@Service("cm5TaskLogService")
+public class Cm5TaskLogServiceImpl extends BaseServiceImpl<Cm5TaskLog, Long> implements Cm5TaskLogService{
+	
+	@Resource(name="cm5TaskLogDao")
+	@Override
+	public void setDao(BaseDao<Cm5TaskLog, Long> dao) {
+		super.dao = dao;
+	}
+	
+
+}

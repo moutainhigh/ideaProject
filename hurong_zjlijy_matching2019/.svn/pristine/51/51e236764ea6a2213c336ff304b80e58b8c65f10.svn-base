@@ -1,0 +1,76 @@
+app.url=http\://localhost:6006/ieo
+app.vueurl=http\://127.0.0.1:8080/#
+# \u4EE3\u7406\u5546\u5730\u5740
+app.agenturl=http\://172.16.10.180:6002
+# \u4EE3\u7406\u5546\u79C1\u94A5
+app.sign=hICyzuciFRF2ZRlH
+oauth.filter1=/user
+oauth.filter2=/v
+oauth.filter3=/sms/getPhone
+oauth.nofilter1=/v2
+
+#\u8C37\u6B4C\u8BA4\u8BC1\u5668\u663E\u793A\u7684\u540D\u79F0
+app.googleCompany=Xstar
+
+app.swagger=true
+
+
+app.oauthKey=919ec6fba69245948865b54df0f67213
+app.oauthIp=172.31.153.174
+
+
+app.emailurl_cn=http\://www.200.com/exmain
+app.emailurl_en=http\://www.200.com/exmain
+#app.email.host=smtp.dayscraft.cn
+#app.email.auth=true
+#app.email.protocol=smtp
+#app.email.userName=test1@dayscraft.cn
+#app.email.agreedUser=test1@dayscraft.cn
+#app.email.agreedPwd=900900.com
+#app.email.customName=\u4E92\u878D\u4E91\u4EA7\u54C1\u6F14\u793A\u7CFB\u7EDF
+
+#\u662F\u5426\u591A\u4E2A\u90AE\u7BB1 0\u4E3A\u5426 1\u4E3A\u662F
+app.multiple=0
+
+
+#app.email.emailaddress=[hurongbi] Email address verification
+#app.email.newip=[hurongbi] New ip login notification
+#app.email.passwordreset=[hurongbi] Password Reset
+#
+#app.email.emailaddresscn=[hurongbi] \u6CE8\u518C\u90AE\u7BB1\u9A8C\u8BC1
+#app.email.passwordresetcn=[coinking] \u91CD\u7F6E\u5BC6\u7801\u9A8C
+
+# \u77ED\u4FE1\u81F4\u7535\u53F7\u7801
+app.sms.call=4000903910
+
+#\u62C9\u53D6KKCoin\u6570\u636E\u5F00\u5173
+kkcoin=1
+
+#\u662F\u5426\u914D\u4E86\u8BC1\u4E66
+hasWss=false
+
+app.img.server.type=oss
+## \u963F\u91CC\u4E91oss
+app.oss.endpoint=http://oss-cn-hangzhou.aliyuncs.com
+app.oss.accessKeyId=LTAI4FtWg9WSg9VJLc3MBKti
+app.oss.accessKeySecret=3psRqlQikAYCUvSvN9sBMzodrTv4ye
+app.oss.publicBucketName=fjxmzyk-exchange-public
+app.oss.privateBucketName=fjxmzyk-exchange-private
+
+## Amazon aws
+app.aws.region=ap-southeast-1
+app.aws.accessKeyId=AKIA3XLAJ2MBEYCQHKEL
+app.aws.accessKeySecret=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
+app.aws.bucketName=cxl-exchange-public
+
+## Microsoft azure
+app.azure.connectionString=DefaultEndpointsProtocol\=https;AccountName\=xunq;AccountKey\=c0QMEMG+8iw9QgK1J1EZ4qIfXMC7EsmG79RqJrqKKmDUJoNX6cT70Fp0ipo2R3yFBCqBU1WusMOkTDV4Dgt7WA\=\=;EndpointSuffix\=core.windows.net
+
+#\u6781\u5BA2\u8BA4\u8BC1\u76F8\u5173\u914D\u7F6E
+geetest_open=true
+geetest_id=54db554ad012a2b2971565d3bb16d2dc
+geetest_key=cee91b518d780c41818670616f8d1e4b
+
+app.equipment_cret=1
+
+app.hearderKlineData=commonkline:huobi:

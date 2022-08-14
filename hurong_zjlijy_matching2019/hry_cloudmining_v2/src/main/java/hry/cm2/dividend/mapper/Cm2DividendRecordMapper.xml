@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm2.dividend.dao.Cm2DividendRecordDao">
+
+    <resultMap id="findResultMap" type="hry.cm2.customer.model.Cm2Customer">
+
+    </resultMap>
+    <select id="findCmCustomer" resultMap="findResultMap">
+        select cc.*
+        from cm2_customer cc
+        left join
+        cm2_grade_minercamps cgm
+        ON cc.grade2 = cgm.grade
+        where cgm.isBonus = '2'
+    </select>
+
+    <select id="findUserFee" resultType="java.util.HashMap">
+        SELECT
+        '1' as feeType,SUM(oat.buyfee+oat.sellfee) as fee
+        FROM
+        otc_app_transaction oat
+        WHERE 1=1
+        and oat.status=3
+        and TO_DAYS(NOW()) - TO_DAYS(oat.created) = 1
+        and oat.coinCode = #{coinCode}
+        and oat.customerId = #{customerId}
+        UNION
+        SELECT
+        '2' as feeType, SUM(edt.fee) as fee
+        FROM ex_dm_transaction edt
+        WHERE
+        edt.status=2
+        and edt.transactionType in(4,2)
+        and TO_DAYS(NOW()) - TO_DAYS(edt.created) = 1
+        and edt.coinCode=#{coinCode}
+        and edt.customerId = #{customerId}
+        UNION
+        SELECT
+        '3' as feeType, SUM(eoi.transactionBuyFee) as fee
+        FROM
+        ex_order_info eoi
+        WHERE
+        TO_DAYS(NOW()) - TO_DAYS(eoi.created) = 1
+        and eoi.coinCode = #{coinCode}
+        and eoi.customerId = #{customerId}
+        UNION
+        SELECT
+        '4' as feeType, SUM(ct.fee) as fee
+        FROM
+        c2c_transaction ct
+        WHERE
+        TO_DAYS(NOW()) - TO_DAYS(ct.created) = 1
+        and ct.coinCode = #{coinCode}
+        and ct.customerId = #{customerId}
+    </select>
+
+
+</mapper>

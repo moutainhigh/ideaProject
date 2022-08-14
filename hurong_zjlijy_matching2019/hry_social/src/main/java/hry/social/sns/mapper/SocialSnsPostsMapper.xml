@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.sns.dao.SocialSnsPostsDao">
+
+    <select id="concernedPostPage" resultType="hry.social.manage.remote.model.sns.SocialSnsPosts">
+        SELECT
+            ssp.*,
+            api.nickName,
+            api.headPortrait,
+            api.accid
+        FROM
+            social_sns_attention ssa
+        LEFT JOIN social_sns_posts ssp ON ssa.customerId = ssp.customerId
+        LEFT JOIN app_person_info api ON ssp.customerId = api.customerId
+        WHERE
+            ssa.attentionId = #{customerId} AND ssa.states = 2
+        ORDER BY
+            ssp.created DESC
+    </select>
+
+    <select id="recentPost" resultType="hry.social.manage.remote.model.sns.SocialSnsPosts">
+        SELECT
+            ssp.*,
+            api.nickName,
+            api.headPortrait,
+            api.accid
+        FROM
+            social_sns_posts ssp
+        LEFT JOIN app_person_info api ON ssp.customerId = api.customerId
+        WHERE ssp.states = 2
+        ORDER BY
+            ssp.created DESC
+    </select>
+
+    <select id="discoverPost" resultType="hry.social.manage.remote.model.sns.SocialSnsPosts">
+        SELECT
+            ssp.id,
+            ssp.customerId,
+            ssp.title,
+            ssp.hasPicture,
+            ssp.communityKey,
+            ssp.isPaid,
+            ssp.price,
+            ssp.isRecommend,
+            ssp.created,
+            api.nickName,
+            api.headPortrait,
+            api.accid
+        FROM
+            social_sns_posts ssp
+        LEFT JOIN app_person_info api ON ssp.customerId = api.customerId
+        WHERE
+            ssp.states = 2
+        ORDER BY
+            ssp.created DESC
+    </select>
+
+    <select id="postDetails" resultType="hry.social.manage.remote.model.sns.SocialSnsPosts">
+        SELECT
+            ssp.id,
+            ssp.customerId,
+            ssp.title,
+            ssp.content,
+            ssp.hasPicture,
+            ssp.hasVideo,
+            ssp.communityKey,
+            ssp.topicId,
+            ssp.hasWarn,
+            ssp.isPaid,
+            ssp.price,
+            ssp.isRecommend,
+            ssp.states,
+            ssp.device,
+            ssp.site,
+            ssp.created,
+            api.nickName,
+            api.headPortrait,
+            api.accid
+        FROM
+        social_sns_posts ssp
+        LEFT JOIN app_person_info api ON ssp.customerId = api.customerId
+        WHERE ssp.id =#{postsId} AND ssp.states = 2
+        ORDER BY
+            ssp.created DESC
+    </select>
+
+</mapper>

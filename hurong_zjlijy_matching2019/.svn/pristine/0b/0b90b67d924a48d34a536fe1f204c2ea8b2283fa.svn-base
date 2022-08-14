@@ -1,0 +1,34 @@
+package hry.cm5.remote;
+
+import hry.cm5.log.service.Cm5TaskLogService;
+import hry.mq.producer.service.MessageProducer;
+import hry.redis.common.utils.RedisService;
+import hry.util.SpringUtil;
+
+import javax.annotation.Resource;
+import java.util.Date;
+
+public class RemoteCmListenerServiceImpl implements RemoteCmListenerService {
+
+	@Resource
+	private MessageProducer messageProducer;
+
+	@Resource
+	private RedisService redisService;
+
+
+	@Override
+	public void minerCoinageByDay() {
+		// TODO Auto-generated method stub
+		Date startDate = new Date();
+		Cm5TaskLogService cmTaskLogService = SpringUtil.getBean("cm5TaskLogService");
+
+
+
+
+		Date endDate = new Date();
+		String functionName = "minerCoinageByDay";
+		cmTaskLogService.saveLog(functionName, 0, startDate, endDate);
+	}
+
+}

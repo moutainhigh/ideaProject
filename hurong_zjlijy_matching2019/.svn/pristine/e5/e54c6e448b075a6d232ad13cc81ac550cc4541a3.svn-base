@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm4.team.dao.Cm4TeamlevelDao">
+    <resultMap id="BaseResultMap" type="hry.cm4.team.model.Cm4Teamlevel">
+    </resultMap>
+
+    <!-- 查询用户团队信息 -->
+    <select id="findTeamByCustomerId" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+			atl.*,
+			api.trueName as trueName,
+			api.surname as surName,
+			api.mobilePhone as mobilePhone,
+			api.email as email,
+			cc.personalAchievement,
+			cc.teamAchievement,
+			cc.teamNum,
+			api.nickName
+		FROM
+			app_teamlevel atl
+		LEFT JOIN cm4_customer cc ON atl.customerId = cc.customerId
+		LEFT JOIN app_person_info api ON atl.customerId = api.customerId
+		WHERE atl.parentId= #{customerId} and atl.`level`= #{level}
+		ORDER BY atl.`level`,api.created asc
+    </select>
+
+</mapper>

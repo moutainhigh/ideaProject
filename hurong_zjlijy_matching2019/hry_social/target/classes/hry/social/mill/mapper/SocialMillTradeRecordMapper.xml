@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.mill.dao.SocialMillTradeRecordDao">
+
+    <select id="findPageList" parameterType="java.util.Map" resultType="hry.social.manage.remote.model.mill.SocialMillTradeRecord">
+        SELECT
+        smtr.id,
+        smtr.orderNum,
+        smtr.customerId,
+        smtr.millId,
+        smtr.serialNum,
+        smtr.rewardType,
+        smtr.rewardNum,
+        smtr.cnyPrice,
+        smtr.num,
+        smtr.cnyAmount,
+        smtr.coinCode,
+        smtr.payNum,
+        smtr.coinMarket,
+        smtr.payAmount,
+        smtr.created,
+        smtr.endTime,
+        api.email AS email,
+        api.mobilePhone AS mobilePhone
+        FROM
+        social_mill_trade_record AS smtr
+        LEFT JOIN app_person_info AS api ON smtr.customerId = api.customerId
+        <where>
+            1=1
+            <if test="orderNum!=null and orderNum!='' ">
+                AND smtr.orderNum LIKE #{orderNum}
+            </if>
+            <if test="serialNum!=null and serialNum!='' ">
+                AND smtr.serialNum LIKE #{serialNum}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                AND smtr.coinCode = #{coinCode}
+            </if>
+            <if test="rewardType!=null and rewardType!='' ">
+                AND smtr.rewardType = #{rewardType}
+            </if>
+            <if test="created_GT!=null and created_GT!='' ">
+                AND smtr.created &gt;= #{created_GT}
+            </if>
+            <if test="created_LT!=null and created_LT!='' ">
+                AND smtr.created &lt;= #{created_LT}
+            </if>
+            <if test="endTime_GT!=null and endTime_GT!='' ">
+                AND smtr.endTime &gt;= #{endTime_GT}
+            </if>
+            <if test="endTime_LT!=null and endTime_LT!='' ">
+                AND smtr.endTime &lt;= #{endTime_LT}
+            </if>
+            <if test="email!=null and email!='' ">
+                AND api.email LIKE #{email}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+        </where>
+        ORDER BY
+        smtr.created DESC,
+        smtr.endTime DESC
+    </select>
+
+    <select id="hasForceMill" resultType="java.lang.Integer">
+        SELECT
+        EXISTS (
+            SELECT
+                *
+            FROM
+                social_mill_trade_record
+            WHERE
+                endTime > NOW()
+            AND rewardType = 1
+            AND customerId = #{customerId}
+        );
+    </select>
+
+    <select id="hasCoinMill" resultType="java.lang.Integer">
+        SELECT
+        EXISTS (
+            SELECT
+                *
+            FROM
+                social_mill_trade_record
+            WHERE
+                endTime > NOW()
+            AND rewardType = 2
+            AND customerId = #{customerId}
+        );
+    </select>
+
+    <select id="findMillCoin" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(sum(rewardNum * num),0) rewardNum
+        FROM
+            social_mill_trade_record
+        WHERE
+            endTime > NOW()
+        AND rewardType = 2
+        AND customerId = #{customerId}
+    </select>
+
+    <select id="getUerMillList" resultType="hry.social.manage.remote.model.mill.SocialMillTradeRecord">
+        SELECT
+            smi.name,
+            smi.img,
+            smi.serialNum,
+            smi.timeUnit,
+            smi.validNum,
+            smtr.*,
+            (TIMESTAMPDIFF(DAY, NOW(), smtr.endTime)+1) AS expire
+        FROM
+            social_mill_trade_record smtr
+        LEFT JOIN social_mill_info smi ON smtr.millId = smi.id
+        WHERE
+            smtr.rewardType = #{rewardType}
+        AND smtr.customerId = #{customerId}
+    </select>
+
+    <select id="getCoinReward" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(rewardNum * num,0) AS rewardNum
+        FROM
+            social_mill_trade_record
+        WHERE
+            coinCode = #{coinCode}
+        AND endTime > NOW()
+        AND rewardType = 2
+    </select>
+
+
+</mapper>

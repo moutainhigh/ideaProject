@@ -1,0 +1,10 @@
+hry\remote\model\AppFinancialRecommend.class
+hry\remote\model\AppFinancialRedAcount.class
+hry\remote\model\FinancialUser.class
+hry\remote\model\AppFinancialProducts.class
+hry\remote\service\RemoteFinancailService.class
+hry\remote\model\AppFinancialRecommendVo.class
+hry\util\SpringUtil.class
+hry\remote\model\AppFinancialGiftRecord.class
+hry\remote\model\RemoteResult.class
+hry\remote\model\AppFinancialRecommendTransaction.class

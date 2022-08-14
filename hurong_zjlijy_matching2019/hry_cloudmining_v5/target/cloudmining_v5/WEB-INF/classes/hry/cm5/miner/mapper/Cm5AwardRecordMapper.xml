@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm5.miner.dao.Cm5AwardRecordDao">
+
+    <select id="getAwardTotal" parameterType="java.util.Map">
+        select IFNUll(sum(car.awardTwo),0) as awardTotal
+        from cm5_award_record car
+        where 1=1
+        <if test="awardCode != null and awardCode != ''">
+            and car.awardCode = #{awardCode}
+        </if>
+        <if test="inheritNum != null and inheritNum != ''">
+            and car.inheritNum = #{inheritNum}
+        </if>
+        <if test="awardType != null and awardType != ''">
+            and car.awardType = #{awardType}
+        </if>
+    </select>
+</mapper>

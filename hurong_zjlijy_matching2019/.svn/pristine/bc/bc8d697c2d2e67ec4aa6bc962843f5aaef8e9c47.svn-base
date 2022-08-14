@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.transfer.dao.SocialTransferRecordDao">
+
+    <select id="findPageList" resultType="hry.social.manage.remote.model.transfer.SocialTransferRecord">
+        SELECT
+            str.id,
+            str.formId,
+            fapi.nickName AS fromName,
+            str.coinCode,
+            str.num,
+            str.serviceFee,
+            str.toId,
+            tapi.nickName AS toName,
+            str.created
+        FROM
+        social_transfer_record str
+        LEFT JOIN app_person_info fapi ON str.formId = fapi.customerId
+        LEFT JOIN app_person_info tapi ON str.toId = tapi.customerId
+        <where>
+
+            <if test="customerId!=null and customerId!='' ">
+                str.formId = #{customerId} OR str.toId = #{customerId}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                AND str.coinCode = #{coinCode}
+            </if>
+            <if test="createdGT!=null and createdGT!='' ">
+                AND str.created &gt;= #{createdGT}
+            </if>
+            <if test="createdLT!=null and createdLT!='' ">
+                AND str.created &lt;= #{createdLT}
+            </if>
+        </where>
+        ORDER BY str.created DESC
+    </select>
+
+    <select id="getPublicKey" resultType="java.lang.String">
+        SELECT
+            publicKey
+        FROM
+            ex_digitalmoney_account
+        WHERE
+            customerId = #{customerId}
+        AND coinCode = #{coinCode}
+        AND `status` = 1
+    </select>
+</mapper>

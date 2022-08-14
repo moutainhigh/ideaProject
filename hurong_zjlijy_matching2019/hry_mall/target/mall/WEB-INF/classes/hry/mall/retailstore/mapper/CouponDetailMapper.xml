@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.retailstore.dao.CouponDetailDao">
+    <resultMap id="findBySqlMap"   type="hry.mall.retailstore.model.vo.CouponVo">
+        <result column="couponId" property="couponId" javaType="java.lang.Long" />
+        <result column="name" property="name" javaType="java.lang.String" />
+        <result column="faceValue" property="faceValue" javaType="java.math.BigDecimal" />
+        <result column="useMoney" property="useMoney" javaType="java.math.BigDecimal" />
+        <result column="useType" property="useType" javaType="java.lang.Integer" />
+        <result column="gcType" property="gcType" javaType="java.lang.Integer" />
+        <result column="onegcId" property="onegcId" javaType="java.lang.Long" />
+        <result column="onegcName" property="onegcName" javaType="java.lang.String" />
+        <result column="twogcId" property="twogcId" javaType="java.lang.Long" />
+        <result column="twogcName" property="twogcName" javaType="java.lang.String" />
+        <result column="startDate" property="startDate" javaType="java.util.Date" />
+        <result column="endDate" property="endDate" javaType="java.util.Date" />
+        <result column="status" property="status" javaType="java.lang.Integer" />
+        <result column="totalCount" property="totalCount" javaType="java.lang.Integer" />
+        <result column="receiveCount" property="receiveCount" javaType="java.lang.Integer" />
+        <result column="usedCount" property="usedCount" javaType="java.lang.Integer" />
+    </resultMap>
+
+    <select id="findMyCouponList" parameterType="java.util.Map" resultMap="findBySqlMap">
+        select scd.couponId,sc.name,sc.faceValue,sc.useMoney,sc.useType,sc.gcType,sc.onegcId,sc.onegcName,sc.twogcId,sc.twogcName,
+               scd.startDate,scd.endDate,scd.`status`
+        from shop_coupon_detail scd
+        LEFT JOIN shop_coupon sc
+        ON scd.couponId = sc.id
+        where 1=1
+        <if test="memberId != null and memberId !=''">
+            and scd.memberId = #{memberId}
+        </if>
+        <if test="status == 1">
+            and scd.status = '0'
+            and now() <![CDATA[ <= ]]> scd.endDate
+        </if>
+        <if test="status == 2">
+            and (now() > scd.endDate
+            or scd.status = '1')
+        </if>
+
+    </select>
+
+
+</mapper>

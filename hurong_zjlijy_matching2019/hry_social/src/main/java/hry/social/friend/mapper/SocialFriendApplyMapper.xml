@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.friend.dao.SocialFriendApplyDao">
+
+    <update id="refuseApply">
+        UPDATE social_friend_apply
+        SET states = 2
+        WHERE
+            id = #{id}
+    </update>
+
+    <update id="acceptApply">
+        UPDATE social_friend_apply
+        SET states = 1
+        WHERE
+            id = #{id}
+    </update>
+
+    <select id="findApplyList" resultType="hry.social.manage.remote.model.friend.SocialFriendApply">
+        SELECT
+            sfar.id,
+            sfar.customerId,
+            sfar.applyId,
+            sfar.states,
+            sfar.message,
+            sfar.created,
+            api.headPortrait,
+            api.nickName,
+            api.mobilePhone,
+            api.email,
+            api.accid,
+            api.mood
+        FROM
+            social_friend_apply sfar
+        LEFT JOIN app_person_info api ON sfar.applyId = api.customerId
+        WHERE
+            sfar.customerId = #{customerId}
+        ORDER BY
+            sfar.created DESC
+    </select>
+
+    <!--查看好友申请记录列表-->
+    <select id="hasNotDeal" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            social_friend_apply
+        WHERE
+            states = 0
+        AND customerId = #{customerId};
+    </select>
+
+</mapper>

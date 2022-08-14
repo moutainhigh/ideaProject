@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.sns.dao.SocialSnsFavoriteDao">
+    <update id="deleteFavorite">
+        DELETE
+        FROM social_sns_favorite
+        WHERE
+            postsId = #{postsId} AND
+            favoriteId = #{favoriteId};
+    </update>
+
+    <select id="countFavorite" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            social_sns_favorite
+        WHERE
+            postsId = #{postsId}
+    </select>
+
+    <select id="hasFavorite" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    social_sns_favorite
+                WHERE
+                    postsId = #{postsId}
+                AND favoriteId = #{favoriteId}
+            )
+    </select>
+</mapper>

@@ -1,0 +1,43 @@
+/**
+ * Copyright:   
+ * @author:      yaozh
+ * @version:     V1.0 
+ * @Date:        2019-11-21 10:03:56 
+ */
+package hry.cm4.order.service;
+
+import hry.core.mvc.service.base.BaseService;
+import hry.cm4.order.model.Cm4Order;
+
+import java.util.List;
+
+
+/**
+ * <p> Cm4OrderService </p>
+ * @author:         yaozh
+ * @Date :          2019-11-21 10:03:56 
+ */
+public interface Cm4OrderService  extends BaseService<Cm4Order, Long>{
+
+    /**
+     * 查询持有到期的矿机的用户
+     * @return
+     */
+    public List<Long> findCloseMinerCustomerId();
+    /**
+     * 查询持有待运行状态矿机的用户
+     * @return
+     */
+    public List<Long> findWaitMinerCustomerId();
+
+    /**
+     * 更新到期订单状态
+     */
+    void updateCloseOrder();
+    /**
+     * 更新待运行订单状态
+     */
+    void updateWaitOrder();
+
+
+}

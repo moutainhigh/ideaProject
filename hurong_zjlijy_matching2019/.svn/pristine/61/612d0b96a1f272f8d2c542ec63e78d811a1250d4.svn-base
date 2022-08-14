@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.platform.dao.AdvertisementDao">
+     <resultMap id="BaseResultMap" type="hry.mall.platform.model.Advertisement">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+        <result column="name" property="name" javaType="java.lang.String" />
+        <result column="remark" property="remark" javaType="java.lang.String" />
+        <result column="imageurl" property="imageurl" javaType="java.lang.String" />
+        <result column="advertisurl" property="advertisurl" javaType="java.lang.String" />
+        <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+        <result column="startTime" property="startTime" javaType="java.util.Date"/>
+        <result column="endTime" property="endTime" javaType="java.util.Date"/>
+        <result column="clickCount" property="clickCount" javaType="java.math.BigDecimal"/>
+        <result column="browseCount" property="browseCount" javaType="java.math.BigDecimal"/>
+        <result column="browseTime" property="browseTime" javaType="java.lang.Integer"/>
+        <result column="hcCount" property="hcCount" javaType="java.math.BigDecimal"/>
+        <result column="hbCount" property="hbCount" javaType="java.math.BigDecimal"/>
+        <result column="isClick" property="isClick" javaType="java.lang.Short"/>
+        <result column="isBrowse" property="isBrowse" javaType="java.lang.Short"/>
+    </resultMap>
+    <select id="findByPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        a.id,a.name,a.remark,a.imageurl,a.advertisurl,a.coinCode,a.browseTime,a.startTime,a.endTime,a.clickCount,a.browseCount,
+        IFNULL(r.coinCount,0) as hcCount,IFNULL(b.coinCount ,0) as hbCount,
+        if(r.id is NULL,0,1) as isClick,  if(b.id is NULL,0,1) as isBrowse
+        FROM
+        shop_advertisement a
+        LEFT JOIN (SELECT * FROM shop_advertisement_record WHERE memberId = #{memberId}  and type=1 ) AS r ON a.id = r.advertisementId
+        LEFT JOIN (SELECT * FROM shop_advertisement_record WHERE memberId = #{memberId}  and type=2 ) AS b ON a.id = b.advertisementId
+        where   1=1 and a.status=1 and a.startTime &lt;=NOW() and a.endTime &gt;=NOW()
+        order by a.created desc
+    </select>
+    
+    <select id="findCount" parameterType="java.util.Map" resultType="java.lang.Long">
+       select COUNT(*) from shop_advertisement_record  where 1=1
+             <if test="type!=null and type!='' ">
+				and type= #{type} 
+		    </if> 
+		    <if test="startTime!=null and startTime!='' ">
+				and created &gt;=#{startTime} 
+		    </if>
+            <if test="endTime!=null and endTime!='' ">
+				and created &lt;=#{endTime} 
+		    </if>
+    </select>
+     <select id="findGetCount" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+       select IFNULL(SUM(coinCount),0)  from shop_advertisement_record   where 1=1
+            <if test="memberId!=null and memberId!='' ">
+				and memberId= #{memberId} 
+		    </if>  
+	
+    </select>
+    
+
+</mapper>

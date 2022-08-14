@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/hry_cloudmining" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_cloudmining_v2" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_cloudmining_v3" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_cloudmining_v4" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_cloudmining_v5" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_financail" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_mall" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_otc" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_single" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_social" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_web_trade" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://192.168.0.60/svn/hry_proj/hurong_matching2019" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

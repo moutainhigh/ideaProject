@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.shake.dao.SocialShakeShopDao">
+    <!--分页查询-->
+    <select id="findPageList" resultType="hry.social.manage.remote.model.shake.SocialShakeShop" parameterType="java.util.Map">
+        SELECT
+        sss.*,
+        ssof.shopName,
+        ssof.shopLogo,
+        ssof.shopAddress,
+        ssof.shopLink,
+        ssof.openTime,
+        ssof.closeTime,
+        ssof.phone
+        FROM
+        social_shake_shop sss
+        LEFT JOIN social_shop_offline ssof ON sss.shopId = ssof.id
+        <where>
+            <if test="shakeId!=null and shakeId!='' ">
+                AND sss.shakeId = #{shakeId}
+            </if>
+            <if test="shopId!=null and shopId!='' ">
+                AND sss.shopId = #{shopId}
+            </if>
+            <if test="status!=null and status!='' ">
+                AND sss.states = #{status}
+            </if>
+        </where>
+        ORDER BY sss.created DESC
+    </select>
+
+    <select id="getShopInfo" resultType="hry.social.manage.remote.model.shake.SocialShakeShop">
+        SELECT
+        sss.*,
+        ssof.shopName,
+        ssof.shopLogo,
+        ssof.shopAddress,
+        ssof.shopLink,
+        ssof.openTime,
+        ssof.closeTime,
+        ssof.phone
+        FROM
+        social_shake_shop sss
+        LEFT JOIN social_shop_offline ssof ON sss.shopId = ssof.id
+        WHERE
+        sss.id = #{shopId}
+    </select>
+
+    <update id="updateRecord" parameterType="hry.social.manage.remote.model.shake.SocialShakeShop">
+        UPDATE social_shake_shop
+        SET modified = #{modified},`states` = #{states}
+        WHERE
+        shakeId = #{shakeId}
+        <if test="states==1 ">
+            AND shopId = #{shopId}
+        </if>
+    </update>
+
+</mapper>

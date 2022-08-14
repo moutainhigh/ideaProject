@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.sns.dao.SocialSnsShareDao">
+
+    <select id="countShare" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            social_sns_share
+        WHERE
+            postsId = #{postsId}
+    </select>
+
+    <select id="hasShare" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    social_sns_share
+                WHERE
+                    postsId = #{postsId}
+                AND shareId = #{shareId}
+            )
+    </select>
+</mapper>

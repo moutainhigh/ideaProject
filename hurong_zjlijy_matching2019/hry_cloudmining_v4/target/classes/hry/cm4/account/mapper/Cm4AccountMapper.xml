@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.hry.cm4.account.dao.Cm4AccountDao">
+    <update id="updateAccount"  parameterType="java.util.List">
+
+        update cm4_account
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="hotMoney = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.hotMoneyDouble}
+                </foreach>
+            </trim>
+            <trim prefix="coldMoney = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.coldMoneyDouble}
+                </foreach>
+            </trim>
+
+            <trim prefix="modified = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.modified}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+</mapper>

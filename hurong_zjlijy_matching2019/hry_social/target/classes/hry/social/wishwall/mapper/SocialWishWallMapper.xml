@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.wishwall.dao.SocialWishWallDao">
+
+    <select id="findBuyIds" parameterType="java.util.Map" resultType="hry.social.manage.remote.model.wishwall.SocialWishWall">
+        SELECT
+        *
+        FROM
+        social_wish_wall
+        WHERE
+        id
+        IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findPageList" resultType="hry.social.manage.remote.model.wishwall.SocialWishWall">
+        SELECT
+            sww.id,
+            sww.wishNum,
+            sww.customerId,
+            api.mobilePhone AS mobilePhone,
+            sww.signature,
+            sww.created,
+            sww.fee,
+            sww.coinCode,
+            sww.cochainTime,
+            sww.`hash`,
+            sww.blockHeight
+        FROM
+            social_wish_wall sww
+        LEFT JOIN
+            app_person_info api
+        ON sww.customerId = api.customerId
+        <where>
+            <if test="type!=null and type!='' ">
+                sww.type = #{type}
+            </if>
+            <if test="wishNum!=null and wishNum!='' ">
+                AND sww.wishNum LIKE #{wishNum}
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                AND sww.customerId = #{customerId}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+            <if test="signature!=null and signature!='' ">
+                AND sww.signature LIKE #{signature}
+            </if>
+            <if test="blockHeight!=null and blockHeight!='' ">
+                AND sww.blockHeight LIKE #{blockHeight}
+            </if>
+            <if test="hash!=null and hash!='' ">
+                AND sww.`hash` LIKE #{hash}
+            </if>
+            <if test="createdGT!=null and createdGT!='' ">
+                AND sww.created &gt;= #{createdGT}
+            </if>
+            <if test="createdLT!=null and createdLT!='' ">
+                AND sww.created &lt;= #{createdLT}
+            </if>
+            <if test="cochainTimeGT!=null and cochainTimeGT!='' ">
+                AND sww.cochainTime &gt;= #{cochainTimeGT}
+            </if>
+            <if test="cochainTimeLT!=null and cochainTimeLT!='' ">
+                AND sww.cochainTime &lt;= #{cochainTimeLT}
+            </if>
+        </where>
+        ORDER BY sww.id DESC
+    </select>
+    <select id="footing" resultType="hry.social.manage.remote.model.wishwall.SocialWishWall">
+        SELECT
+            sum(sww.fee)as fee
+        FROM
+            social_wish_wall sww
+        LEFT JOIN
+            app_person_info api
+        ON sww.customerId = api.customerId
+        <where>
+            <if test="type!=null and type!='' ">
+                sww.type = #{type}
+            </if>
+            <if test="wishNum!=null and wishNum!='' ">
+                AND sww.wishNum LIKE #{wishNum}
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                AND sww.customerId = #{customerId}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+            <if test="signature!=null and signature!='' ">
+                AND sww.signature LIKE #{signature}
+            </if>
+            <if test="blockHeight!=null and blockHeight!='' ">
+                AND sww.blockHeight LIKE #{blockHeight}
+            </if>
+            <if test="hash!=null and hash!='' ">
+                AND sww.`hash` LIKE #{hash}
+            </if>
+            <if test="createdGT!=null and createdGT!='' ">
+                AND sww.created &gt;= #{createdGT}
+            </if>
+            <if test="createdLT!=null and createdLT!='' ">
+                AND sww.created &lt;= #{createdLT}
+            </if>
+            <if test="cochainTimeGT!=null and cochainTimeGT!='' ">
+                AND sww.cochainTime &gt;= #{cochainTimeGT}
+            </if>
+            <if test="cochainTimeLT!=null and cochainTimeLT!='' ">
+                AND sww.cochainTime &lt;= #{cochainTimeLT}
+            </if>
+        </where>
+
+
+    </select>
+
+
+    <select id="chainList" resultType="hry.social.manage.remote.model.wishwall.SocialWishWall" >
+        SELECT * FROM social_wish_wall WHERE type = #{type}
+    </select>
+
+
+
+</mapper>

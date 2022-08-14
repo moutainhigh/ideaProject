@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+     <bean id="remoteCmMinerServiceImpl" class="hry.cm.remote.RemoteCmMinerServiceImpl" />   
+     <dubbo:service ref="remoteCmMinerServiceImpl"  interface="hry.cm.remote.RemoteCmMinerService"  /> 
+     
+     <bean id="remoteCmCustomerMinerServiceImpl" class="hry.cm.remote.RemoteCmCustomerMinerServiceImpl" />   
+     <dubbo:service ref="remoteCmCustomerMinerServiceImpl"  interface="hry.cm.remote.RemoteCmCustomerMinerService"  /> 
+
+     <bean id="remoteCmOrderServiceImpl" class="hry.cm.remote.RemoteCmOrderServiceImpl" />   
+     <dubbo:service ref="remoteCmOrderServiceImpl"  interface="hry.cm.remote.RemoteCmOrderService"  /> 
+
+     <bean id="remoteCmAccountServiceImpl" class="hry.cm.remote.RemoteCmAccountServiceImpl" />   
+     <dubbo:service ref="remoteCmAccountServiceImpl"  interface="hry.cm.remote.RemoteCmAccountService"  /> 
+     
+     <bean id="remoteCmCustomerServiceImpl" class="hry.cm.remote.RemoteCmCustomerServiceImpl" />   
+     <dubbo:service ref="remoteCmCustomerServiceImpl"  interface="hry.cm.remote.RemoteCmCustomerService"  /> 
+
+
+     <bean id="remoteCmListenerServiceImpl" class="hry.cm.remote.RemoteCmListenerServiceImpl" />   
+     <dubbo:service ref="remoteCmListenerServiceImpl"  interface="hry.cm.remote.RemoteCmListenerService"  />
+
+     <bean id="remoteCmDividendServiceImpl" class="hry.cm.remote.RemoteCmDividendServiceImpl" />
+     <dubbo:service ref="remoteCmDividendServiceImpl"  interface="hry.cm.remote.RemoteCmDividendService"  />
+</beans>  

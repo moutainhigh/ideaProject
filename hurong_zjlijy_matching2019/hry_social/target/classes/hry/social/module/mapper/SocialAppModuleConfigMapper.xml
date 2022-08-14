@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.module.dao.SocialAppModuleConfigDao">
+
+    <update id="updateStatus">
+        update social_app_module_config set status = #{status} where areaName = #{areaName} and moduleName = #{moduleName}
+    </update>
+
+    <select id="hasData" resultType="java.lang.Integer">
+		SELECT
+		EXISTS (
+			SELECT
+				*
+			FROM
+				social_app_module_config
+			WHERE
+				areaName = #{areaName}
+			AND moduleName = #{moduleName}
+		);
+    </select>
+
+	<select id="getModuleConfig" resultType="hry.social.manage.remote.model.module.SocialAppModuleConfig">
+		SELECT
+            *
+        FROM
+            social_app_module_config
+        WHERE
+            areaName = #{countryArea}
+	</select>
+
+</mapper>

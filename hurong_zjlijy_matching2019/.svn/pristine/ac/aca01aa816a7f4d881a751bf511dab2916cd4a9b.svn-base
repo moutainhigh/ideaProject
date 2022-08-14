@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm2.profittwo.dao.Cm2ProfitTwoDao">
+
+    <resultMap id="BaseResultMap" type="hry.cm2.profittwo.model.Cm2ProfitTwo">
+    </resultMap>
+
+    <!-- 统计每个用户所有未发放收益的总数 -->
+    <select id="findProfitSum" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+			cpt.customerId,
+			SUM(cpt.profit3) AS profit3
+		FROM
+			cm2_profit_two cpt
+		WHERE
+			cpt.`status` = 1
+		GROUP BY
+			cpt.customerId
+    </select>
+    <!-- 用户今天收益的总数 -->
+    <select id="getTodayProfitSum" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			SUM(cpt.profit3) AS profit3
+		FROM
+			cm2_profit_two cpt
+		WHERE
+			cpt.customerId = #{customerId}
+			AND to_days(cpt.created) = to_days(now())
+    </select>
+
+    <!-- 用户总收益的总数 -->
+    <select id="getTotalProfitSum" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			SUM(cpt.profit3) AS profit3
+		FROM
+			cm2_profit_two cpt
+		WHERE
+			cpt.customerId = #{customerId}
+    </select>
+
+    <!-- 更新未发放收益为已发放-->
+    <update id="updateStatus">
+    	UPDATE cm2_profit_two cpt
+		SET cpt. STATUS = 2,
+		 cpt.modified = now()
+		WHERE
+			1 = 1
+		AND cpt.customerId = #{customerId}
+		AND cpt. STATUS = 1
+    </update>
+
+
+</mapper>

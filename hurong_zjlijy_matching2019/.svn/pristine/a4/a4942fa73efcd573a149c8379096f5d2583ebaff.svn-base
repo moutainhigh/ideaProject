@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/hry_mall/hry_mall.iml" filepath="$PROJECT_DIR$/hry_mall/hry_mall.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_mall_api/hry_mall_api.iml" filepath="$PROJECT_DIR$/hry_mall_api/hry_mall_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_social/hry_social.iml" filepath="$PROJECT_DIR$/hry_social/hry_social.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_social_api/hry_social_api.iml" filepath="$PROJECT_DIR$/hry_social_api/hry_social_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hurong_matching2019.iml" filepath="$PROJECT_DIR$/hurong_matching2019.iml" />
+    </modules>
+  </component>
+</project>

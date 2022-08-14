@@ -1,0 +1,35 @@
+##
+app.name=hurong_single
+app.url=http://52.221.235.244/app
+
+###########################authorization#################################
+app.oauthKey=31a8946f224d4ff399a01007b296e10e
+app.oauthIp=172.31.32.245
+
+app.vueurl=http://52.221.235.244/h5/index.html#/
+
+###########################cloud_storage#################################
+app.oss.type=aws
+app.img.server.type=aws
+## ������oss
+app.oss.endpoint=http://oss-cn-beijing.aliyuncs.com
+app.oss.accessKeyId=LTAIy0JoG8UwjD89
+app.oss.accessKeySecret=IlxRvELEysGMpOA3dWVqxKG8B6yVFf
+app.oss.publicBucketName=hry-exchange-public
+app.oss.privateBucketName=hry-exchange-private
+## ������oss ���л��Ե�ַ
+app.oss.uri = http://hry-exchange-public.oss-cn-beijing.aliyuncs.com
+
+## Amazon aws
+app.aws.region=ap-southeast-1
+app.aws.accessKeyId=AKIA3XLAJ2MBEYCQHKEL
+app.aws.accessKeySecret=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
+app.aws.bucketName=cxl-exchange-public
+
+## Microsoft azure
+app.azure.connectionString=DefaultEndpointsProtocol\=https;AccountName\=xunq;AccountKey\=c0QMEMG+8iw9QgK1J1EZ4qIfXMC7EsmG79RqJrqKKmDUJoNX6cT70Fp0ipo2R3yFBCqBU1WusMOkTDV4Dgt7WA\=\=;EndpointSuffix\=core.windows.net
+
+###########################yunxin_im_config###############################
+app.YunXin.appKey=8b75f0e44a0e9675e23aa78fd168beff
+app.YunXin.appSecret=a322118c1401
+app.YunXin.apiUrl=https://api.netease.im

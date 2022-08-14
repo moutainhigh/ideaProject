@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.retailstore.dao.StoreGoodsDao">
+
+    <resultMap id="findSearchGoodsMap"   type="hry.mall.goods.model.SearchGoods">
+        <result column="id" property="id" javaType="java.lang.Long" />
+        <result column="gcId" property="gcId" javaType="java.lang.Long" />
+        <result column="goodsName" property="goodsName" javaType="java.lang.String" />
+        <result column="goodsSubtitle" property="goodsSubtitle" javaType="java.lang.String" />
+        <result column="goodsImageMore" property="goodsImageMore" javaType="java.lang.String" />
+        <result column="brandId" property="brandId" javaType="java.lang.Long" />
+        <result column="goodsClick" property="goodsClick" javaType="java.lang.Integer" />
+        <result column="saleNum" property="saleNum" javaType="java.lang.Integer" />
+        <result column="specGoodsPrice" property="specGoodsPrice" javaType="java.math.BigDecimal" />
+        <result column="activityId" property="activityId" javaType="java.lang.Long" />
+        <result column="activityGoodsId" property="activityGoodsId" javaType="java.lang.Long" />
+        <result column="activityPrice" property="activityPrice" javaType="java.math.BigDecimal" />
+        <result column="peopleCount" property="peopleCount" javaType="java.lang.Integer" />
+        <result column="activityType" property="activityType" javaType="java.lang.Integer" />
+        <result column="startTime" property="startTime" javaType="java.lang.String" />
+        <result column="endTime" property="endTime" javaType="java.lang.String" />
+        <result column="activitySTime" property="activitySTime" javaType="java.util.Date" />
+        <result column="activityETime" property="activityETime" javaType="java.util.Date" />
+        <result column="storeId" property="storeId" javaType="java.lang.Long" />
+        <result column="storeGoodsShow" property="storeGoodsShow" javaType="java.lang.Integer" />
+    </resultMap>
+
+
+    <!--查询店铺商品-->
+    <select id="findStoreGoodsList" parameterType="java.util.Map" resultMap="findSearchGoodsMap">
+		SELECT sg.id, sg.gcId,sg.goodsName,sg.goodsSubtitle,sg.goodsImageMore,  sg.brandId,sg.goodsClick, sg.saleNum,
+        sz.specGoodsPrice,ssg.storeId,ssg.goodsShow as storeGoodsShow
+        FROM shop_goods sg
+        LEFT JOIN
+        (SELECT id,goodsId,specName,specNameValue,specGoodsPrice,specGoodsStorage,specGoodsSerial,specIsOpen,specStorageWarning
+        FROM shop_goods_spec a,
+        (SELECT MIN(specGoodsPrice) AS price,goodsId as groupId FROM shop_goods_spec AS sgs WHERE sgs.specIsOpen = 1 GROUP BY goodsId) b
+        where a.goodsId = b.groupId and specGoodsPrice = price
+        GROUP BY goodsId) sz
+        ON sg.id = sz.goodsId
+        LEFT JOIN shop_store_goods ssg
+        ON sg.id = ssg.goodsId
+        WHERE 1=1 and sg.goodsShow = 1
+        <if test="storeId != null and storeId != ''">
+            and ssg.storeId = #{storeId}
+        </if>
+    </select>
+
+</mapper>

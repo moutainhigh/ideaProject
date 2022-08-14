@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.user.dao.SocialUserDao">
+
+    <update id="updateFriendsNote">
+        UPDATE social_friend_relation
+        SET friendsNote = #{friendsNote}
+        WHERE
+            customerId = #{customerId}
+        AND friendId = #{friendId}
+    </update>
+
+    <update id="updateYunxinToken">
+        UPDATE app_person_info
+        SET token = #{token}
+        WHERE
+            accid = #{accid}
+    </update>
+
+    <update id="updateFansGruop">
+        UPDATE app_person_info
+        SET fansGroupId = #{fansGroupId}
+        WHERE
+            customerId = #{customerId}
+    </update>
+
+    <update id="unLockUser">
+        UPDATE app_customer
+        SET isLock = 0
+        WHERE
+            id = #{customerId}
+    </update>
+
+    <update id="lockUser">
+        UPDATE app_customer
+        SET isLock = 1
+        WHERE
+            id = #{customerId}
+    </update>
+
+    <select id="getAccidByCustomerId" resultType="java.lang.String">
+        SELECT
+            accid
+        FROM
+            app_person_info
+        WHERE
+            customerId = #{customerId}
+    </select>
+
+    <select id="hasExistence" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    social_friend_relation
+                WHERE
+                    customerId = #{customerId}
+                AND friendId = #{friendId}
+            )
+    </select>
+
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm2.profitone.dao.Cm2ProfitOneDao">
+
+    <resultMap id="BaseResultMap" type="hry.cm2.profitone.model.Cm2ProfitOne">
+    </resultMap>
+
+    <!-- 查询直推用户今天动态收益总和 -->
+    <select id="getTeamProfitSumByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+        SUM(cpo.profit2)
+        FROM
+        app_teamlevel atl
+        LEFT JOIN cm2_profit_one cpo ON atl.customerId = cpo.customerId
+        WHERE
+        atl.parentId = #{customerId}
+        AND atl.`level` = 1
+        AND to_days(cpo.created) = to_days(now())
+        <if test="type != null and type != '' ">
+            and cpo.type = #{type,jdbcType=INTEGER}
+        </if>
+    </select>
+    <!-- 查询用户今天动态收益总和 -->
+    <select id="getProfitSumByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			SUM(cpo.profit2)
+		FROM
+			cm2_profit_one cpo
+		WHERE
+			cpo.customerId = #{customerId}
+		AND to_days(cpo.created) = to_days(now())
+    </select>
+    <!-- 查询用户今天烧伤收益总和 -->
+    <select id="getProfit3SumByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			SUM(cpo.profit3)
+		FROM
+			cm2_profit_one cpo
+		WHERE
+			cpo.customerId = #{customerId}
+		AND to_days(cpo.created) = to_days(now())
+    </select>
+
+    <!-- 查询用户动态收益总和 -->
+    <select id="getProfitAllByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			SUM(cpo.profit2)
+		FROM
+			cm2_profit_one cpo
+		WHERE
+			cpo.customerId = #{customerId}
+    </select>
+
+</mapper>

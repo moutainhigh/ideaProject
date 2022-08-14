@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.goods.dao.SpecDao">
+    <resultMap id="SpecMap" type="hry.mall.goods.model.Spec">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="spName" property="spName" jdbcType="VARCHAR"/>
+        <result column="gcId" property="gcId" jdbcType="BIGINT"/>
+        <result column="spFormat" property="spFormat" jdbcType="INTEGER"/>
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+        <collection property="specValues" ofType="hry.mall.goods.model.SpecValue"
+                    column="id" javaType="arraylist"
+                    select="hry.mall.goods.dao.SpecDao.findListBySpId">
+        </collection>
+    </resultMap>
+    <resultMap id="SpecValueMap" type="hry.mall.goods.model.SpecValue">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="spValueName" property="spValueName" jdbcType="VARCHAR"/>
+        <result column="spValueImage" property="spValueImage" jdbcType="VARCHAR"/>
+        <result column="spId" property="spId" jdbcType="BIGINT"/>
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="findListBySpId" resultMap="SpecValueMap" parameterType="java.lang.Long">
+        SELECT
+        id, spValueName, spValueImage, spId,sort
+        FROM shop_spec_value
+        where spId = #{id}
+        order by created ASC
+    </select>
+
+    <select id="findSpecList" parameterType="java.util.Map" resultMap="SpecMap">
+        SELECT
+        id, spName, gcId, spFormat,sort
+        FROM shop_spec
+        WHERE 1=1
+        <if test="gcId != null">
+           AND gcId = #{gcId}
+        </if>
+        <if test="id != null">
+           AND id = #{id}
+        </if>
+        order by created ASC
+    </select>
+
+</mapper>

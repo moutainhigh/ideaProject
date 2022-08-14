@@ -1,0 +1,66 @@
+app.admin=admin
+app.name=hurong_manage
+app.key=manage
+app.ip=127.0.0.1
+app.port=8080
+app.url=http\://147.244.217.55/admin
+
+#solr\u8DEF\u5F84
+solr.url = http://172.31.222.43:8888/solr/collection
+
+app.oauthKey=d5c1ba14a2a6486892f8328ffe1b62f1
+app.oauthIp=172.31.222.43
+
+app.emailurl_cn=http\://localhost/exmain
+app.emailurl_en=http\://localhost/exmain
+app.email.host = smtp.126.com
+app.email.auth = true
+app.email.protocol = smtp
+app.email.userName = wu_shuiming@126.com
+app.email.agreedUser = wu_shuiming
+app.email.agreedPwd = mike123456789
+
+app.smsServiceName=hrySmsService
+app.smsUrl=http\://www.bitstables.com/manage
+app.smsKey=hurongyuseen
+app.sms.hxusername=101100-WEB-JZWW-482566
+app.sms.hxpassword=RUXUANSI
+app.sms.common=\u5C0A\u656C\u7684\u7528\u6237\uFF1A\u60A8\u7684\u9A8C\u8BC1\u7801\u4E3A\uFF1AHRY_CODE\u3010\u4E92\u878D\u4E91\u5E01\u3011
+
+app.saasId=402880e4514780120151479ac3a50005
+app.socketUrl=ws\://127.0.0.1\:9100/hurong_socketserver
+app.coinip=http\://192.168.0.59\:8080/coinsecurity
+app.loadApp=exchange,web,calculate
+app.loadweb1=cn=cny
+app.exEntrustIsUseMongo=0
+app.differetCustomer=common
+app.isClosePlate=true
+
+##coinInterFace
+app.coinInterFace=HRC
+app.LMC_Secret=40cdcaed5a8f58748af02aff9dc4b2af
+app.LMC_App_key=30bbb1b174fdd43c497fab4366e77649
+app.LMC_Url=http://123.206.49.114:18083
+app.LMC_CreateAddressUrl=/wallet/address
+app.LMC_Wallet_Transfer=/wallet/transfer
+
+test=\u4F59\u989D\u4E0D\u8DB3,\u8BF7\u68C0\u6D4B\u4F59\u989D\u54DF\!
+
+app.isStartAllJob=true
+
+#\u4F01\u4E1A\u603B\u7EBF
+app.blockbus=true
+app.blockbus.url=http\://192.168.0.52:8083/blockbus
+app.blockbus.apikey=59d6802dc3264493ad00eaa053e50346
+
+#####\u5FAE\u661F\u5BF9\u63A5\u53C2\u6570\u53CA\u63A5\u53E3---start
+weixing.userid = 13776612351
+weixing.key = 934E8ED1391F6B00B7788088E56EB15A
+#\u8D26\u6237\u4F59\u989D\u67E5\u8BE2\u63A5\u53E3
+weixing.balance = http://chongzhi.windows-chongzhi.cn/Interface/Balance.ashx
+#\u5145\u503C\u8BF7\u6C42\u63A5\u53E3
+weixing.recharge = http://chongzhi.windows-chongzhi.cn/Interface/Recharge.ashx
+#\u8BA2\u5355\u67E5\u8BE2\u63A5\u53E3\uFF1A(\u53EA\u63D0\u4F9B\u6700\u8FD1\u4E03\u5929\u8BB0\u5F55)
+weixing.query = http://chongzhi.windows-chongzhi.cn/Interface/Query.ashx
+######\u5FAE\u661F\u5BF9\u63A5\u53C2\u6570\u53CA\u63A5\u53E3---end
+

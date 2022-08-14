@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.sns.dao.SocialSnsCommunityDao">
+
+    <select id="communityInfo" resultType="hry.social.manage.remote.model.sns.SocialSnsCommunity">
+        SELECT
+        *
+        FROM
+        social_sns_community
+        WHERE
+        states = 1
+        AND langKey = #{language}
+        ORDER BY
+        sortNum,
+        created DESC
+        <if test="csn!=null and csn!='' ">
+            LIMIT #{csn}
+        </if>
+    </select>
+</mapper>

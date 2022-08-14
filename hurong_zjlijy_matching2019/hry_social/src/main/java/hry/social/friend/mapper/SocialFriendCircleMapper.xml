@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.friend.dao.SocialFriendCircleDao">
+
+    <update id="updateTheme">
+        UPDATE app_person_info
+        SET themeImg = #{themeImg}
+        WHERE
+            customerId = #{customerId}
+    </update>
+
+    <!--分页查询-->
+    <select id="findPageList" resultType="hry.social.manage.remote.model.friend.SocialFriendCircle" parameterType="java.util.Map">
+        SELECT
+        sfc.id,
+        sfc.customerId,
+        IFNULL(sfr.friendsNote, api.nickName) AS nickName,
+        api.headPortrait,
+        api.mobilePhone,
+        sfc.device,
+        sfc.site,
+        sfc.issuedTime,
+        sfc.link,
+        sfc.linkTitle,
+        sfc.linkImage,
+        sfc.picture,
+        sfc.music,
+        sfc.video,
+        sfc.content,
+        sfc.likeCustomerIds
+        FROM
+        social_friend_circle sfc
+        LEFT JOIN app_person_info api ON sfc.customerId = api.customerId
+        LEFT JOIN social_friend_relation sfr ON sfc.customerId = sfr.friendId
+        <where>
+            sfc.issued = 1
+            <if test="content!=null and content!='' ">
+                AND sfc.content LIKE #{content}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                AND sfr.customerId = #{customerId}
+            </if>
+            <if test="palId!=null and palId!='' ">
+                AND sfr.friendId = #{palId}
+            </if>
+            <if test="nickName!=null and nickName!='' ">
+                AND api.nickName LIKE #{nickName}
+            </if>
+            <if test="issuedTimeGT!=null and issuedTimeGT!='' ">
+                AND sfc.issuedTime &gt;= #{issuedTimeGT}
+            </if>
+            <if test="issuedTimeLT!=null and issuedTimeLT!='' ">
+                AND sfc.issuedTime &lt;= #{issuedTimeLT}
+            </if>
+        </where>
+        ORDER BY sfc.issuedTime DESC
+    </select>
+
+    <!--查看详情-->
+    <select id="see" resultType="hry.social.manage.remote.model.friend.SocialFriendCircle">
+        SELECT
+            sfc.id,
+            api.nickName,
+            api.mobilePhone,
+            sfc.device,
+            sfc.site,
+            sfc.issuedTime,
+            sfc.link,
+            sfc.linkTitle,
+            sfc.linkImage,
+            sfc.picture,
+            sfc.music,
+            sfc.video,
+            sfc.content,
+            sfc.likeCustomerIds
+        FROM
+            social_friend_circle sfc
+        LEFT JOIN app_person_info api ON sfc.customerId = api.customerId
+        WHERE sfc.id = #{id}
+    </select>
+
+    <!--发帖-->
+    <insert id="friendCircle" parameterType="hry.social.manage.remote.model.friend.SocialFriendCircle" useGeneratedKeys="true"  keyProperty="id">
+        INSERT INTO social_friend_circle
+        SET content = #{socialFriendCircle.content},
+        link = #{socialFriendCircle.link},
+        linkTitle = #{socialFriendCircle.linkTitle},
+        linkImage = #{socialFriendCircle.linkImage},
+        picture = #{socialFriendCircle.picture},
+        customerId = #{socialFriendCircle.customerId},
+        device = #{socialFriendCircle.device},
+        site = #{socialFriendCircle.site},
+        issued = 1
+        <selectKey resultType="Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!--保存图片-->
+    <insert id="saveImg">
+        insert into social_friend_picture set circleId=#{sfcId},name=#{name},path=#{path}
+    </insert>
+
+    <!--查询好友最近的帖子的图片-->
+    <select id="findByCustomerId" resultType="java.lang.String">
+        SELECT
+            sfc.picture
+        FROM
+        social_friend_circle sfc
+        LEFT JOIN social_friend_relation ssf ON sfc.customerId = ssf.friendId
+        WHERE
+            sfc.issued = 1
+            AND ! ISNULL(sfc.picture)
+            AND LENGTH(sfc.picture)
+            AND ssf.customerId = #{customerId}
+            AND ssf.friendId = #{palId}
+        ORDER BY sfc.issuedTime DESC LIMIT 4
+    </select>
+
+    <!--查询个人最近的帖子的图片-->
+    <select id="findPersonCircle" resultType="java.lang.String">
+        SELECT
+            sfc.picture
+        FROM
+        social_friend_circle sfc
+        WHERE
+            sfc.issued = 1
+            AND ! ISNULL(sfc.picture)
+            AND LENGTH(sfc.picture)
+            AND sfc.customerId = #{palId}
+        ORDER BY sfc.issuedTime DESC LIMIT 4
+    </select>
+
+    <!--周榜-->
+    <select id="weeklyRank" resultType="hry.social.manage.remote.model.friend.SocialFriendCircle">
+        SELECT
+            sfc.id,
+            api.nickName,
+            api.headPortrait,
+            api.mobilePhone,
+            sfc.customerId,
+            sfc.device,
+            sfc.site,
+            sfc.issuedTime,
+            sfc.link,
+            sfc.linkTitle,
+            sfc.linkImage,
+            sfc.picture,
+            sfc.music,
+            sfc.video,
+            sfc.content,
+            sfc.likeCustomerIds,
+            YEARWEEK(sfc.created),
+            IFNULL(rewardNum.rewards, 0) AS rewardNum
+        FROM
+            social_friend_circle sfc
+        LEFT JOIN app_person_info api ON sfc.customerId = api.customerId
+        LEFT JOIN (
+            SELECT
+                COUNT(circleId) rewards,
+                circleId
+            FROM
+                social_friend_reward sfr
+            GROUP BY
+                sfr.circleId
+        ) rewardNum ON sfc.id = rewardNum.circleId
+        WHERE
+            YEARWEEK(sfc.created) = (YEARWEEK(now()))
+        ORDER BY
+            rewardNum.rewards DESC
+        LIMIT 10;
+    </select>
+
+
+    <!--月榜-->
+    <select id="monthRank" resultType="hry.social.manage.remote.model.friend.SocialFriendCircle">
+        SELECT
+            sfc.id,
+            api.nickName,
+            api.headPortrait,
+            api.mobilePhone,
+            sfc.customerId,
+            sfc.device,
+            sfc.site,
+            sfc.issuedTime,
+            sfc.link,
+            sfc.linkTitle,
+            sfc.linkImage,
+            sfc.picture,
+            sfc.music,
+            sfc.video,
+            sfc.content,
+            sfc.likeCustomerIds,
+            YEARWEEK(sfc.created),
+            IFNULL(rewardNum.rewards, 0) AS rewardNum
+        FROM
+            social_friend_circle sfc
+        LEFT JOIN app_person_info api ON sfc.customerId = api.customerId
+        LEFT JOIN (
+            SELECT
+                COUNT(circleId) rewards,
+                circleId
+            FROM
+                social_friend_reward sfr
+            GROUP BY
+                sfr.circleId
+        ) rewardNum ON sfc.id = rewardNum.circleId
+        WHERE
+            DATE_FORMAT(sfc.created, '%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m')
+        ORDER BY
+            rewardNum.rewards DESC
+        LIMIT 10;
+    </select>
+
+</mapper>

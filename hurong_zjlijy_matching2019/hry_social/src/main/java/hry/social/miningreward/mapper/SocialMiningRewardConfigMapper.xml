@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.miningreward.dao.SocialMiningRewardConfigDao">
+
+    <select id="getImgPath" resultType="java.lang.String">
+        SELECT
+            image
+            FROM
+            social_mining_reward_config
+            WHERE
+            id = #{id}
+    </select>
+
+    <select id="getCoinConfig" resultType="hry.social.manage.remote.model.miningreward.SocialMiningRewardConfig">
+        SELECT
+            *
+            FROM
+            social_mining_reward_config
+            WHERE
+            coinCode = #{coinCode}
+            AND states= 1
+            AND openTime &lt; NOW()
+            AND endTime &gt; NOW()
+    </select>
+
+    <select id="findMiningCode" resultType="java.lang.String">
+        SELECT DISTINCT
+        coinCode
+        FROM
+        social_mining_rule_config
+        <where>
+            <if test="rewardType!=null and rewardType!='' ">
+                rewardType = #{rewardType}
+            </if>
+        </where>
+    </select>
+
+</mapper>

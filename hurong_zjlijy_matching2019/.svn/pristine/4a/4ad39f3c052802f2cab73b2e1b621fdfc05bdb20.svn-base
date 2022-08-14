@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm.order.dao.CmOrderDao">
+
+	<resultMap id="BaseResultMap" type="hry.cm.order.model.CmOrder">
+    </resultMap>
+    
+    <!-- 查询持有到期的矿机的用户 -->
+    <select id="findCloseMinerCustomerId" parameterType="java.util.Map"
+    	resultType="java.lang.Long">
+        SELECT
+			co.customerId
+		FROM
+			cm_order co
+		WHERE
+			1 = 1
+		AND   NOW()>=co.endDate
+		GROUP BY
+			co.customerId
+    </select>
+    <!-- 查询持有待运行矿机的用户 -->
+    <select id="findWaitMinerCustomerId" parameterType="java.util.Map"
+    	resultType="java.lang.Long">
+        SELECT
+			co.customerId
+		FROM
+			cm_order co
+		WHERE
+			1 = 1
+		AND   co.status=1
+		GROUP BY
+			co.customerId
+    </select>
+    
+    <!-- 更新到期订单状态-->
+    <update id="updateCloseOrder">
+    	UPDATE 
+				cm_order co
+		SET 
+			co.status = 3,
+			co.modified = now() 
+		WHERE
+			1 = 1
+		AND   NOW()>=co.endDate
+    </update>
+    <!-- 更新待运行订单状态-->
+    <update id="updateWaitOrder">
+    	UPDATE 
+				cm_order co
+		SET 
+			co.status = 2,
+			co.modified = now() 
+		WHERE
+			1 = 1
+		AND   NOW()>=co.startDate
+		AND   co.status =1
+    </update>
+
+</mapper>

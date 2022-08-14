@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm5.account.dao.Cm5AccountRecordDao">
+    <insert id ="insertRecord" parameterType="java.util.List" >
+        insert into cm5_account_record
+        (accountId, customerId, coinCode,
+        transactionMoney, transactionNum, remark, remarkkey, monteyType,recordType
+        )
+        values
+        <foreach collection ="list" item="record" index= "index" separator =",">
+            (
+            #{record.accountId},
+            #{record.customerId},
+            #{record.coinCode},
+            #{record.transactionMoney},
+            #{record.transactionNum},
+            #{record.remark},
+            #{record.remarkkey},
+            #{record.monteyType},
+            #{record.recordType}
+            )
+        </foreach>
+
+    </insert >
+</mapper>

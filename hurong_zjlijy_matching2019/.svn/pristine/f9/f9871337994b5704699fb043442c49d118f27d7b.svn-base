@@ -1,0 +1,83 @@
+/**
+ * Copyright:   
+ * @author:      zhouming
+ * @version:     V1.0 
+ * @Date:        2020-01-08 14:05:03 
+ */
+package hry.cm5.miner.service.impl;
+
+import hry.bean.JsonResult;
+import hry.cm5.miner.dao.Cm5MinerOrderDao;
+import hry.cm5.miner.model.Cm5MinerGoods;
+import hry.cm5.miner.model.Cm5MinerOrder;
+import hry.cm5.miner.service.Cm5MinerGoodsService;
+import hry.cm5.miner.service.Cm5MinerOrderService;
+import hry.core.mvc.dao.base.BaseDao;
+import hry.core.mvc.service.base.impl.BaseServiceImpl;
+import javax.annotation.Resource;
+
+import hry.util.idgenerate.IdGenerate;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+ * <p> Cm5MinerOrderService </p>
+ * @author:         zhouming
+ * @Date :          2020-01-08 14:05:03  
+ */
+@Service("cm5MinerOrderService")
+public class Cm5MinerOrderServiceImpl extends BaseServiceImpl<Cm5MinerOrder, Long> implements Cm5MinerOrderService{
+
+	@Resource
+	private Cm5MinerGoodsService cm5MinerGoodsService;
+
+	@Resource(name="cm5MinerOrderDao")
+	@Override
+	public void setDao(BaseDao<Cm5MinerOrder, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Override
+	public JsonResult saveMinerOrder(Long customerId, Long buyMinerId, Cm5MinerOrder cm5MinerOrder) {
+		// 将要购买的矿机
+		Cm5MinerGoods buyMinerGoods = cm5MinerGoodsService.get(buyMinerId);
+		// 继承码
+		String inheritNum = IdGenerate.transactionNum("ex");
+		// 订单实际金额
+		BigDecimal orderActualPrice = buyMinerGoods.getMinerPrice();
+		if (cm5MinerOrder != null) {
+			// 矿机升级---订单继承
+			inheritNum = cm5MinerOrder.getInheritNum();
+			// OrderType 订单类型 1 购买 2 升级
+			cm5MinerOrder.setOrderType(2);
+			// status 矿机状态 1：运行中 2：已升级(低版本升高版本) 3:已结束(已出局)
+			cm5MinerOrder.setStatus(2);
+			cm5MinerOrder.setEndDate(new Date());
+		}
+		// 保存矿机订单
+		Cm5MinerOrder buyMinerOrder = new Cm5MinerOrder();
+		buyMinerOrder.setInheritNum(inheritNum);
+		buyMinerOrder.setCustomerId(customerId);
+		buyMinerOrder.setMinerId(buyMinerId);
+		buyMinerOrder.setOrderNum(IdGenerate.transactionNum("CM"));
+		buyMinerOrder.setMinerName(buyMinerGoods.getMinerName());
+		buyMinerOrder.setMinerCode(buyMinerGoods.getMinerCode());
+		buyMinerOrder.setMinerPrice(buyMinerGoods.getMinerPrice());
+		buyMinerOrder.setTotalProfit(buyMinerGoods.getMinerPrice().multiply(new BigDecimal("2")));
+		buyMinerOrder.setOrderPrice(buyMinerGoods.getMinerPrice());
+		buyMinerOrder.setOrderActualPrice(orderActualPrice);
+		buyMinerOrder.setStartDate(new Date());
+		buyMinerOrder.setOrderType(1);
+		buyMinerOrder.setStatus(1);
+		super.update(cm5MinerOrder);
+		super.save(buyMinerOrder);
+		// 用户币账户减少
+
+
+
+
+		return new JsonResult(true).setMsg("购买成功");
+	}
+}

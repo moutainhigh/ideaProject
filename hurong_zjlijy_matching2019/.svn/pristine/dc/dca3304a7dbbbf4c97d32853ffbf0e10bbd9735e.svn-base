@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.goods.dao.GoodsDao">
+    <resultMap id="findPageBySqlMap"   type="hry.mall.goods.model.Goods">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="gcId" property="gcId" javaType="java.lang.Long" />
+        <result column="gcName" property="gcName" javaType="java.lang.String" />
+        <result column="goodsImageMore" property="goodsImageMore" javaType="java.lang.String" />
+        <result column="goodsName" property="goodsName" javaType="java.lang.String" />
+        <result column="brandId" property="brandId" javaType="java.lang.Long" />
+        <result column="brandName" property="brandName" javaType="java.lang.String" />
+        <result column="specGoodsPrice" property="specGoodsPrice" javaType="java.math.BigDecimal" />
+        <result column="specGoodsStorage" property="specGoodsStorage" javaType="java.lang.Integer" />
+        <result column="saleNum" property="saleNum" javaType="java.lang.Integer" />
+        <result column="goodsShow" property="goodsShow" javaType="java.lang.Integer" />
+        <result column="isAudit" property="isAudit" javaType="java.lang.Integer" />
+        <result column="goodsIsComplete" property="goodsIsComplete" javaType="java.lang.Integer" />
+        <result column="goodsStaus" property="goodsStaus" javaType="java.lang.Integer" />
+        <result column="specStorageWarning" property="specStorageWarning" javaType="java.lang.Integer" />
+        <result column="specId" property="specId" javaType="java.lang.Long" />
+        <result column="specName" property="specName" javaType="java.lang.String" />
+        <result column="specNameValue" property="specNameValue" javaType="java.lang.String" />
+        <result column="goodsCommend" property="goodsCommend" javaType="java.lang.Integer" />
+        <result column="goodsSpec" property="goodsSpec" javaType="java.lang.String" />
+        <result column="goodsBodyApp" property="goodsBodyApp" javaType="java.lang.String" />
+        <result column="goodsBodyPc" property="goodsBodyPc" javaType="java.lang.String" />
+        <result column="goodsVideo" property="goodsVideo" javaType="java.lang.String" />
+        <result column="goodsClick" property="goodsClick" javaType="java.lang.Integer" />
+        <result column="merchantId" property="merchantId" javaType="java.lang.Long" />
+    </resultMap>
+
+    <resultMap id="findSearchGoodsMap"   type="hry.mall.goods.model.SearchGoods">
+        <result column="id" property="id" javaType="java.lang.Long" />
+        <result column="gcId" property="gcId" javaType="java.lang.Long" />
+        <result column="goodsName" property="goodsName" javaType="java.lang.String" />
+        <result column="goodsSubtitle" property="goodsSubtitle" javaType="java.lang.String" />
+        <result column="goodsImageMore" property="goodsImageMore" javaType="java.lang.String" />
+        <result column="brandId" property="brandId" javaType="java.lang.Long" />
+        <result column="goodsClick" property="goodsClick" javaType="java.lang.Integer" />
+        <result column="saleNum" property="saleNum" javaType="java.lang.Integer" />
+        <result column="specGoodsPrice" property="specGoodsPrice" javaType="java.math.BigDecimal" />
+        <result column="activityId" property="activityId" javaType="java.lang.Long" />
+        <result column="activityGoodsId" property="activityGoodsId" javaType="java.lang.Long" />
+        <result column="activityPrice" property="activityPrice" javaType="java.math.BigDecimal" />
+        <result column="peopleCount" property="peopleCount" javaType="java.lang.Integer" />
+        <result column="activityType" property="activityType" javaType="java.lang.Integer" />
+        <result column="startTime" property="startTime" javaType="java.lang.String" />
+        <result column="endTime" property="endTime" javaType="java.lang.String" />
+        <result column="activitySTime" property="activitySTime" javaType="java.util.Date" />
+        <result column="activityETime" property="activityETime" javaType="java.util.Date" />
+        <result column="merchantId" property="merchantId" javaType="java.lang.Long" />
+    </resultMap>
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map" resultMap="findPageBySqlMap">
+        SELECT sg.id, sg.gcId,sg.gcName, sg.goodsImageMore, sg.goodsName, sg.brandId, sg.brandName,
+                     sg.goodsShow, sz.specGoodsStorage,sg.goodsClick, sg.saleNum, sz.specGoodsPrice,sg.goodsBodyApp,sg.goodsBodyPc,
+               sg.goodsIsComplete, sg.isAudit, sg.goodsStaus, sz.specStorageWarning,
+               sz.id as specId, sz.specName,sz.specNameValue, sg.goodsCommend,sg.goodsSpec,sz.integralCount,sg.goodsVideo,
+               sg.created,sg.merchantId
+        FROM shop_goods sg
+        LEFT JOIN
+        (SELECT id,goodsId,specName,specNameValue,specGoodsPrice,specGoodsStorage,specGoodsSerial,specIsOpen,integralCount,specStorageWarning
+        FROM shop_goods_spec a,
+        (SELECT MIN(specGoodsPrice) AS price,goodsId as groupId FROM shop_goods_spec AS sgs WHERE sgs.specIsOpen = 1 GROUP BY goodsId) b
+        where a.goodsId = b.groupId and specGoodsPrice = price
+        <if test="warning == 'warning'">
+            and a.specGoodsStorage <![CDATA[ <= ]]> a.specStorageWarning
+        </if>
+        GROUP BY goodsId) sz
+        ON sg.id = sz.goodsId
+        WHERE 1=1
+        <if test="goodsShow != null">
+            and sg.goodsShow = #{goodsShow}
+        </if>
+        <if test="goodsName != null and goodsName != ''">
+            AND sg.goodsName LIKE #{goodsName}
+        </if>
+        <if test="gcId != null and gcId != ''">
+            AND sg.gcId = #{gcId}
+        </if>
+        <if test="brandId != null and brandId != ''">
+            AND sg.brandId = #{brandId}
+        </if>
+        <if test="goodsId != null">
+            and sg.id = #{goodsId}
+        </if>
+        <if test="goodsCommend != null">
+            and sg.goodsCommend = ${goodsCommend}
+            ORDER BY sg.created DESC
+        </if>
+        <if test="goodsClickSort == 'DESC'">
+            ORDER BY sg.goodsClick DESC, sg.created DESC
+        </if>
+    </select>
+
+    <!-- 查询solr所需要参数 -->
+    <select id="findSearchGoodsList" parameterType="java.util.Map" resultMap="findSearchGoodsMap">
+        SELECT sg.id, sg.gcId,sg.goodsName,sg.goodsSubtitle,sg.goodsImageMore,  sg.brandId,sg.goodsClick, sg.saleNum,
+        sz.specGoodsPrice, sg.merchantId
+        FROM shop_goods sg
+        LEFT JOIN
+        (SELECT id,goodsId,specName,specNameValue,specGoodsPrice,specGoodsStorage,specGoodsSerial,specIsOpen,specStorageWarning
+        FROM shop_goods_spec a,
+        (SELECT MIN(specGoodsPrice) AS price,goodsId as groupId FROM shop_goods_spec AS sgs WHERE sgs.specIsOpen = 1 GROUP BY goodsId) b
+        where a.goodsId = b.groupId and specGoodsPrice = price
+        GROUP BY goodsId) sz
+        ON sg.id = sz.goodsId
+        WHERE 1=1 and sg.goodsShow = 1
+        <if test="goodsId != null">
+            and sg.id = #{goodsId}
+        </if>
+    </select>
+    
+      <!-- 通过sql分页查询 -->
+    <select id="findIntegralGoods" parameterType="java.util.Map" resultMap="findPageBySqlMap">
+        SELECT sg.id, sg.gcId,sg.gcName, sg.goodsImageMore, sg.goodsName, sg.brandId, sg.brandName,
+                     sg.goodsShow, sz.specGoodsStorage,sg.goodsClick, sg.saleNum, sz.specGoodsPrice,
+               sg.goodsIsComplete, sg.isAudit, sg.goodsStaus, sz.specStorageWarning,sg.specialType,
+               sz.id as specId, sz.specName,sz.specNameValue, sg.goodsCommend,sg.goodsSpec,sz.integralCount,sg.goodsVideo,
+               sg.created
+        FROM shop_goods sg
+        LEFT JOIN
+        (SELECT id,goodsId,specName,specNameValue,specGoodsPrice,specGoodsStorage,specGoodsSerial,specIsOpen,integralCount,specStorageWarning
+        FROM shop_goods_spec a,
+        (SELECT MIN(specGoodsPrice) AS price,goodsId as groupId FROM shop_goods_spec AS sgs WHERE sgs.specIsOpen = 1 GROUP BY goodsId) b
+        where a.goodsId = b.groupId and specGoodsPrice = price
+        <if test="warning == 'warning'">
+            and a.specGoodsStorage <![CDATA[ <= ]]> a.specStorageWarning
+        </if>
+        GROUP BY goodsId) sz
+        ON sg.id = sz.goodsId
+        WHERE 1=1
+        <if test="goodsShow != null">
+            and sg.goodsShow = #{goodsShow}
+        </if>
+        <if test="goodsName != null and goodsName != ''">
+            AND sg.goodsName LIKE #{goodsName}
+        </if>
+        <if test="gcId != null and gcId != ''">
+            AND sg.gcId = #{gcId}
+        </if>
+        <if test="brandId != null and brandId != ''">
+            AND sg.brandId = #{brandId}
+        </if>
+        <if test="goodsId != null">
+            and sg.id = #{goodsId}
+        </if>
+        <if test="goodsCommend != null">
+            and sg.goodsCommend = ${goodsCommend}
+            ORDER BY sg.created DESC
+        </if>
+        <if test="specialType == 2">
+            and sg.specialType = ${specialType}
+        </if>
+        <if test="specialType != 2">
+            and sg.specialType in (1,3,4)
+        </if>
+          <if test="isAudit != null">
+            and sg.isAudit = ${isAudit}
+        </if>
+        <if test="goodsClickSort == 'DESC'">
+            ORDER BY sg.goodsClick DESC, sg.created DESC
+        </if>
+    </select>
+
+    <!--活动商品list-->
+    <select id="findActivityGoodsList" parameterType="java.util.Map" resultMap="findSearchGoodsMap">
+        SELECT g.id, g.gcId,g.goodsName,g.goodsSubtitle,g.goodsImageMore,g.brandId,g.goodsClick, g.saleNum,
+        g.specGoodsPrice,a.activityId,a.activitySTime, a.activityETime, a.activityGoodsId,a.activityPrice,a.peopleCount,a.activityType
+        <if test="timeTempId != null and timeTempId != ''">
+            , a.startTime, a.endTime
+        </if>
+        FROM (SELECT sg.id, sg.gcId,sg.goodsName,sg.goodsSubtitle,sg.goodsImageMore,sg.brandId,sg.goodsClick, sg.saleNum,
+        sz.specGoodsPrice
+        FROM shop_goods sg
+        LEFT JOIN
+        (SELECT id,goodsId,specName,specNameValue,specGoodsPrice,specGoodsStorage,specGoodsSerial,specIsOpen,specStorageWarning
+        FROM shop_goods_spec a,
+        (SELECT MIN(specGoodsPrice) AS price,goodsId as groupId FROM shop_goods_spec AS sgs WHERE sgs.specIsOpen = 1 GROUP BY goodsId) b
+        where a.goodsId = b.groupId and specGoodsPrice = price
+        GROUP BY goodsId) sz
+        ON sg.id = sz.goodsId
+        WHERE 1=1 and sg.goodsShow = 1) g,
+        (select sag.goodsId, sa.startTime as activitySTime, sa.endTime as activityETime, sag.activityId,sag.id as activityGoodsId,sag.activityPrice,sag.peopleCount,sag.activityType
+        <if test="timeTempId != null and timeTempId != ''">
+            , sat.startTime, sat.endTime
+        </if>
+        from shop_activity sa,shop_activity_goods sag
+        <if test="timeTempId != null and timeTempId != ''">
+            , shop_activity_time sat
+        </if>
+        where sa.id = sag.activityId
+        <if test="timeTempId != null and timeTempId != ''">
+            and sag.activitytimeId = sat.id
+        </if>
+        and sa.status = 1 and NOW() >= sa.startTime and NOW() <![CDATA[ <= ]]> sa.endTime
+        <if test="timeTempId != null and timeTempId != ''">
+            and sat.timeTempId = #{timeTempId}
+        </if>
+        ) as a
+        where g.id = a.goodsId
+        <if test="activityId !=null and activityId != ''">
+           and a.activityId = #{activityId}
+        </if>
+    </select>
+
+
+    <select id="findActivityGoodsAllList" parameterType="java.util.Map" resultMap="findSearchGoodsMap">
+        select a.goodsId as id,a.startTime as activitySTime,a.endTime as activityETime,a.activityId, a.activityGoodsId, a.activityPrice, a.peopleCount, a.activityType, sat.startTime, sat.endTime
+        from
+        (select sa.startTime,sa.endTime,sag.goodsId, sag.activityId,sag.id as activityGoodsId, sag.activityPrice, sag.peopleCount,sag.activityType,sag.activityTimeId
+        from shop_activity sa, shop_activity_goods sag
+        where sa.id = sag.activityId
+        and NOW() >= sa.startTime and NOW() <![CDATA[ <= ]]> sa.endTime) a
+        LEFT JOIN shop_activity_time sat
+        ON sat.id = a.activityTimeId
+        where 1=1
+        <if test="goodsId != null and goodsId != ''">
+            and a.goodsId = #{goodsId}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+
+   
+	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <bean id="remoteIntegralConfigServiceImpl" class="hry.mall.integral.remote.RemoteIntegralConfigServiceImpl" />
+	<dubbo:service ref="remoteIntegralConfigServiceImpl"  interface="hry.mall.integral.remote.RemoteIntegralConfigService"   />
+
+	 <bean id="remoteIntegralDetailServiceImpl" class="hry.mall.integral.remote.RemoteIntegralDetailServiceImpl" />
+	<dubbo:service ref="remoteIntegralDetailServiceImpl"  interface="hry.mall.integral.remote.RemoteIntegralDetailService"   />
+
+	 <bean id="remoteIntegralAccountServiceImpl" class="hry.mall.integral.remote.RemoteIntegralAccountServiceImpl" />
+	<dubbo:service ref="remoteIntegralAccountServiceImpl"  interface="hry.mall.integral.remote.RemoteIntegralAccountService"   />
+</beans>

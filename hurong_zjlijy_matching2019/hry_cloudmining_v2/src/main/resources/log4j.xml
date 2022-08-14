@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+
+<log4j:configuration>
+
+    <!-- 将日志信息输出到控制台 -->
+    <appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <!-- 设置日志输出的格式 -->
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%-5p] [method:%l]%n%m%n" />
+        </layout>
+        <!--过滤器设置输出的级别-->
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="levelMin" value="INFO" />
+            <param name="levelMax" value="ERROR" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+    </appender>
+
+
+    <!-- INFO日志文件 -->
+    <appender name="logINFO" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="Append" value="true" />
+        <!-- 设置日志信息输出文件全路径名 -->
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="FileNamePattern" value="${catalina.home}/hrylog/single/%d{yyyy-MM-dd}/info.log" />
+        </rollingPolicy>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%-5p] [method:%l]%n%m%n%n" />
+        </layout>
+        <!--输出html表格-->
+        <!--<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="FileNamePattern" value="${user.home}/log4j/%d{yyyy-MM-dd-HH-mm}/logINFO.html" />
+        </rollingPolicy>
+        <layout class="org.apache.log4j.HTMLLayout"/>-->
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="levelMin" value="INFO" />
+            <param name="levelMax" value="INFO" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+    </appender>
+    <!-- WARN日志文件 -->
+    <appender name="logWARN" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="Append" value="true" />
+        <!-- 设置日志信息输出文件全路径名 -->
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="FileNamePattern" value="${catalina.home}/hrylog/single/%d{yyyy-MM-dd}/warn.log" />
+        </rollingPolicy>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%-5p] [method:%l]%n%m%n%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="levelMin" value="WARN" />
+            <param name="levelMax" value="WARN" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+    </appender>
+    <!-- ERROR日志文件 -->
+    <appender name="logERROR" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="Append" value="true" />
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="FileNamePattern" value="${catalina.home}/hrylog/single/%d{yyyy-MM-dd}/error.log" />
+        </rollingPolicy>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%-5p] [method:%l]%n%m%n%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="levelMin" value="ERROR" />
+            <param name="levelMax" value="ERROR" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+    </appender>
+
+    <!--配置根-->
+    <root>
+        <level value ="INFO"/>
+        <appender-ref ref="ConsoleAppender"/>
+        <appender-ref ref="logINFO"/>
+        <appender-ref ref="logWARN"/>
+        <appender-ref ref="logERROR"/>
+    </root>
+
+</log4j:configuration>

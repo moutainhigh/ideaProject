@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.vip.dao.SocialCustomerVipDao">
+    <delete id="deleteOverdue">
+        DELETE FROM social_customer_vip
+        WHERE
+            customerId = #{customerId}
+            <!--AND endTime &lt;= NOW()-->
+    </delete>
+
+    <select id="findPageList" parameterType="java.util.Map" resultType="hry.social.manage.remote.model.vip.SocialCustomerVip">
+        SELECT
+            scv.id,
+            scv.customerId,
+            scv.vipId,
+            svi.vipName,
+            svi.serialNum,
+            scv.additionRatio,
+            scv.startTime,
+            scv.endTime,
+            scv.updateId,
+            scv.renewId,
+            api.email,
+            api.mobilePhone
+        FROM
+        social_customer_vip scv
+        LEFT JOIN social_vip_info svi ON scv.vipId = svi.id
+        LEFT JOIN app_person_info api ON scv.customerId = api.customerId
+        <where>
+            1=1
+            <if test="vipName!=null and vipName!='' ">
+                AND svi.vipName LIKE #{vipName}
+            </if>
+            <if test="serialNum!=null and serialNum!='' ">
+                AND svi.serialNum = #{serialNum}
+            </if>
+            <if test="startTime_GT!=null and startTime_GT!='' ">
+                AND scv.startTime &gt;= #{startTime_GT}
+            </if>
+            <if test="startTime_LT!=null and startTime_LT!='' ">
+                AND scv.startTime &lt;= #{startTime_LT}
+            </if>
+            <if test="endTime_GT!=null and endTime_GT!='' ">
+                AND scv.endTime &gt;= #{endTime_GT}
+            </if>
+            <if test="endTime_LT!=null and endTime_LT!='' ">
+                AND scv.endTime &lt;= #{endTime_LT}
+            </if>
+            <if test="email!=null and email!='' ">
+                AND api.email LIKE #{email}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+        </where>
+        ORDER BY
+        scv.created DESC
+    </select>
+
+    <select id="getVipInfo" resultType="hry.social.manage.remote.model.vip.SocialCustomerVip">
+        SELECT
+            svi.id,
+            svi.img,
+            svi.vipName,
+            svi.serialNum,
+            svi.additionRatio,
+            scv.endTime,
+            scv.vipId,
+            TIMESTAMPDIFF(DAY, NOW(), scv.endTime) AS expire
+        FROM
+            social_customer_vip scv
+        LEFT JOIN social_vip_info svi ON scv.vipId = svi.id
+        WHERE
+            scv.customerId = #{customerId} AND
+            scv.endTime > NOW()
+    </select>
+
+    <select id="getVipAdd" resultType="java.math.BigDecimal">
+        SELECT
+            SUM(additionRatio)
+        FROM
+            social_customer_vip
+        WHERE
+            customerId = #{customerId}
+        AND endTime > NOW()
+    </select>
+</mapper>

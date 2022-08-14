@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.friend.dao.SocialFriendRelationDao">
+
+    <update id="updateFriendsNote">
+        UPDATE social_friend_relation
+        SET friendsNote = #{friendsNote}
+        WHERE
+            customerId = #{customerId}
+        AND friendId = #{friendId}
+    </update>
+
+    <update id="updateYunxinToken">
+        UPDATE app_person_info
+        SET token = #{token}
+        WHERE
+            accid = #{accid}
+    </update>
+
+    <update id="updateFansGruop">
+         UPDATE app_person_info
+        SET fansGroupId = #{fansGroupId}
+        WHERE
+            customerId = #{customerId}
+    </update>
+
+    <select id="getAccidByCustomerId" resultType="java.lang.String">
+        SELECT
+            accid
+        FROM
+            app_person_info
+        WHERE
+            customerId = #{customerId}
+    </select>
+
+    <select id="findPalList" resultType="hry.social.manage.remote.model.friend.SocialFriendRelation">
+        SELECT
+            sfr.id,
+            api.nickName AS nickName,
+            api.email AS email,
+            api.mobilePhone AS mobilePhone,
+            api.accid AS accid,
+            api.headPortrait AS headPortrait,
+            api.mood AS mood,
+            IFNULL(
+                sfr.friendsNote,
+                api.nickName
+            ) AS friendsNote,
+            sfr.customerId AS customerId,
+            sfr.friendId AS friendId,
+            scf.totalForce AS totalForce
+        FROM
+            social_friend_relation sfr
+        LEFT JOIN app_person_info api ON sfr.friendId = api.customerId
+        LEFT JOIN social_calculate_force scf ON sfr.friendId = scf.customerId
+        WHERE
+            sfr.customerId = #{customerId}
+        ORDER BY
+            scf.totalForce DESC,
+            scf.customerId
+    </select>
+
+    <select id="searchMyFriend" resultType="hry.social.manage.remote.model.friend.SocialFriendRelation">
+        SELECT
+            sfr.id,
+            sfr.customerId AS customerId,
+            sfr.friendId AS friendId,
+            IFNULL(
+                sfr.friendsNote,
+                api.nickName
+            ) AS friendsNote,
+            api.email AS email,
+            api.mobilePhone AS mobilePhone,
+            api.accid AS accid,
+            api.nickName AS nickName,
+            api.headPortrait AS headPortrait,
+            api.mood AS mood,
+            scf.totalForce AS totalForce
+        FROM
+            social_friend_relation sfr
+        LEFT JOIN app_person_info api ON sfr.customerId = api.customerId
+        AND sfr.customerId = #{customerId}
+        LEFT JOIN social_calculate_force scf ON sfr.friendId = scf.customerId
+        WHERE
+            api.nickName LIKE #{name}
+        OR api.mobilePhone LIKE #{name}
+        OR api.email LIKE #{name}
+        OR sfr.friendsNote LIKE #{name}
+        ORDER BY
+            scf.totalForce DESC,
+            scf.customerId
+    </select>
+
+    <select id="searchAddFriend" resultType="hry.social.manage.remote.model.friend.SocialFriendRelation">
+        SELECT
+            scf.customerId AS customerId,
+            api.email AS email,
+            api.mobilePhone AS mobilePhone,
+            api.accid AS accid,
+            api.nickName AS nickName,
+            api.headPortrait AS headPortrait,
+            api.mood AS mood,
+            scf.totalForce AS totalForce
+        FROM
+            app_person_info api
+        LEFT JOIN social_calculate_force scf ON api.customerId = scf.customerId
+        WHERE
+            api.nickName LIKE #{name}
+        OR api.mobilePhone LIKE #{name}
+        OR api.email LIKE #{name}
+        ORDER BY
+            scf.totalForce DESC,
+            scf.customerId
+    </select>
+
+    <select id="hasExistence" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    social_friend_relation
+                WHERE
+                    customerId = #{customerId}
+                AND friendId = #{friendId}
+            )
+    </select>
+
+    <select id="findFrontPageBySql" resultType="hry.social.manage.remote.model.friend.SocialFriendRelation">
+        SELECT
+            sfr.id,
+            api.nickName AS nickName,
+            api.email AS email,
+            api.mobilePhone AS mobilePhone,
+            api.accid AS accid,
+            api.headPortrait AS headPortrait,
+            api.mood AS mood,
+            IFNULL(
+                sfr.friendsNote,
+                api.nickName
+            ) AS friendsNote,
+            sfr.customerId AS customerId,
+            sfr.friendId AS friendId,
+            scf.totalForce AS totalForce
+        FROM
+            social_friend_relation sfr
+        LEFT JOIN app_person_info api ON sfr.friendId = api.customerId
+        LEFT JOIN social_calculate_force scf ON sfr.friendId = scf.customerId
+        WHERE
+            sfr.customerId = #{customerId}
+        AND sfr.customerId != sfr.friendId
+        ORDER BY
+            scf.totalForce DESC,
+            scf.customerId
+    </select>
+
+    <select id="getPalInfo" resultType="hry.social.manage.remote.model.friend.SocialFriendRelation">
+        SELECT
+            sfr.id,
+            api.nickName AS nickName,
+            api.email AS email,
+            api.mobilePhone AS mobilePhone,
+            api.accid AS accid,
+            api.headPortrait AS headPortrait,
+            api.mood AS mood,
+            IFNULL(
+                sfr.friendsNote,
+                api.nickName
+            ) AS friendsNote,
+            sfr.customerId AS customerId,
+            sfr.friendId AS friendId
+        FROM
+            social_friend_relation sfr
+        LEFT JOIN app_person_info api ON sfr.friendId = api.customerId
+        WHERE
+            sfr.customerId = #{customerId}
+        AND sfr.friendId = #{friendId}
+    </select>
+
+    <select id="getCustomerIdByAccid" resultType="java.lang.Long">
+        SELECT
+            customerId
+        FROM
+            app_person_info
+        WHERE
+            accid = #{accid}
+    </select>
+
+    <select id="getFriendIds" resultType="java.lang.String">
+        SELECT
+        friendId
+        FROM
+            social_friend_relation
+        WHERE
+            customerId = #{customerId}
+    </select>
+
+    <delete id="deleteRelation">
+        DELETE
+        FROM
+            social_friend_relation
+        WHERE
+            customerId = #{customerId}
+        AND friendId = #{friendId}
+    </delete>
+
+</mapper>

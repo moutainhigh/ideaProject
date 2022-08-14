@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+	<dubbo:reference id="remoteOrderService" interface="hry.mall.order.remote.RemoteOrderService"  check="false"/>
+	<dubbo:reference id="remoteAddressService" interface="hry.mall.platform.remote.RemoteAddressService"  check="false"/>
+	<dubbo:reference id="remoteGoodsService" interface="hry.mall.goods.remote.RemoteGoodsService" check="false"/>
+	<dubbo:reference id="remoteCartService" interface="hry.mall.goods.remote.RemoteCartService" check="false"/>
+	<dubbo:reference id="remoteFavoriteService" interface="hry.mall.goods.remote.RemoteFavoriteService" check="false"/>
+	<dubbo:reference id="remoteGroupService" interface="hry.mall.retailstore.remote.RemoteGroupService" check="false"/>
+	<dubbo:reference id="remoteCouponService" interface="hry.mall.retailstore.remote.RemoteCouponService" check="false"/>
+	<dubbo:reference id="remoteStoreService" interface="hry.mall.retailstore.remote.RemoteStoreService" check="false"/>
+	<dubbo:reference id="remoteMallManageService" interface="hry.mall.manage.remote.RemoteMallManageService" check="false"/>
+      <dubbo:reference id="remoteMallAdvertisementService" interface="hry.mall.platform.remote.RemoteMallAdvertisementService"  check="false"/>
+
+	<dubbo:reference id="remoteThirdPayService" interface="hry.mall.third.remote.RemoteThirdPayService" check="false"/>
+	<dubbo:reference id="remoteIntegralLevelService" interface="hry.mall.integral.remote.RemoteIntegralLevelService" check="false"/>
+	<dubbo:reference id="remoteRechargeConfigService" interface="hry.mall.integral.remote.RemoteRechargeConfigService" check="false"/>
+	<dubbo:reference id="remoteRollService" interface="hry.mall.integral.remote.RemoteRollService" check="false"/>
+	<dubbo:reference id="remoteShopWithdrawRecordService" interface="hry.mall.integral.remote.RemoteShopWithdrawRecordService" check="false"/>
+
+</beans>

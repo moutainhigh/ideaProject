@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm2.customer.dao.Cm2CustomerDao">
+
+    <resultMap id="BaseResultMap" type="hry.cm2.customer.model.Cm2Customer">
+    </resultMap>
+
+    <!-- 查询用户等级信息 -->
+    <select id="getCustomerByCustomerId" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+			cc.*,
+			cgm.teamProfitProportion AS teamProfitProportion,
+			cgmm.cappingMultiple AS cappingMultiple
+		FROM
+			cm2_customer cc
+		LEFT JOIN cm2_grade_minercamps cgm ON cgm.grade = cc.grade2
+		LEFT JOIN cm2_grade_miner cgmm ON cgmm.grade = cc.grade1
+		WHERE cc.customerId= #{customerId} LIMIT 1
+    </select>
+
+
+</mapper>

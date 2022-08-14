@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.shake.dao.SocialShopOfflineDao">
+    <!--hry.manage.remote.model.SocialShopOffline-->
+    <!--<select id="randomShop" resultType="hry.manage.remote.model.SocialShopOffline">-->
+    <!--SELECT-->
+    <!--ssOne.*-->
+    <!--FROM-->
+    <!--social_shop_offline AS ssOne-->
+    <!--JOIN (-->
+    <!--SELECT-->
+    <!--ROUND(-->
+    <!--RAND() * (-->
+    <!--SELECT-->
+    <!--MAX(id)-->
+    <!--FROM-->
+    <!--social_shop_offline-->
+    <!--)-->
+    <!--) AS id-->
+    <!--) AS ssTwo-->
+    <!--WHERE-->
+    <!--ssOne.id >= ssTwo.id-->
+    <!--ORDER BY-->
+    <!--ssOne.id-->
+    <!--LIMIT 1;-->
+    <!--</select>-->
+
+    <!--hry.manage.remote.model.SocialShopOffline-->
+    <select id="randomShop" resultType="hry.social.manage.remote.model.shake.SocialShopOffline">
+        SELECT
+            *, (
+                6371393 * ACOS(
+                    COS(RADIANS(#{latitude})) * COS(RADIANS(latitude)) * COS(
+                        RADIANS(#{longitude} - longitude)
+                    ) + SIN(RADIANS(#{latitude})) * SIN(RADIANS(latitude))
+                )
+            ) AS distance
+        FROM
+            social_shop_offline
+        ORDER BY
+            distance
+        LIMIT 1;
+    </select>
+
+    <select id="shopPic" resultType="java.lang.String">
+        SELECT
+            shopPicture
+        FROM
+            social_shop_picture
+        WHERE
+            shopId = #{shopId}
+    </select>
+
+    <select id="randomProduct" resultType="hry.social.manage.remote.model.shake.SocialShopProduct">
+        SELECT
+            *
+        FROM
+            social_shop_product
+        WHERE
+            adType = 9
+        AND `states` = 1
+        ORDER BY
+            RAND()
+        LIMIT 1;
+    </select>
+
+    <select id="recommendShop" resultType="hry.social.manage.remote.model.shake.SocialShopProduct">
+        SELECT
+            *
+        FROM
+            social_shop_product
+        WHERE
+            adType = 6
+        AND `states` = 1
+        ORDER BY
+            sortNumber DESC
+    </select>
+    <select id="hasOffShop" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    social_shop_offline
+                WHERE
+                    customerId = #{customerId}
+            )
+    </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <bean id="remoteCm4AccountServiceImpl" class="hry.cm4.remote.RemoteCmAccountServiceImpl" />
+    <dubbo:service ref="remoteCm4AccountServiceImpl"  interface="hry.cm4.remote.RemoteCmAccountService"  />
+
+    <bean id="remoteCm4MinerServiceImpl" class="hry.cm4.remote.RemoteCmMinerServiceImpl" />
+    <dubbo:service ref="remoteCm4MinerServiceImpl"  interface="hry.cm4.remote.RemoteCmMinerService"  />
+
+    <bean id="remoteCm4CustomerMinerServiceImpl" class="hry.cm4.remote.RemoteCmCustomerMinerServiceImpl" />
+    <dubbo:service ref="remoteCm4CustomerMinerServiceImpl"  interface="hry.cm4.remote.RemoteCmCustomerMinerService"  />
+
+    <bean id="remoteCm4OrderServiceImpl" class="hry.cm4.remote.RemoteCmOrderServiceImpl" />
+    <dubbo:service ref="remoteCm4OrderServiceImpl"  interface="hry.cm4.remote.RemoteCmOrderService"  />
+
+    <bean id="remoteCm4CustomerServiceImpl" class="hry.cm4.remote.RemoteCmCustomerServiceImpl" />
+    <dubbo:service ref="remoteCm4CustomerServiceImpl"  interface="hry.cm4.remote.RemoteCmCustomerService"  />
+
+    <bean id="remoteCm4ListenerServiceImpl" class="hry.cm4.remote.RemoteCmListenerServiceImpl" />
+    <dubbo:service ref="remoteCm4ListenerServiceImpl"  interface="hry.cm4.remote.RemoteCmListenerService"  />
+
+
+</beans>  

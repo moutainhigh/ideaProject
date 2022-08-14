@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.task.dao.SocialTaskRewardDao">
+
+
+    <select id="findPageList" resultType="hry.social.manage.remote.model.task.SocialTaskReward">
+        SELECT
+        str.*,
+        api.nickName AS name,
+        api.mobilePhone AS mobilePhone,
+        api.trueName AS trueName,
+        api.surname AS surname
+        FROM
+        social_task_reward str
+        LEFT JOIN
+        app_person_info api
+        ON str.customerId = api.customerId
+        <where>
+            <if test="customerId!=null and customerId!='' ">
+                AND str.customerId = #{customerId}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+            <if test="surname!=null and surname!='' ">
+                AND api.surname LIKE #{surname}
+            </if>
+            <if test="trueName!=null and trueName!='' ">
+                AND api.trueName LIKE #{trueName}
+            </if>
+            <if test="categoryKey!=null and categoryKey!='' ">
+                AND str.categoryKey = #{categoryKey}
+            </if>
+            <if test="itemName!=null and itemName!='' ">
+                AND str.itemName = #{itemName}
+            </if>
+            <if test="rewardType!=null and rewardType!='' ">
+                AND str.rewardType = #{rewardType}
+            </if>
+            <if test="rewardWay!=null and rewardWay!='' ">
+                AND str.rewardWay = #{rewardWay}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                AND str.coinCode = #{coinCode}
+            </if>
+            <if test="states!=null and states!='' ">
+                AND str.states = #{states}
+            </if>
+            <if test="createdGT!=null and createdGT!='' ">
+                AND str.created &gt;= #{createdGT}
+            </if>
+            <if test="createdLT!=null and createdLT!='' ">
+                AND str.created &lt;= #{createdLT}
+            </if>
+        </where>
+        ORDER BY str.created DESC
+    </select>
+
+    <select id="footing" resultType="hry.social.manage.remote.model.task.SocialTaskReward" parameterType="java.util.Map">
+        select sum(rewardNum) as rewardNum from social_task_reward str
+        LEFT JOIN
+        app_person_info api
+        ON str.customerId = api.customerId
+        <where>
+            1=1
+            <if test="customerId!=null and customerId!='' ">
+                AND str.customerId = #{customerId}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+            <if test="surname!=null and surname!='' ">
+                AND api.surname LIKE #{surname}
+            </if>
+            <if test="trueName!=null and trueName!='' ">
+                AND api.trueName LIKE #{trueName}
+            </if>
+            <if test="categoryKey!=null and categoryKey!='' ">
+                AND str.categoryKey = #{categoryKey}
+            </if>
+            <if test="itemName!=null and itemName!='' ">
+                AND str.itemName = #{itemName}
+            </if>
+            <if test="rewardType!=null and rewardType!='' ">
+                AND str.rewardType = #{rewardType}
+            </if>
+            <if test="rewardWay!=null and rewardWay!='' ">
+                AND str.rewardWay = #{rewardWay}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                AND str.coinCode = #{coinCode}
+            </if>
+            <if test="states!=null and states!='' ">
+                AND str.states = #{states}
+            </if>
+            <if test="createdGT!=null and createdGT!='' ">
+                AND str.created &gt;= #{createdGT}
+            </if>
+            <if test="createdLT!=null and createdLT!='' ">
+                AND str.created &lt;= #{createdLT}
+            </if>
+        </where>
+    </select>
+
+    <select id="getHasMax" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    (
+                        SELECT
+                            COUNT(id) AS num
+                        FROM
+                            social_task_reward
+                        WHERE
+                            taskMark = #{taskMark}
+                        AND customerId = #{customerId}
+                    ) srr
+                WHERE
+                    srr.num > #{numberCaps}
+        )
+    </select>
+
+    <select id="hashOnce" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    social_task_reward
+                WHERE
+                    customerId = #{customerId}
+                AND taskMark = #{taskMark}
+            );
+    </select>
+
+    <select id="hashNums" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    (
+                        SELECT
+                            count(id) AS num
+                        FROM
+                            social_task_reward
+                        WHERE
+                            customerId = #{customerId}
+                        AND taskMark = #{taskMark}
+                        AND TO_DAYS(created) = TO_DAYS(NOW())
+                    ) has
+                WHERE
+                    has.num &gt;= #{dailyUpper}
+            );
+    </select>
+
+    <select id="hasFinish" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    social_task_reward
+                WHERE
+                    customerId = #{customerId}
+                AND taskMark = #{taskMark}
+            );
+    </select>
+
+    <select id="hasOnseFinish" resultType="java.lang.Integer">
+        SELECT
+            EXISTS (
+                SELECT
+                    *
+                FROM
+                    social_task_reward
+                WHERE
+                    customerId = #{customerId}
+                AND taskMark = #{taskMark}
+                AND TO_DAYS(created) = TO_DAYS(NOW())
+            );
+    </select>
+</mapper>

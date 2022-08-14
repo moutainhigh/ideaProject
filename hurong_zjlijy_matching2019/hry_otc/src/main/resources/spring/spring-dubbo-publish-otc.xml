@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- OTC配置-具体的实现bean -->
+    <bean id="remoteAppConfigServiceImpl" class="hry.app.otc.remote.RemoteAppConfigServiceImpl"/>
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service ref="remoteAppConfigServiceImpl" interface="hry.otc.manage.remote.api.RemoteAppConfigService"/>
+
+    <!-- OTC广告-具体的实现bean -->
+    <bean id="remoteNewAdvertisementServiceImpl" class="hry.app.otc.remote.RemoteNewAdvertisementServiceImpl"/>
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service ref="remoteNewAdvertisementServiceImpl" interface="hry.otc.manage.remote.api.RemoteNewAdvertisementService"/>
+
+    <!-- OTC-具体的实现bean -->
+    <bean id="remoteNewOtcServiceImpl" class="hry.app.otc.remote.RemoteNewOtcServiceImpl"/>
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service ref="remoteNewOtcServiceImpl" interface="hry.otc.manage.remote.api.RemoteNewOtcService"/>
+
+    <!-- OTC-具体的实现bean -->
+    <bean id="remoteOtcChatMessageServiceImpl" class="hry.app.otc.remote.RemoteOtcChatMessageServiceImpl"/>
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service ref="remoteOtcChatMessageServiceImpl" interface="hry.otc.manage.remote.api.RemoteOtcChatMessageService"/>
+
+</beans>

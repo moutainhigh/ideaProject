@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.financail.financing.dao.AppFinancialUserDao">
+
+    <sql id="BaseResult">
+        au.id,au.customerId,au.productId,au.coinCode,au.coinMoney,au.redPacketsMoney,au.expectedIncome,au.realIncome,au.states,au.isRedeem,au.operator,au.remark,au.redeemTime,au.endTime,au.created,au.poundage,
+        af.productNum,af.productName,af.coinCode as coinCodeId,af.incomeYearFloor,af.lockUpPeriod,af.investmentPeriod,af.earlyRedemption,
+        af.redemptionRate,af.interestBearing,af.repayment,af.totalMoney,af.minimumMoney,af.incrementalMoney,af.maxNumber,af.remarks,af.preheatingTime,af.startTime,
+        af.endTime as endTime1,af.startingInterestTime,af.returnOfPrincipalTime,af.canUseRedPackets,af.isRecommended,af.stage,af.status,IFNULL(auu.investmentMoney,0) investmentMoney, IFNULL(auu.investmentPeople,0) investmentPeople
+  </sql>
+
+    <select id="findFinancialUserList" resultType="hry.remote.model.FinancialUser" parameterType="java.util.Map" >
+        select <include refid="BaseResult"/>
+        from  app_financial_user au
+        left join app_financial_products af on au.productId=af.id
+        LEFT JOIN (
+        select
+        sum(auu1.coinMoney+auu1.redPacketsMoney) investmentMoney ,
+        COUNT( DISTINCT(auu1.customerId)) investmentPeople,
+        auu1.productId
+        from
+        app_financial_user auu1 where auu1.isDelete = 0
+        GROUP BY auu1.productId)
+        auu on af.id=auu.productId
+        where  au.isDelete=0
+        <if test="customerId != 0 and customerId !=null">
+            and au.customerId=#{customerId}
+        </if>
+        <if test="productId != 0 and productId !=null">
+            and au.productId=#{productId}
+        </if>
+        <if test="coinCode !='' and coinCode !=null">
+            and au.coinCode=#{coinCode}
+        </if>
+        <if test="isRedeem !=null ">
+            and au.isRedeem in(0,1)
+        </if>
+        <if test="states !=null ">
+            and au.states=#{states}
+        </if>
+    </select>
+
+    <select id="findInvestmentedPersonCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT count(*) FROM app_financial_user
+        <where>
+            <if test="productId != null and productId != '' ">
+                AND productId = #{productId}
+            </if>
+            <if test="coinCode != null and coinCode != '' ">
+                AND coinCode = #{coinCode}
+            </if>
+        </where>
+    </select>
+    
+    <select id="findByUid" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT count(*) FROM app_financial_user where  customerId = #{customerId}
+
+    </select>
+
+    <select id="findAppFinancialUserRefactorCount" resultType="java.lang.Integer">
+            SELECT
+                count(1)
+            FROM
+                app_financial_user
+            WHERE
+                ifRecommend = 0
+                AND states = 1
+    </select>
+
+    <select id="findAppFinancialUserRefactorList" resultType="hry.financail.financing.model.AppFinancialUser" parameterType="java.util.HashMap">
+            SELECT
+                id,
+                productId,
+                customerId,
+                coinMoney,
+                realIncome,
+                ifRecommend
+            FROM
+                app_financial_user
+            WHERE
+                ifRecommend = 0
+	            AND states = 1
+        <if test="pageSize != null and pageSize != ''">
+            LIMIT #{currentPage},#{pageSize}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.integral.dao.ShopTeamLevelDao">
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+            tl.*,
+            il.name ilName,
+            tl2.name tlName
+        FROM shop_team_level tl
+                 LEFT JOIN shop_integral_level il
+                           on tl.integralLevelId=il.id
+                 LEFT JOIN shop_team_level tl2
+                           on tl.teamLevelId=tl2.id
+        ORDER BY tl.number DESC
+
+    </select>
+
+    <!-- 查询直推下级符合团队等级的人数 -->
+    <select id="countTeanPersonNumByParam" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*) from app_commend_user ac
+               LEFT JOIN shop_customer_integral sc
+               on ac.uid = sc.memberId
+        <where>
+            <if test="memberId!=null and memberId!='' ">
+                ac.pid =  #{memberId}
+            </if>
+            <if test="integralLevelNumber!=null and integralLevelNumber!='' ">
+              and sc.levelNumber >= #{integralLevelNumber}
+            </if>
+            <if test="teamLevelNumber!=null and teamLevelNumber!='' ">
+              and sc.teamNumber >=  #{teamLevelNumber}
+            </if>
+        </where>
+
+    </select>
+</mapper>

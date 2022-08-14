@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+    <!--商城相关接口-->
+
+    <bean id="remoteOrderServiceImpl" class="hry.mall.order.remote.RemoteOrderServiceImpl" />
+    <dubbo:service ref="remoteOrderServiceImpl"  interface="hry.mall.order.remote.RemoteOrderService" />
+
+    <bean id="remoteAddressServiceImpl" class="hry.mall.platform.remote.RemoteAddressServiceImpl" />
+    <dubbo:service ref="remoteAddressServiceImpl"  interface="hry.mall.platform.remote.RemoteAddressService"  />
+
+    <bean id="remoteGoodsServiceImpl" class="hry.mall.goods.remote.RemoteGoodsServiceImpl" />
+    <dubbo:service ref="remoteGoodsServiceImpl"  interface="hry.mall.goods.remote.RemoteGoodsService"  />
+
+    <bean id="remoteCartServiceImpl" class="hry.mall.goods.remote.RemoteCartServiceImpl" />
+    <dubbo:service ref="remoteCartServiceImpl"  interface="hry.mall.goods.remote.RemoteCartService"  />
+
+    <bean id="remoteFavoriteServiceImpl" class="hry.mall.goods.remote.RemoteFavoriteServiceImpl" />
+    <dubbo:service ref="remoteFavoriteServiceImpl"  interface="hry.mall.goods.remote.RemoteFavoriteService"  />
+
+    <bean id="remoteGroupServiceImpl" class="hry.mall.retailstore.remote.RemoteGroupServiceImpl" />
+    <dubbo:service ref="remoteGroupServiceImpl"  interface="hry.mall.retailstore.remote.RemoteGroupService"  />
+
+    <bean id="remoteCouponServiceImpl" class="hry.mall.retailstore.remote.RemoteCouponServiceImpl" />
+    <dubbo:service ref="remoteCouponServiceImpl"  interface="hry.mall.retailstore.remote.RemoteCouponService"  />
+
+    <bean id="remoteStoreServiceImpl" class="hry.mall.retailstore.remote.RemoteStoreServiceImpl" />
+    <dubbo:service ref="remoteStoreServiceImpl"  interface="hry.mall.retailstore.remote.RemoteStoreService" />
+
+    <bean id="remoteMallManageServiceImpl" class="hry.mall.manage.remote.RemoteMallManageServiceImpl" />
+    <dubbo:service ref="remoteMallManageServiceImpl"  interface="hry.mall.manage.remote.RemoteMallManageService" />
+
+    <bean id="remoteMallAdvertisementServiceImpl" class="hry.mall.platform.remote.RemoteMallAdvertisementServiceImpl" />
+    <dubbo:service ref="remoteMallAdvertisementServiceImpl"  interface="hry.mall.platform.remote.RemoteMallAdvertisementService"  />
+
+    <bean id="remoteThirdPayServiceImpl" class="hry.mall.third.remote.RemoteThirdPayServiceImpl" />
+    <dubbo:service ref="remoteThirdPayServiceImpl"  interface="hry.mall.third.remote.RemoteThirdPayService" />
+
+    <bean id="remoteIntegralLevelServiceImpl" class="hry.mall.integral.remote.RemoteIntegralLevelServiceImpl" />
+    <dubbo:service ref="remoteIntegralLevelServiceImpl"  interface="hry.mall.integral.remote.RemoteIntegralLevelService" />
+
+    <bean id="remoteRechargeConfigServiceImpl" class="hry.mall.integral.remote.RemoteRechargeConfigServiceImpl" />
+    <dubbo:service ref="remoteRechargeConfigServiceImpl"  interface="hry.mall.integral.remote.RemoteRechargeConfigService" />
+
+    <bean id="remoteRollServiceImpl" class="hry.mall.integral.remote.RemoteRollServiceImpl" />
+    <dubbo:service ref="remoteRollServiceImpl"  interface="hry.mall.integral.remote.RemoteRollService" />
+
+    <bean id="remoteShopWithdrawRecordServiceImpl" class="hry.mall.integral.remote.RemoteShopWithdrawRecordServiceImpl" />
+    <dubbo:service ref="remoteShopWithdrawRecordServiceImpl"  interface="hry.mall.integral.remote.RemoteShopWithdrawRecordService" />
+
+</beans>

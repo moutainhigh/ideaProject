@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.miningreward.dao.SocialMiningRewardRecordDao">
+
+    <select id="hasAboveMax" resultType="java.lang.Integer">
+        SELECT
+        EXISTS (
+            SELECT
+                totalCount
+            FROM
+                (
+                    SELECT
+                        COUNT(*) AS totalCount,
+                        customerId
+                    FROM
+                        social_mining_reward_record
+                    WHERE
+                        customerId = #{customerId}
+                    AND states != 2
+                    AND rewardType = 1
+                ) smrr
+            WHERE
+                totalCount >= #{maxUncollect}
+        )
+    </select>
+    <select id="findPageList" resultType="hry.social.manage.remote.model.miningreward.SocialMiningRewardRecord">
+        SELECT
+        smrr.*,
+        api.nickName AS name,
+        api.mobilePhone AS mobilePhone,
+        api.trueName AS trueName,
+        api.surname AS surname
+        FROM
+        social_mining_reward_record smrr
+        LEFT JOIN
+        app_person_info api
+        ON smrr.customerId = api.customerId
+        <where>
+            <if test="customerId!=null and customerId!='' ">
+                AND smrr.customerId = #{customerId}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+            <if test="surname!=null and surname!='' ">
+                AND api.surname LIKE #{surname}
+            </if>
+            <if test="trueName!=null and trueName!='' ">
+                AND api.trueName LIKE #{trueName}
+            </if>
+            <if test="rewardType!=null and rewardType!='' ">
+                AND smrr.rewardType = #{rewardType}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                AND smrr.coinCode = #{coinCode}
+            </if>
+            <if test="states!=null and states!='' ">
+                AND smrr.states = #{states}
+            </if>
+            <if test="createdGT!=null and createdGT!='' ">
+                AND smrr.created &gt;= #{createdGT}
+            </if>
+            <if test="createdLT!=null and createdLT!='' ">
+                AND smrr.created &lt;= #{createdLT}
+            </if>
+        </where>
+        ORDER BY smrr.created DESC
+    </select>
+
+    <select id="footing" resultType="hry.social.manage.remote.model.miningreward.SocialMiningRewardRecord" parameterType="java.util.Map">
+        select sum(rewardNum) as rewardNum from social_mining_reward_record smrr
+        LEFT JOIN
+        app_person_info api
+        ON smrr.customerId = api.customerId
+        <where>
+            1=1
+            <if test="customerId!=null and customerId!='' ">
+                AND smrr.customerId = #{customerId}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+            <if test="surname!=null and surname!='' ">
+                AND api.surname LIKE #{surname}
+            </if>
+            <if test="trueName!=null and trueName!='' ">
+                AND api.trueName LIKE #{trueName}
+            </if>
+            <if test="rewardType!=null and rewardType!='' ">
+                AND smrr.rewardType = #{rewardType}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                AND smrr.coinCode = #{coinCode}
+            </if>
+            <if test="states!=null and states!='' ">
+                AND smrr.states = #{states}
+            </if>
+            <if test="createdGT!=null and createdGT!='' ">
+                AND smrr.created &gt;= #{createdGT}
+            </if>
+            <if test="createdLT!=null and createdLT!='' ">
+                AND smrr.created &lt;= #{createdLT}
+            </if>
+        </where>
+    </select>
+</mapper>

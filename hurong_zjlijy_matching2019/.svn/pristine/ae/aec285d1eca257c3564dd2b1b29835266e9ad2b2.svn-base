@@ -1,0 +1,7 @@
+HRY_TABLE=cm5_account_record
+HRY_MODEL=Cm5AccountRecord
+HRY_PACKAGE=hry.cm5.account
+HRY_AUTH=zhouming
+url=jdbc:mysql://192.168.0.55:3306/hry_zjlijy
+user=root
+password=Credit_2018Admin

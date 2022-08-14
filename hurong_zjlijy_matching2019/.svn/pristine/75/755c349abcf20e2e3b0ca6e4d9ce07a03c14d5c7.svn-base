@@ -1,0 +1,16 @@
+package hry.listener.cloudminingv5;
+
+/**
+ * @author zhouming
+ * @date 2020/1/15 16:35
+ * @Version 1.0
+ */
+public class Cm5Management {
+
+    /**
+     * 李金沅矿机产币---每天
+     * */
+    public void miner5CoinageByDay () {
+
+    }
+}

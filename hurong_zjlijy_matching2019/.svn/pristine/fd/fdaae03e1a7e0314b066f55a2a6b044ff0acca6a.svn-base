@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.friend.dao.SocialCircleRecycleBinDao">
+
+    <select id="findPageBySql" resultType="hry.social.manage.remote.model.friend.SocialCircleRecycleBin" parameterType="java.util.Map" >
+        SELECT a.id,a.customerId,a.content,a.link,a.picture,a.video,a.music,a.device,a.site,a.likeCustomerIds,a.issued,a.issuedTime,a.deleteTime,b.mobilePhone AS phone,b.nickName AS name,b.email AS email
+        FROM social_friend_circle AS a
+        LEFT JOIN app_person_info AS b ON a.customerId=b.customerId
+        <where>
+             a.issued=2
+            <if test="id!=null and id!='' ">
+                and a.id = #{id}
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                and a.customerId = #{customerId}
+            </if>
+            <if test="email!=null and email!='' ">
+                and b.email like
+                #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="phone!=null and phone!='' ">
+                and b.mobilePhone like
+                #{phone,jdbcType=VARCHAR}
+            </if>
+            <if test="name!=null and name!='' ">
+                and b.nickName like
+                #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="keyword!=null and keyword!='' ">
+                and a.content like #{keyword,jdbcType=VARCHAR}
+            </if>
+            <if test="start!=null and start!='' ">
+                and a.issuedTime &gt;= #{start}
+            </if>
+            <if test="end!=null and end!='' ">
+                and a.issuedTime &lt;= #{end}
+            </if>
+            <if test="startde!=null and startde!='' ">
+                and a.deleteTime &gt;= #{startde}
+            </if>
+            <if test="ende!=null and ende!='' ">
+                and a.deleteTime &lt;= #{ende}
+            </if>
+        </where>
+    </select>
+
+    <update id="open" >
+        update social_friend_circle set issued=1,deleteTime=null where id=#{ids}
+    </update>
+
+    <select id="findOne" resultType="hry.social.manage.remote.model.friend.SocialCircleRecycleBin">
+        select * from social_friend_circle where id=#{id};
+    </select>
+
+</mapper>

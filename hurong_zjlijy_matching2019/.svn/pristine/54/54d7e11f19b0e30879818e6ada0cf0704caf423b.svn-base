@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+
+    <!-- 云矿机V2业务 -->
+    <dubbo:reference id="remoteCm2MinerService" interface="hry.cm2.remote.RemoteCmMinerService"  check="false"/>
+    <dubbo:reference id="remoteCm2CustomerMinerService" interface="hry.cm2.remote.RemoteCmCustomerMinerService"  check="false"/>
+    <dubbo:reference id="remoteCm2OrderService" interface="hry.cm2.remote.RemoteCmOrderService"  check="false"/>
+    <dubbo:reference id="remoteCm2AccountService" interface="hry.cm2.remote.RemoteCmAccountService"  check="false"/>
+    <dubbo:reference id="remoteCm2CustomerService" interface="hry.cm2.remote.RemoteCmCustomerService"  check="false"/>
+
+    <!--  -->
+    <dubbo:reference id="remoteCm2ListenerService" interface="hry.cm2.remote.RemoteCmListenerService"  check="false"/>
+    <!--加权分红业务-->
+    <dubbo:reference id="remoteCm2DividendService" interface="hry.cm2.remote.RemoteCmDividendService"  check="false"/>
+
+
+</beans> 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm2.customerminer.dao.Cm2CustomerMinerProfitDao">
+
+    <resultMap id="BaseResultMap" type="hry.cm2.customerminer.model.Cm2CustomerMinerProfit">
+    </resultMap>
+
+    <!-- 查询直推用户今天静态收益总数 -->
+    <select id="getTeamProfitSumByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			SUM(ccmp.profit1)
+		FROM
+			app_teamlevel atl
+		LEFT JOIN cm2_customer_miner_profit ccmp ON atl.customerId = ccmp.customerId
+		WHERE
+			atl.parentId = #{customerId}
+		AND atl.`level` = 1
+		AND to_days(ccmp.created) = to_days(now())
+    </select>
+    <!-- 查询用户今天矿机产币总数 -->
+    <select id="getProfitSumByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			SUM(ccmp.profit1)
+		FROM cm2_customer_miner_profit ccmp
+		WHERE
+			ccmp.customerId = #{customerId}
+		AND to_days(ccmp.created) = to_days(now())
+    </select>
+
+
+</mapper>

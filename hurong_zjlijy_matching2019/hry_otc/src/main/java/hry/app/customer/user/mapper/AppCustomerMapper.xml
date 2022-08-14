@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.app.customer.user.dao.AppCustomerDao" >
+		
+		
+		<resultMap id="BaseResultMap" type="hry.otc.manage.remote.model.customer.user.AppCustomer">
+		    <id column="id" property="id" javaType="java.lang.Long" />
+	   </resultMap>
+		
+	   <select id="getFundChangeCustomers"  parameterType="java.util.Map"   resultMap="BaseResultMap" >
+		
+			select b.customerId as id from app_transaction b 
+			 <![CDATA[ 
+			where b.created<=#{endTime} and b.created >=#{beginTime}   group by b.customerId
+			  ]]>
+			UNION 
+			select c.customerId as id from ex_dm_transaction c
+			 <![CDATA[ 
+			 where c.created<=#{endTime} and c.created >=#{beginTime}   group by c.customerId
+			 ]]>
+			UNION 
+			select d.customerId as id from app_cold_account_record d
+			 <![CDATA[  
+			where d.created<=#{endTime} and d.created >=#{beginTime}   group by d.customerId
+			 ]]>
+			UNION 
+			select f.customerId as id from app_hot_account_record f
+			 <![CDATA[ 
+			 where f.created<=#{endTime} and f.created >=#{beginTime}   group by f.customerId
+			 ]]>
+			UNION 
+			select e.customerId as id from ex_dm_hot_account_record e 
+			 <![CDATA[ 
+			where e.created<=#{endTime} and e.created >=#{beginTime}   group by e.customerId
+			 ]]>
+			UNION 
+			select g.customerId as id from ex_dm_cold_account_record g 
+			 <![CDATA[ 
+			where g.created<=#{endTime} and g.created >=#{beginTime}   group by g.customerId
+		      ]]>
+		      	UNION 
+			select i.customerId as id from ex_dm_lend_intent i 
+			 <![CDATA[ 
+			where i.created<=#{endTime} and i.created >=#{beginTime}   group by i.customerId
+		      ]]>
+		      	UNION 
+			select h.customerId as id from ex_dm_lend h 
+			 <![CDATA[ 
+			where h.created<=#{endTime} and h.created >=#{beginTime}   group by h.customerId
+		      ]]>
+		      
+		       	UNION 
+			select j.customerId as id from app_account_disable j 
+			 <![CDATA[ 
+			where j.created<=#{endTime} and j.created >=#{beginTime}   group by j.customerId
+		      ]]>
+		</select>
+</mapper>

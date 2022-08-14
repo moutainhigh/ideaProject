@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.merchant.dao.MerchantDao">
+    <select id="getMerchant" parameterType="java.lang.Long" resultType="hry.mall.merchant.model.Merchant">
+        select m.id, m.storeName, m.memberId, m.memberName,
+        m.provinceId, m.cityId, m.countyId, m.merchantAddress, m.merchantDesc, m.created,
+        m.merchantGradeId,g.gradeName as merchantGradeName, g.gradeLogo, m.merchantLogo
+        from shop_merchant m
+        LEFT JOIN shop_merchant_grade g
+        ON m.merchantGradeId = g.id
+        where 1=1 and m.id = #{id}
+    </select>
+</mapper>

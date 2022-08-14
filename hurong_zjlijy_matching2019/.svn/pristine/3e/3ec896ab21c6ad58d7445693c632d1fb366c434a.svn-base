@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.integral.dao.IntegralAccountDao">
+    <select id="findNoIntegralAccountUser" resultType="java.lang.Long">
+        select ac.id
+        from app_customer ac
+        LEFT JOIN shop_customer_integral aci
+        ON ac.id = aci.memberId
+        where aci.memberId is null
+    </select>
+
+
+    <select id="findNoIntegralDetailUser" resultType="java.lang.Long">
+        select u.id
+        FROM
+        (
+            SELECT au.id
+            FROM
+            app_commend_user au
+            LEFT JOIN
+            (
+            SELECT ac.pid
+            FROM
+            (
+            select acu.pid
+            from app_customer ac, app_commend_user acu
+            where ac.id = acu.uid and acu.pid is not null GROUP BY acu.pid
+            ) ac
+            LEFT JOIN shop_customer_integral sc
+            ON ac.pid = sc.memberId
+            where sc.id is not null
+            ) a
+            ON au.pid = a.pid
+            where a.pid is not null
+        ) u
+        LEFT JOIN
+        (
+            select *
+            from shop_integral_detail
+            where taskId = 1
+        ) d
+        ON u.id = d.orderSn
+        where d.orderSn is null
+    </select>
+
+</mapper>

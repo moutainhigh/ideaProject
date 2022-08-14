@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.force.dao.SocialCalculateForceDao">
+
+    <select id="getCondePerson" resultType="hry.social.manage.remote.model.force.SocialCalculateForce">
+        SELECT
+            customerId,
+            totalForce
+        FROM
+            social_calculate_force
+        WHERE
+            totalForce > #{rewardCondition}
+        ORDER BY
+	        totalForce DESC
+    </select>
+
+    <select id="getAllTotal" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(totalForce), 0) AS totalForce
+        FROM
+            social_calculate_force
+    </select>
+
+    <select id="findGtForce" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            social_calculate_force
+        WHERE
+            totalForce &gt; #{totalForce}
+    </select>
+
+    <select id="findEqForce" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*) + 1
+        FROM
+        social_calculate_force
+        WHERE
+        totalForce = #{totalForce}
+        AND customerId &lt; #{customerId}
+    </select>
+
+    <select id="getFirstForce" resultType="java.math.BigDecimal">
+        SELECT
+            MAX(totalForce)
+        FROM
+            social_calculate_force
+    </select>
+
+    <select id="taskFroceTotal" resultType="java.math.BigDecimal">
+        SELECT
+			IFNULL(SUM(terminable),0)
+		FROM
+			social_terminable_force
+		WHERE
+			endTime > NOW()
+		AND type = 1
+		AND customerId = #{customerId}
+    </select>
+
+    <select id="perpetualTotal" resultType="java.math.BigDecimal">
+        SELECT
+			IFNULL(SUM(permanent),0)
+		FROM
+			social_permanent_force
+		WHERE
+		    type = 1
+		    AND customerId = #{customerId}
+    </select>
+
+    <select id="findMillFroce" resultType="java.math.BigDecimal">
+        SELECT
+			IFNULL(SUM(terminable),0)
+		FROM
+			social_terminable_force
+		WHERE
+			endTime > NOW()
+		AND type = 2
+		AND customerId = #{customerId}
+    </select>
+
+    <select id="getTop" resultType="hry.social.manage.remote.model.force.SocialCalculateForce">
+        SELECT
+            IFNULL(scf.totalForce, 0) AS totalForce,
+            api.nickName AS nickName,
+            api.headPortrait AS headPortrait
+        FROM
+            social_calculate_force scf
+        LEFT JOIN app_person_info api ON scf.customerId = api.customerId
+        ORDER BY
+            scf.totalForce DESC,
+            scf.customerId
+    </select>
+
+    <select id="findPicked" resultType="hry.model.social.miningreward.SocialPickRedis">
+        SELECT
+        smrr.id,
+        smrr.customerId,
+        smrr.rewardNum AS awardCoinNum,
+        smrr.rewardNum AS residualNum,
+        smrr.rewardType AS rewardType,
+        smrr.rewardSource AS rewardSource,
+        smrr.coinCode AS coinCode,
+        0 AS onlySelf,
+        10 AS imgNum
+        FROM
+        social_mining_reward_record smrr
+        WHERE
+        smrr.customerId = #{customerId}
+        AND smrr.states = 0
+        ORDER BY
+        smrr.created DESC,
+        smrr.rewardType DESC
+        LIMIT #{limt}
+    </select>
+
+    <select id="getForceByCustomerId" resultType="hry.social.manage.remote.model.force.SocialCalculateForce">
+        SELECT
+            *
+        FROM
+            social_calculate_force scf
+        WHERE scf.customerId = #{customerId}
+    </select>
+
+    <update id="updateStates">
+        UPDATE social_mining_reward_record
+        SET states = 1
+        WHERE
+            id = #{id}
+    </update>
+
+    <select id="terminableForce" resultType="java.math.BigDecimal">
+        SELECT
+			IFNULL(SUM(terminable),0)
+		FROM
+			social_terminable_force
+		WHERE
+			endTime > NOW()
+		AND customerId = #{customerId}
+    </select>
+
+    <select id="additionTotal" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(addition), 0)
+        FROM
+            social_force_coin_addition
+        WHERE
+            endTime > NOW()
+        AND customerId = #{customerId}
+    </select>
+
+    <select id="getAccountGtRankNum" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            ex_digitalmoney_account
+        WHERE
+            coinCode = #{coinCode}
+        AND hotMoney &gt; #{hotMoney}
+    </select>
+
+    <select id="getAccountEqRankNum" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*) + 1
+        FROM
+        ex_digitalmoney_account
+        WHERE
+        coinCode = #{coinCode}
+        AND hotMoney = #{hotMoney}
+        AND customerId &lt; #{customerId}
+    </select>
+
+    <update id="updateForce">
+        UPDATE social_calculate_force
+        SET perpetualForce = #{perpetualForce},
+         terminableForce = #{terminableForce},
+         additionForce = #{additionForce},
+         totalForce = #{totalForce}
+        WHERE
+            customerId = #{customerId}
+    </update>
+
+</mapper>

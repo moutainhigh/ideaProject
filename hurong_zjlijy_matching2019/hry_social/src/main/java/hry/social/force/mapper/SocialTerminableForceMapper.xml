@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.force.dao.SocialTerminableForceDao">
+
+    <!-- 有效的时效性算力记录 -->
+    <select id="findTerminablen" resultType="hry.social.manage.remote.model.force.SocialTerminableForce">
+        SELECT
+            *
+        FROM
+            social_terminable_force
+        WHERE
+            endTime > NOW()
+        AND customerId = #{customerId}
+    </select>
+
+    <!-- 无效的时效性算力记录 -->
+    <select id="findDisTerminable" resultType="hry.social.manage.remote.model.force.SocialTerminableForce">
+        SELECT
+            *
+        FROM
+            social_terminable_force
+        WHERE
+            endTime &lt; NOW()
+        AND customerId = #{customerId}
+    </select>
+
+</mapper>

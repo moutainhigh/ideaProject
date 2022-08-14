@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm4.customerminer.dao.Cm4CustomerMinerDao">
+    <resultMap id="BaseResultMap" type="hry.cm4.customerminer.model.Cm4CustomerMiner">
+    </resultMap>
+
+    <resultMap id="BaseResultCustomerMap" type="hry.cm4.customer.model.Cm4Customer">
+    </resultMap>
+
+    <!-- 查询用户有效投入总数 -->
+    <select id="getMinerPriceSumByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+        sum(ccm.minerPrice)
+        FROM
+        cm4_customer_miner ccm
+        LEFT JOIN app_person_info AS api ON ccm.customerId = api.customerId
+        <where>
+            1=1 and ccm.status!=3  and ccm.customerId = #{customerId}
+        </where>
+    </select>
+
+    <!-- 查询用户伞下有效投入总数 -->
+    <select id="getTeamMinerPriceSumByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			sum(ccm.minerPrice)
+		FROM
+			app_teamlevel atl
+		LEFT JOIN cm4_customer_miner AS ccm ON ccm.customerId = atl.customerId
+		WHERE
+			atl.parentId = #{customerId}
+		AND ccm. STATUS != 3
+    </select>
+    <!-- 查询用户直推最大线  最小线 -->
+    <select id="getTeamMaxAndMinByCustomerId" parameterType="java.util.Map"
+            resultMap="BaseResultCustomerMap">
+    	SELECT
+			MAX(cc.teamAchievement) AS maxAchievement,
+			MIN(cc.teamAchievement) AS minAchievement
+		FROM
+			(
+				SELECT
+					atl.customerId,
+					atl.parentId
+				FROM
+					app_teamlevel AS atl
+				WHERE
+					atl.parentId = #{customerId}
+				AND atl.`level` = 1
+			) a
+		LEFT JOIN cm4_customer cc ON a.customerId = cc.customerId
+    </select>
+
+    <!-- 查询用户团队人数 -->
+    <select id="getTeamNumByCustomerId" parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        SELECT
+			count(atl.id)
+		FROM
+			app_teamlevel atl
+		where
+			atl.parentId = #{customerId}
+    </select>
+    <!-- 查询用户有效直推人数 -->
+    <select id="getYouxiaoZtNumByCustomerId" parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        SELECT
+			COUNT(b.customerId)
+		FROM
+			(
+				SELECT
+					a.customerId
+				FROM
+					(
+						SELECT
+							atl.customerId
+						FROM
+							app_teamlevel atl
+						WHERE
+							atl.parentId = #{customerId}
+						AND atl.`level` = 1
+					) AS a
+				INNER JOIN cm4_customer_miner ccm ON a.customerId = ccm.customerId
+				GROUP BY
+					a.customerId
+			) b
+    </select>
+
+    <!-- 用户矿机信息统计 -->
+    <select id="getMyMinerCustomerId" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+       SELECT
+			SUM(ccm.dayProfit) AS dayProfit,
+			count(ccm.id) AS minerNum,
+			SUM(ccm.minerPrice) AS minerPrice,
+			SUM(ccm.profit3) AS profit3,
+			ccm.status
+		FROM
+			cm4_customer_miner ccm
+		WHERE
+			ccm.customerId = #{customerId}
+		GROUP BY
+			ccm.`status`
+    </select>
+
+    <!-- 更新矿机收益 -->
+    <update id="updateMinerProfit">
+    	UPDATE
+    		cm4_customer_miner ccm
+		SET
+			ccm.profit1 = profit1+#{profit1},
+			ccm.profit2 = profit2+#{profit2},
+			ccm.profit3 = profit3+#{profit3},
+			ccm.modified = now()
+		WHERE
+			ccm.id=#{id}
+    </update>
+
+    <!-- 更新到期矿机状态-->
+    <update id="updateCloseMiner">
+    	UPDATE
+				cm4_customer_miner co
+		SET
+			co.status = 3,
+			co.modified = now()
+		WHERE
+			1 = 1
+		AND   NOW()>=co.endDate
+    </update>
+    <!-- 更新待运行矿机状态-->
+    <update id="updateWaitMiner">
+    	UPDATE
+				cm4_customer_miner co
+		SET
+			co.status = 2,
+			co.modified = now()
+		WHERE
+			1 = 1
+		AND   NOW()>=co.startDate
+		AND   co.status =1
+    </update>
+
+    <!-- 查询用户待运行+运行中的矿机总数 -->
+    <select id="getMinigNumByCustomerId" parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        SELECT
+			count(1)
+		FROM
+			cm4_customer_miner ccm
+		where
+			ccm.customerId = #{customerId} and ccm.status!=3
+    </select>
+
+    <!-- 查询用户待运行+运行中的矿机总数 -->
+    <select id="getMinigProFitByCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        SELECT
+			SUM(ccm.profit3)
+		FROM
+			cm4_customer_miner ccm
+		WHERE
+			ccm.customerId = #{customerId}
+    </select>
+
+    <!-- 根据矿机Id查询用户待运行+运行中的矿机总数 -->
+    <select id="getMinigNumByCustomerIdAndMinerId" parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        SELECT
+			count(1)
+		FROM
+			cm4_customer_miner ccm
+		where
+			ccm.customerId = #{customerId} and ccm.status!=3 and ccm.minerId = #{minerId}
+    </select>
+
+    <!-- 查询当前层级用户今天产币总和 -->
+    <select id="getProfitSumByCustomerIdAndHierarchy" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        /*SELECT
+			SUM(b.profit1)
+		FROM
+			(
+				SELECT
+					at1.*
+				FROM
+					app_teamlevel at1
+				WHERE
+					at1.parentId = #{customerId}
+				AND at1.`level` = #{hierarchy}
+			) a
+		INNER JOIN (
+			SELECT
+				ccmp.profit1,
+				ccmp.customerId
+			FROM
+				cm4_customer_miner_profit ccmp
+			WHERE
+				to_days(ccmp.created) = to_days(now())
+		) b ON a.customerId = b.customerId*/
+		SELECT
+			SUM(b.dayProfit)
+		FROM
+			(
+				SELECT
+					at1.*
+				FROM
+					app_teamlevel at1
+				WHERE
+					at1.parentId = #{customerId}
+				AND at1.`level` = #{hierarchy}
+			) a
+		INNER JOIN (
+			SELECT
+				ccmp.dayProfit,
+				ccmp.customerId
+			FROM
+				cm4_customer_miner ccmp
+			WHERE
+				AND ccmp.status = 2
+		) b ON a.customerId = b.customerId
+    </select>
+
+</mapper>

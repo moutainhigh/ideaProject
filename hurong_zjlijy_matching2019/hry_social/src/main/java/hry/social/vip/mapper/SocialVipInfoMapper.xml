@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.vip.dao.SocialVipInfoDao">
+
+    <select id="getAvailableVip" resultType="hry.social.manage.remote.model.vip.SocialVipInfo">
+        SELECT
+            *
+        FROM
+            social_vip_info
+        WHERE
+            additionRatio >= #{additionRatio}
+        AND states = 1
+        ORDER BY
+            additionRatio
+    </select>
+</mapper>

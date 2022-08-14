@@ -1,0 +1,31 @@
+/**
+ * Copyright:   
+ * @author:      zhouming
+ * @version:     V1.0 
+ * @Date:        2019-12-24 14:58:03 
+ */
+package hry.cm5.account.service.impl;
+
+import hry.cm5.account.model.Cm5AccountRecord;
+import hry.cm5.account.service.Cm5AccountRecordService;
+import hry.core.mvc.dao.base.BaseDao;
+import hry.core.mvc.service.base.impl.BaseServiceImpl;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p> Cm5AccountRecordService </p>
+ * @author:         zhouming
+ * @Date :          2019-12-24 14:58:03  
+ */
+@Service("cm5AccountRecordService")
+public class Cm5AccountRecordServiceImpl extends BaseServiceImpl<Cm5AccountRecord, Long> implements Cm5AccountRecordService{
+	
+	@Resource(name="cm5AccountRecordDao")
+	@Override
+	public void setDao(BaseDao<Cm5AccountRecord, Long> dao) {
+		super.dao = dao;
+	}
+	
+
+}

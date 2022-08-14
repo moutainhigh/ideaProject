@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.minigrobot.robot.dao.ExCustomerMiningRobotDao">
+    <resultMap id="cumstoemrMingingRobot" type="hry.minigrobot.robot.model.ExCustomerMiningRobot">
+
+        <result column="id" property="id"  javaType="java.lang.Long"  />
+        <result column="customerId" property="customerId"  javaType="java.lang.Long"  />
+        <result column="fixPriceCoinCode" property="fixPriceCoinCode" javaType="java.lang.String" />
+        <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+        <result column="coinCodeIniMoney" property="coinCodeIniMoney" javaType="java.math.BigDecimal" />
+        <result column="fixPriceCoinCodeIniMoney" property="fixPriceCoinCodeIniMoney" javaType="java.math.BigDecimal" />
+        <result column="coinCodeConvertPrice" property="coinCodeConvertPrice" javaType="java.math.BigDecimal" />
+        <result column="fixPriceCoinCodeConvertPrice" property="fixPriceCoinCodeConvertPrice" javaType="java.math.BigDecimal" />
+        <result column="robotOrderNum" property="robotOrderNum" javaType="java.lang.Integer" />
+
+        <result column="robotCommissionCharges" property="robotCommissionCharges" javaType="java.math.BigDecimal" />
+        <result column="coinCodeCurrMoney" property="coinCodeCurrMoney" javaType="java.math.BigDecimal" />
+        <result column="fixPriceCoinCodeCurrMoney" property="fixPriceCoinCodeCurrMoney" javaType="java.math.BigDecimal" />
+        <result column="robotStatus" property="robotStatus" javaType="java.lang.Integer" />
+    </resultMap>
+    <select id="getCumstoemrMingingRobotList"  parameterType="java.util.Map" resultMap="cumstoemrMingingRobot" >
+       select * from ex_customer_mining_robot a   where a.robotStatus=1
+    </select>
+
+
+    <update id="updateByid">
+        UPDATE ex_customer_mining_robot
+        SET robotStatus = #{robotStatus},
+        robotCommissionCharges = #{robotCommissionCharges},
+        distributionAmount = #{distributionAmount},
+         coinCodeCurrMoney = #{coinCodeCurrMoney},
+          fixPriceCoinCodeCurrMoney = #{fixPriceCoinCodeCurrMoney},
+         robotOrderNumed = #{robotOrderNumed},
+         isDistributeCharges = #{isDistributeCharges}
+        WHERE
+         id = #{id}
+    </update>
+
+    <update id="updateRobotStatusByid">
+        UPDATE ex_customer_mining_robot
+        SET robotStatus = #{robotStatus}
+        WHERE
+         id = #{id}
+    </update>
+    <update id="updateRobotStatusToOpenByid">
+        UPDATE ex_customer_mining_robot
+        SET robotStatus =1
+        WHERE
+          robotStatus=3
+    </update>
+</mapper>

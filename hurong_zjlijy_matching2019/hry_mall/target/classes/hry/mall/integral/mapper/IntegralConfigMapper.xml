@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.integral.dao.IntegralConfigDao">
+
+    <!-- 查询直推下级符合团队等级的人数 -->
+    <select id="getUserRecommendedNumber" parameterType="java.lang.String" resultType="java.lang.Long">
+        select count(*) from app_commend_user  ac
+                                 LEFT JOIN shop_customer_integral cl
+                                           on ac.uid = cl.memberId
+        where cl.levelId  is not null and ac.sid like #{param}
+    </select>
+
+</mapper>

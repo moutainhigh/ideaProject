@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm4.customer.dao.Cm4CustomerDao">
+    <resultMap id="BaseResultMap" type="hry.cm4.customer.model.Cm4Customer">
+    </resultMap>
+
+    <!-- 查询用户等级信息 -->
+    <select id="getCustomerByCustomerId" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+			cc.*,
+			cgmm.cappingMultiple AS cappingMultiple
+		FROM
+			cm4_customer cc
+		LEFT JOIN cm4_grade_miner cgmm ON cgmm.grade = cc.grade1
+		WHERE cc.customerId= #{customerId} LIMIT 1
+    </select>
+</mapper>

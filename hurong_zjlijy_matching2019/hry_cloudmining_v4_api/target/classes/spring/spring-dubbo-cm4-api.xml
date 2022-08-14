@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+
+    <!-- 云矿机V4业务 -->
+    <dubbo:reference id="remoteCm4AccountService" interface="hry.cm4.remote.RemoteCmAccountService"  check="false"/>
+    <dubbo:reference id="remoteCm4MinerService" interface="hry.cm4.remote.RemoteCmMinerService"  check="false"/>
+    <dubbo:reference id="remoteCm4CustomerMinerService" interface="hry.cm4.remote.RemoteCmCustomerMinerService"  check="false"/>
+    <dubbo:reference id="remoteCm4OrderService" interface="hry.cm4.remote.RemoteCmOrderService"  check="false"/>
+    <dubbo:reference id="remoteCm4CustomerService" interface="hry.cm4.remote.RemoteCmCustomerService"  check="false"/>
+    <dubbo:reference id="remoteCm4ListenerService" interface="hry.cm4.remote.RemoteCmListenerService"  check="false"/>
+
+
+</beans> 

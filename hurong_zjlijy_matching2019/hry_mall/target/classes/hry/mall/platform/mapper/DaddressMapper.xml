@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.platform.dao.DaddressDao">
+       <resultMap id="BaseResultMap" type="hry.mall.platform.model.Daddress">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+     <!--    <result column="saasId" property="saasId" javaType="java.lang.String" /> -->
+        <result column="name" property="name" javaType="java.lang.String" />
+        <result column="provinceId" property="info_province" javaType="java.lang.String" />
+        <result column="cityId" property="info_city" javaType="java.lang.String" />
+        <result column="countyId" property="info_county" javaType="java.lang.String" />
+        <result column="street" property="street" javaType="java.lang.String" />
+        <result column="detailAddress" property="detailAddress" javaType="java.lang.String" />
+        <result column="cellphone" property="cellphone" javaType="java.lang.String" />
+        <result column="sendName" property="sendName" javaType="java.lang.String" />
+        <result column="zipCode" property="zipCode" javaType="java.lang.String" />
+        <result column="provinceName" property="provinceName" javaType="java.lang.String" />
+        <result column="cityName" property="cityName" javaType="java.lang.String" />
+        <result column="countyName" property="countyName" javaType="java.lang.String" />
+        <result column="isDefault" property="isDefault" javaType="java.lang.Short" />
+        <result column="isReceiveDefault" property="isReceiveDefault" javaType="java.lang.Short" />
+    </resultMap>
+    
+        <select id="findPageBySql" parameterType="java.util.Map" resultMap="BaseResultMap">
+            SELECT
+			r.id,r.name,r.cellphone,r.sendName,r.isDefault,r.isReceiveDefault,r.provinceId as info_province,r.cityId as info_city,r.countyId as info_county,a.regionName as provinceName,a1.regionName as cityName,a2.regionName as countyName,
+			CONCAT(a.regionName,a1.regionName,a2.regionName,r.detailAddress) as detailAddress
+			FROM shop_daddress r 
+			LEFT JOIN app_area_dic a ON r.provinceId = a.regionCoding
+			LEFT JOIN app_area_dic a1 ON r.cityId = a1.regionCoding
+			LEFT JOIN app_area_dic a2 ON r.countyId = a2.regionCoding
+            where 1=1  
+            <if test="provinceId!=null and provinceId!='' ">
+				and r.provinceId = #{provinceId} 
+		    </if>  
+		     <if test="cityId!=null and cityId!='' ">
+				and r.cityId= #{cityId} 
+		    </if>  
+		     <if test="countyId!=null and countyId!='' ">
+				and r.countyId = #{countyId} 
+		    </if>  
+		   	<if test="name!=null and name!='' ">
+		   	     and r.name like
+                #{name,jdbcType=VARCHAR}
+			</if>
+			<if test="sendName!=null and sendName!='' ">
+		   	     and r.sendName like
+                #{sendName,jdbcType=VARCHAR}
+			</if>
+			<if test="cellphone!=null and cellphone!='' ">
+		   	     and r.cellphone like
+                #{cellphone,jdbcType=VARCHAR}
+			</if>
+			ORDER BY r.created DESC
+   </select>
+</mapper>

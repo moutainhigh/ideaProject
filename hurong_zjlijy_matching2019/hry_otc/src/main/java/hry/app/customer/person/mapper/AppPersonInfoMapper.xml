@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.app.customer.person.dao.AppPersonInfoDao">
+
+	<resultMap id="BaseResultMap" type="hry.otc.manage.remote.model.customer.person.AppPersonInfo">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+		<result column="email" property="email" javaType="java.lang.String" />
+	</resultMap>
+	<select id="getByCustomerId" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+		select customerId,mobilePhone,email from app_person_info a where a.customerId=#{customerId} ;
+	</select>
+</mapper>

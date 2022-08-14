@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.friend.dao.SocialFriendPictureDao">
+
+    <select id="findPageList" resultType="hry.social.manage.remote.model.friend.SocialFriendPicture">
+        SELECT
+            sfp.id,
+            sfp.path,
+            sfp.circleId,
+            sfp.created
+        FROM
+            social_friend_picture sfp
+        LEFT JOIN social_friend_circle sfc ON sfp.circleId = sfc.id
+        WHERE
+            sfp.states = 0
+        AND sfc.issued = 1
+        ORDER BY
+            sfp.created DESC
+    </select>
+
+    <select id="findPictures" resultType="hry.social.manage.remote.model.friend.SocialFriendPicture">
+        SELECT
+            sfp.id,
+            sfp.path
+        FROM
+            social_friend_picture sfp
+        WHERE
+            sfp.states = 0
+        AND sfp.circleId = #{circleId}
+        ORDER BY
+            sfp.created DESC
+    </select>
+
+    <select id="findCirclePictures" resultType="java.lang.String">
+        SELECT
+            sfp.path
+        FROM
+            social_friend_picture sfp
+        LEFT JOIN social_friend_circle sfc ON sfp.circleId = sfc.id
+        WHERE
+            sfc.customerId = #{customerId}
+        ORDER BY
+            sfp.id DESC
+    </select>
+
+    <select id="findUrls" resultType="java.lang.String">
+        SELECT path FROM social_friend_picture WHERE states = 0 AND circleId = #{sfcId};
+    </select>
+
+</mapper>

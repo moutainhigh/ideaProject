@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.miningreward.dao.SocialMiningRewardRecordDao">
+
+    <select id="hasAboveMax" resultType="java.lang.Integer">
+        SELECT
+        EXISTS (
+            SELECT
+                totalCount
+            FROM
+                (
+                    SELECT
+                        COUNT(*) AS totalCount,
+                        customerId
+                    FROM
+                        social_mining_reward_record
+                    WHERE
+                        customerId = #{customerId}
+                    AND states != 2
+                    AND rewardType = 1
+                ) smrr
+            WHERE
+                totalCount >= #{maxUncollect}
+        )
+    </select>
+
+    <select id="findPicked" resultType="hry.model.social.miningreward.SocialPickRedis">
+        SELECT
+            smrr.id,
+            smrr.customerId,
+            smrr.rewardNum AS awardCoinNum,
+            smrr.coinCode AS coinCode,
+            smrr.rewardNum AS residualNum,
+            smrr.rewardType AS rewardType,
+            smrr.rewardSource AS rewardSource,
+            smrr.coinCode AS coinCode,
+            smrr.created AS created,
+            0 AS onlySelf,
+            10 AS imgNum
+        FROM
+            social_mining_reward_record smrr
+        WHERE
+            smrr.customerId = #{customerId}
+        AND smrr.states = 0
+        ORDER BY
+            smrr.created DESC,
+            smrr.rewardType DESC
+        LIMIT #{limt}
+    </select>
+
+    <update id="updateStates">
+        UPDATE social_mining_reward_record
+        SET states = 1
+        WHERE
+            id = #{id}
+    </update>
+
+    <update id="expiryStates">
+        UPDATE social_mining_reward_record
+        SET states = 3
+        WHERE
+            id = #{id}
+    </update>
+
+    <update id="expiryReward">
+        UPDATE social_mining_reward_record
+        SET states = 3
+        WHERE
+            states = 0
+        AND created &lt; DATE_ADD(NOW(), INTERVAL - #{expiryHour} HOUR);
+    </update>
+
+</mapper>

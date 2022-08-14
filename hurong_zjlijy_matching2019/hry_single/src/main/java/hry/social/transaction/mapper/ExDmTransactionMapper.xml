@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.transaction.dao.ExDmTransactionDao">
+
+    <select id="getAccount4DB" resultType="hry.trade.redis.model.ExDigitalmoneyAccountRedis">
+        SELECT
+            id,
+            customerId,
+            hotMoney,
+            coldMoney,
+            userName,
+            coinCode
+        FROM
+            ex_digitalmoney_account
+        WHERE
+            customerId = #{customerId}
+        AND coinCode = #{coinCode}
+    </select>
+
+</mapper>

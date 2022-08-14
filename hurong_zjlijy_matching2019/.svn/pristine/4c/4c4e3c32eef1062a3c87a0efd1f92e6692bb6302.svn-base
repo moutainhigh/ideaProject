@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: hry.common2018:hry_base_utils:6.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://D:/workSoftware/apache_maven_local_repository/hry/common2018/hry_base_utils/6.0-SNAPSHOT/hry_base_utils-6.0-20190418.100841-115.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://D:/workSoftware/apache_maven_local_repository/hry/common2018/hry_base_utils/6.0-SNAPSHOT/hry_base_utils-6.0-20190418.100841-115-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://D:/workSoftware/apache_maven_local_repository/hry/common2018/hry_base_utils/6.0-SNAPSHOT/hry_base_utils-6.0-20190418.100841-115-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

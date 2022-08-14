@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.order.dao.EvaluateGoodsDao">
+       <resultMap id="BaseResultMap" type="hry.mall.order.model.EvaluateGoods">
+              <id column="id" property="id" javaType="java.lang.Long" />
+              <result column="created" property="created" javaType="java.util.Date" />
+              <result column="modified" property="modified" javaType="java.util.Date" />
+              <result column="orderId" property="orderId" javaType="java.lang.Long" />
+              <result column="orderSn" property="orderSn" javaType="java.lang.String" />
+              <result column="orderGoodsId" property="orderGoodsId" javaType="java.lang.Long" />
+              <result column="goodsId" property="goodsId" javaType="java.lang.Long" />
+              <result column="goodsName" property="goodsName" javaType="java.lang.String" />
+              <result column="gcId" property="gcId" javaType="java.lang.Long" />
+              <result column="gcName" property="gcName" javaType="java.lang.String" />
+              <result column="goodsPrice" property="goodsPrice" javaType="java.math.BigDecimal" />
+              <result column="memberId" property="memberId" javaType="java.lang.Long" />
+              <result column="userName" property="userName" javaType="java.lang.String" />
+              <result column="scores" property="scores" javaType="java.lang.Integer" />
+              <result column="content" property="content" javaType="java.lang.String" />
+              <result column="isanonymous" property="isanonymous" javaType="java.lang.Integer" />
+              <result column="state" property="state" javaType="java.lang.Integer" />
+              <result column="remark" property="remark" javaType="java.lang.String" />
+              <result column="specInfo" property="specInfo" javaType="java.lang.String" />
+              <result column="image" property="image" javaType="java.lang.String" />
+              <result column="isDel" property="isDel" javaType="java.lang.Integer" />
+              <result column="addcontent" property="addcontent" javaType="java.lang.String" />
+              <result column="addimage" property="addimage" javaType="java.lang.String" />
+              <result column="addtime" property="addtime" javaType="java.util.Date" />
+              <result column="replyContent" property="replyContent" javaType="java.lang.String" />
+              <result column="replyTime" property="replyTime" javaType="java.util.Date" />
+              <result column="replyStoreId" property="replyStoreId" javaType="java.lang.Long" />
+              <result column="replyStorename" property="replyStorename" javaType="java.lang.String" />
+              <result column="isReply" property="isReply" javaType="java.lang.Integer" />
+              <result column="isWarn" property="isWarn" javaType="java.lang.Integer" />
+              <result column="ipAddress" property="ipAddress" javaType="java.lang.String" />
+              <result column="headPortrait" property="headPortrait" javaType="java.lang.String" />
+       </resultMap>
+
+       <sql id="whereSql">
+              <if test="goodsId != null">
+                     AND e.goodsId = #{goodsId}
+              </if>
+              <if test="selectType != null and selectType == 1">
+                     AND e.scores in (4,5)
+              </if>
+              <if test="selectType != null and selectType == 2">
+                     AND e.scores in (2,3)
+              </if>
+              <if test="selectType != null and selectType == 3">
+                     AND e.scores = 1
+              </if>
+              <if test="selectType != null and selectType == 4">
+                     AND image != ""
+              </if>
+       </sql>
+       <select id="findEvaluateList" resultMap="BaseResultMap" parameterType="java.util.Map">
+              SELECT e.id,e.modified,e.orderId,e.orderSn,e.orderGoodsId,e.goodsId,e.goodsName,e.gcId,e.gcName,e.goodsPrice,
+              e.memberId,e.userName,e.scores,e.content,e.isanonymous,e.state,e.remark,e.specInfo,e.image,e.isDel,
+              e.addcontent,e.addimage,e.replyContent,e.replyTime,e.replyStoreId,e.replyStorename,e.isReply,
+              e.isWarn,e.ipAddress,e.created,a.headPortrait
+              FROM shop_evaluate_goods e
+              LEFT JOIN app_person_info a
+              ON e.memberId = a.customerId
+              WHERE 1=1
+              <include refid="whereSql"/>
+              and state = 0
+              ORDER BY created DESC
+              <if test="limit != null and limit == ''">
+              limit #{limit}, 5
+              </if>
+       </select>
+
+       <select id="countEvaluateGoods" resultType="int" parameterType="java.util.Map">
+            select COUNT(*)
+            FROM  shop_evaluate_goods e
+            WHERE 1=1
+            <include refid="whereSql"/>
+       </select>
+
+       <select id="getExDigitalmoneyAccount" resultType="hry.mall.order.model.vo.ExDigitalmoneyAccount" parameterType="java.util.Map">
+              select *
+              FROM  ex_digitalmoney_account e
+              WHERE  e.customerId=#{customerId}
+                     and  e.coinCode=#{coinCode}
+       </select>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- 好友关系-具体的实现bean -->
+    <bean id="remoteFriendServiceImpl" class="hry.social.manage.remote.friend.RemoteFriendServiceImpl"/>
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service ref="remoteFriendServiceImpl" interface="hry.social.manage.remote.api.friend.RemoteFriendService"/><!-- 好友关系-具体的实现bean -->
+
+    <!-- 朋友圈-具体的实现bean -->
+    <bean id="remoteFriendCircleServiceImpl" class="hry.social.manage.remote.friend.RemoteFriendCircleServiceImpl"/>
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service ref="remoteFriendCircleServiceImpl" interface="hry.social.manage.remote.api.friend.RemoteFriendCircleService"/>
+</beans>  

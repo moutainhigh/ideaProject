@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v2/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v2_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v2_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v3_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v3_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v4/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v4/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v4_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v4_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v5/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v5/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v5_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_cloudmining_v5_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_financail/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_financail/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_financail_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_financail_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_mall" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_mall/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_mall/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_mall_api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_mall_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_mall_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_otc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_otc/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_otc_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_otc_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_single/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_single/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_single_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_single_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_social" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_social/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_social/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_social_api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_social_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_social_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_web_trade/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_web_trade/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_web_trade_api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hry_web_trade_api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

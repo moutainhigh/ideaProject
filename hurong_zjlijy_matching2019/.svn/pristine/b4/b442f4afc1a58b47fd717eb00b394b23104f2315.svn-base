@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="hry_social:war">
+    <output-path>$PROJECT_DIR$/hry_social/target</output-path>
+    <root id="archive" name="social.war">
+      <element id="artifact" artifact-name="hry_social:war exploded" />
+    </root>
+  </artifact>
+</component>

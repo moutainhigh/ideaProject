@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.order.dao.OrderDao">
+    <resultMap id="BaseResultMap" type="hry.mall.order.model.Order">
+        <id column="id" property="id" javaType="java.lang.Long"/>
+        <result column="created" property="created" javaType="java.util.Date"/>
+        <result column="modified" property="modified" javaType="java.util.Date"/>
+        <result column="saasId" property="saasId" javaType="java.lang.String"/>
+        <result column="orderSn" property="orderSn" javaType="java.lang.String"/>
+        <result column="memberName" property="memberName" javaType="java.lang.String"/>
+        <result column="memberId" property="memberId" javaType="java.lang.Long"/>
+        <result column="userName" property="userName" javaType="java.lang.String"/>
+        <result column="goodsAmount" property="goodsAmount" javaType="java.math.BigDecimal"/>
+        <result column="discount" property="discount" javaType="java.math.BigDecimal"/>
+        <result column="orderAmount" property="orderAmount" javaType="java.math.BigDecimal"/>
+        <result column="orderTotalPrice" property="orderTotalPrice" javaType="java.math.BigDecimal"/>
+        <result column="paymentId" property="paymentId" javaType="java.lang.Long"/>
+        <result column="paymentName" property="paymentName" javaType="java.lang.String"/>
+        <result column="tradeSn" property="tradeSn" javaType="java.lang.String"/>
+        <result column="paymentTime" property="paymentTime" javaType="java.util.Date"/>
+        <result column="paymentState" property="paymentState" javaType="java.lang.Integer"/>
+        <result column="orderSort" property="orderSort" javaType="java.lang.Integer"/>
+        <result column="orderState" property="orderState" javaType="java.lang.Integer"/>
+        <result column="orderSource" property="orderSource" javaType="java.lang.String"/>
+        <result column="orderMessage" property="orderMessage" javaType="java.lang.String"/>
+        <result column="shipTime" property="shipTime" javaType="java.util.Date"/>
+        <result column="shippingExpressId" property="shippingExpressId" javaType="java.lang.Long"/>
+        <result column="shippingExpressName" property="shippingExpressName" javaType="java.lang.String"/>
+        <result column="shippingCode" property="shippingCode" javaType="java.lang.String"/>
+        <result column="finnshedTime" property="finnshedTime" javaType="java.util.Date"/>
+        <result column="evaluationTime" property="evaluationTime" javaType="java.util.Date"/>
+        <result column="shippingFee" property="shippingFee" javaType="java.math.BigDecimal"/>
+        <result column="refundAmount" property="refundAmount" javaType="java.math.BigDecimal"/>
+        <result column="shippingName" property="shippingName" javaType="java.lang.String"/>
+        <result column="evaluationStatus" property="evaluationStatus" javaType="java.lang.Integer"/>
+        <result column="refundState" property="refundState" javaType="java.lang.Integer"/>
+        <result column="returnState" property="returnState" javaType="java.lang.Integer"/>
+        <result column="returnNum" property="returnNum" javaType="java.lang.Integer"/>
+        <result column="balanceState" property="balanceState" javaType="java.lang.Integer"/>
+        <result column="payId" property="payId" javaType="java.lang.Long"/>
+        <result column="paySn" property="paySn" javaType="java.lang.String"/>
+        <result column="balanceTime" property="balanceTime" javaType="java.util.Date"/>
+        <result column="cancelCause" property="cancelCause" javaType="java.lang.String"/>
+        <result column="receiveName" property="receiveName" javaType="java.lang.String"/>
+        <result column="detailAddress" property="detailAddress" javaType="java.lang.String"/>
+        <result column="cellphone" property="cellphone" javaType="java.lang.String"/>
+        <result column="goodsName" property="goodsName" javaType="java.lang.String"/>
+        <result column="balanceCount" property="balanceCount" javaType="java.lang.String"/>
+        <result column="platCount" property="platCount" javaType="java.lang.String"/>
+        <result column="oneLevelCount" property="oneLevelCount" javaType="java.lang.String"/>
+        <result column="twoLevelCount" property="twoLevelCount" javaType="java.lang.String"/>
+        <result column="balanceCode" property="balanceCode" javaType="java.lang.String"/>
+        <result column="goodsNum" property="goodsNum" javaType="java.lang.String"/>
+        <result column="goodsPrice" property="goodsPrice" javaType="java.lang.String"/>
+
+    </resultMap>
+     <resultMap id="UnionResultMap" type="hry.mall.order.model.vo.OrderRefundVo">
+        <id column="id" property="id" javaType="java.lang.Long"/>
+        <result column="handTime" property="handTime" javaType="java.util.Date"/>
+        <result column="memberId" property="memberId" javaType="java.lang.Long"/>
+        <result column="coinCode" property="coinCode" javaType="java.lang.String"/>
+        <result column="number" property="number" javaType="java.lang.String"/>
+        <result column="coinCount" property="coinCount" javaType="java.lang.String"/>
+        <result column="name" property="name" javaType="java.lang.String"/>
+        <result column="type" property="type" javaType="java.lang.String"/>
+    </resultMap>
+
+    <resultMap id="BalanceResultMap" type="hry.mall.order.model.vo.OrderBalanceVo">
+    </resultMap>
+
+    <select id="findUnionBySql" parameterType="java.util.Map"
+            resultMap="UnionResultMap">
+            select * from (select o.id,o.orderSn as number,o.memberId,o.coinCode,CONCAT('-',(o.coinCount+o.coinFeeCount))   as coinCount,o.paymentTime  as handTime,'数币购物' as name,1 as type  from shop_order  o where o.orderState in (20,30,40,70) and o.payType in (2,3)
+            UNION 
+            SELECT r.id,r.refundSn as number, r.memberId,r.refundCoinCode as coinCode , CONCAT('+',r.refundCoinCount) as coinCount,r.receiveTime as handTime ,'退款/退货' as name,2 as type from shop_refund r where r.refundState=3 and r.refundWay=2
+            ) as a
+        <where>
+            1=1
+            <if test="memberId !=null and memberId!='' ">
+                and a.memberId = #{memberId}
+            </if>
+        </where>
+         ORDER BY a.handTime DESC
+    </select>
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        o.id,
+        o.orderSn,
+        o.userName,
+        o.memberId,
+        o.memberName,
+        o.orderState,
+        o.goodsAmount,
+        o.discount,
+        o.paymentName,
+        o.paymentId,
+        o.orderAmount,
+        o.orderTotalPrice,
+        o.tradeSn,
+        o.orderSort,
+        o.orderSource,
+        o.finnshedTime,
+        o.created,
+        o.modified,
+        a.cellphone,
+        a.receiveName,
+        a.detailAddress,
+        GROUP_CONCAT(g.goodsName SEPARATOR ',') goodsName
+        FROM
+        shop_order o
+        LEFT JOIN shop_order_address a ON o.id = a.orderId
+        LEFT JOIN shop_order_goods g on o.id = g.orderId
+        <where>
+            1=1
+            <if test="orderSn!=null and orderSn!='' ">
+                and o.orderSn like #{orderSn}
+            </if>
+            <if test="userName!=null and userName!='' ">
+                and o.userName like #{userName}
+            </if>
+            <if test="goodsName!=null and goodsName!='' ">
+                and g.goodsName like #{goodsName}
+            </if>
+            <if test="receivePerson !=null and receivePerson !='' ">
+                and a.receiveName like #{receivePerson}
+            </if>
+            <if test="orderState !=null and orderState!='' ">
+                and o.orderState = #{orderState}
+            </if>
+            <if test="created !=null and created!='' ">
+                and o.created &gt;= #{created}
+            </if>
+            <if test="creatend !=null and creatend!='' ">
+                and o.created &lt;= #{creatend}
+            </if>
+        </where>
+        GROUP BY g.orderId
+        order by o.created desc
+    </select>
+
+<!-- 通过sql分页查询 -->
+    <select id="findByMemberIdAndStatus" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        o.id,
+        o.orderSn,
+        o.userName,
+        o.memberId,
+        o.memberName,
+        o.orderState,
+        o.goodsAmount,
+        o.discount,
+        o.paymentName,
+        o.paymentId,
+        o.orderAmount,
+        o.orderTotalPrice,
+        o.tradeSn,
+        o.orderSort,
+        o.orderSource,
+        o.finnshedTime,
+        o.created,
+        o.modified
+        FROM
+        shop_order o
+        LEFT JOIN shop_order_address a ON o.id = a.orderId
+        LEFT JOIN shop_order_goods g on o.id = g.orderId
+        <where>
+            1=1
+            <if test="orderSn!=null and orderSn!='' ">
+                and o.orderSn like #{orderSn}
+            </if>
+            <if test="userName!=null and userName!='' ">
+                and o.userName like #{userName}
+            </if>
+            <if test="goodsName!=null and goodsName!='' ">
+                and g.goodsName like #{goodsName}
+            </if>
+            <if test="receivePerson !=null and receivePerson !='' ">
+                and a.receiveName like #{receivePerson}
+            </if>
+            <if test="orderState !=null and orderState!='' ">
+                and o.orderState = #{orderState}
+            </if>
+            <if test="created !=null and created!='' ">
+                and o.created &gt;= #{created}
+            </if>
+            <if test="creatend !=null and creatend!='' ">
+                and o.created &lt;= #{creatend}
+            </if>
+        </where>
+        GROUP BY g.orderId
+        order by o.created desc
+    </select>
+
+    <!-- 通过sql查询商户结算信息 -->
+    <select id="findBalanceBySql" parameterType="java.util.Map"
+            resultMap="BalanceResultMap">
+        SELECT
+        o.id,o.orderSn,
+        o.merchantId,o.merchantName,GROUP_CONCAT(g.goodsName SEPARATOR ',') goodsName,
+        o.payCoin,o.created,o.payType,o.balanceState,o.userName,o.balanceTime,c.balanceCount,c.platCount,c.oneLevelCount,c.balanceCode,
+        c.twoLevelCount,g.goodsNum,g.goodsPrice
+        FROM
+        shop_order o
+        LEFT JOIN shop_order_goods g ON o.id = g.orderId
+        LEFT JOIN( SELECT c.orderId, c.balanceCode,
+        SUM(c.platCount) as platCount,SUM(c.oneLevelCount) as  oneLevelCount,SUM(c.twoLevelCount) as twoLevelCount,
+        GROUP_CONCAT( CONCAT(c.coinCode,'_',	c.storeCount) SEPARATOR ',') as balanceCount
+        FROM shop_order o
+        LEFT JOIN shop_order_coin c ON o.id = c.orderId
+        WHERE
+        o.merchantId > 0  and o.orderState in (20,30,40) GROUP BY o.id )  as c ON o.id = c.orderId
+
+        <where>
+            1=1  and o.merchantId>0 and o.orderState in (20,30,40)
+            <if test="merchantId !=null and merchantId!='' ">
+                and o.merchantId = #{merchantId}
+            </if>
+            <if test="orderId !=null and orderId!='' ">
+                and o.id = #{orderId}
+            </if>
+            <if test="orderSn!=null and orderSn!='' ">
+                and o.orderSn like #{orderSn}
+            </if>
+
+            <if test="goodsName!=null and goodsName!='' ">
+                and g.goodsName like #{goodsName}
+            </if>
+            <if test="merchantName!=null and merchantName!='' ">
+                and o.merchantName like #{merchantName}
+            </if>
+            <if test="orderState !=null and orderState!='' ">
+                and o.orderState = #{orderState}
+            </if>
+
+        </where>
+        GROUP BY g.orderId
+        order by o.created desc
+    </select>
+
+</mapper>

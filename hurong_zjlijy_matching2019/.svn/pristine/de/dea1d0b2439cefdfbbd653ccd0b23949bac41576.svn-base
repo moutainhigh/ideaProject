@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.integral.dao.CustomerIntegralDao">
+
+    <resultMap id="findPageBySqlMap" type="java.util.Map">
+        <id column="id" property="id" javaType="java.lang.Long"/>
+        <result column="modified" property="modified" javaType="java.util.Date"/>
+        <result column="memberId" property="memberId" javaType="java.lang.Long"/>
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String"/>
+        <result column="email" property="email" javaType="java.lang.String"/>
+        <result column="userFace" property="userFace" javaType="java.lang.String"/>
+        <result column="nickNameOtc" property="nickNameOtc" javaType="java.lang.String"/>
+        <result column="availableIntegral" property="availableIntegral" javaType="java.math.BigDecimal"/>
+        <result column="totalIntegral" property="totalIntegral" javaType="java.math.BigDecimal"/>
+        <result column="freezeIntegral" property="freezeIntegral" javaType="java.math.BigDecimal"/>
+    </resultMap>
+
+    <select id="findByTotal" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap">
+      SELECT
+        s.id,
+        s.memberId,
+        s.availableIntegral,
+        s.totalIntegral,
+        s.freezeIntegral,
+        c.nickNameOtc,
+        p.mobilePhone,
+        p.email,
+        s.modified,
+        c.userFace
+        FROM
+          shop_customer_integral s
+        LEFT JOIN app_customer c ON c.id = s.memberId
+        LEFT JOIN app_person_info p ON p.customerId = s.memberId
+        ORDER BY
+        s.totalIntegral DESC LIMIT 10
+
+    </select>
+
+
+    <select id="findNoDefaultLevel"  resultType="hry.mall.integral.model.CustomerIntegral">
+        select * from shop_customer_integral where levelId is null
+    </select>
+</mapper>

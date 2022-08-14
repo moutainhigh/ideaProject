@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.mall.integral.dao.IntegralDetailDao">
+    <resultMap id="findPageBySqlMap"   type="java.util.Map">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="receCode" property="receCode" javaType="java.lang.String" />
+        <result column="taskName" property="taskName" javaType="java.lang.String" />
+        <result column="rewardintegralCount" property="rewardintegralCount" javaType="java.math.BigDecimal" />
+        <result column="monthTeamIntegral" property="monthTeamIntegral" javaType="java.math.BigDecimal" />
+        <result column="todayTeamIntegral" property="todayTeamIntegral" javaType="java.math.BigDecimal" />
+        <result column="monthShopIntegral" property="monthShopIntegral" javaType="java.math.BigDecimal" />
+        <result column="todayShopIntegral" property="todayShopIntegral" javaType="java.math.BigDecimal" />
+        <result column="integralShop" property="integralShop" javaType="java.math.BigDecimal" />
+        <result column="integralTask" property="integralTask" javaType="java.math.BigDecimal" />
+        <result column="integralDistribution" property="integralDistribution" javaType="java.math.BigDecimal" />
+        <result column="taskId" property="taskId" javaType="java.lang.Long" />
+    </resultMap>
+    <!-- 通过sql分页查询 -->
+    <select id="findbyKey" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        SELECT
+        SUM(
+        CASE
+        WHEN created BETWEEN #{todayTime}
+        AND #{todayEndTime}
+        AND taskId = #{ShopKeyId} THEN
+        rewardintegralCount
+        ELSE
+        0
+        END
+        ) todayShopIntegral,
+        SUM(
+        CASE
+        WHEN created BETWEEN #{monthTime}
+        AND #{monthEndTime}
+        AND taskId = #{ShopKeyId} THEN
+        rewardintegralCount
+        ELSE
+        0
+        END
+        ) monthShopIntegral,
+        SUM(
+        CASE
+        WHEN created BETWEEN #{todayTime}
+        AND #{todayEndTime}
+        AND taskId = #{recommendShopKeyId} THEN
+        rewardintegralCount
+        ELSE
+        0
+        END
+        ) todayTeamIntegral,
+        SUM(
+        CASE
+        WHEN created BETWEEN #{monthTime}
+        AND #{monthEndTime}
+        AND taskId = #{recommendShopKeyId} THEN
+        rewardintegralCount
+        ELSE
+        0
+        END
+        ) monthTeamIntegral
+
+        FROM
+        shop_integral_detail d
+        <where>
+            1 = 1
+            <if test="memberId!=null and memberId!='' ">
+                and memberId =#{memberId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="findByRewardType" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        SELECT
+	SUM(
+		CASE
+		WHEN created BETWEEN #{startTime}
+		AND #{endTime}
+		AND rewardType = 1 THEN
+			rewardintegralCount
+		ELSE
+			0
+		END
+	) integralDistribution,
+	SUM(
+		CASE
+		WHEN created BETWEEN #{startTime}
+		AND #{endTime}
+		AND rewardType = 0 THEN
+			rewardintegralCount
+		ELSE
+			0
+		END
+	) integralShop,
+	SUM(
+		CASE
+		WHEN created BETWEEN #{startTime}
+		AND #{endTime}
+		AND rewardType = 2 THEN
+			rewardintegralCount
+		ELSE
+			0
+		END
+	) integralTask
+FROM
+	shop_integral_detail s
+    </select>
+
+
+    <select id="getThisMonthRoll" parameterType="java.lang.String" resultType="java.math.BigDecimal">
+        select SUM(callbackintegralCount) as thisMonthUseIntegral
+        FROM shop_integral_detail
+        where 1=1 AND finishDate >= date_add(curdate(),interval -day(curdate())+1 day) and finishDate <![CDATA[ <= ]]> now()
+          AND tradingType = 2  and  businessType in (2,3)
+          AND memberId = #{memberId,jdbcType=VARCHAR}
+        GROUP BY memberId
+    </select>
+
+</mapper>

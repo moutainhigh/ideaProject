@@ -1,0 +1,25 @@
+##
+app.name=hurong_single
+app.url=http://www.yisc.vip/app
+app.vueurl=http://www.yisc.vip/h5/index.html#/
+
+###########################authorization#################################
+app.oauthKey=8d9bc97c4152412d9cb29f62448c2b30
+app.oauthIp=172.31.222.45
+
+###########################cloud_storage#################################
+app.oss.type=oss
+app.img.server.type=oss
+## ������oss
+app.oss.endpoint=http://oss-cn-shanghai.aliyuncs.com
+app.oss.accessKeyId=LTAIUhOQSWklST7V
+app.oss.accessKeySecret=pelTrvNx0TaR7Vc51KJltP3fay98LL
+app.oss.publicBucketName=ahhym-exchange-public
+app.oss.privateBucketName=ahhym-exchange-private
+## ������oss ���л��Ե�ַ
+app.oss.uri =http://ahhym-exchange-public.oss-cn-shanghai.aliyuncs.com
+
+###########################yunxin_mi_config###############################
+app.YunXin.appKey=84cfc0c029b4d126680b5db9fbe1f6f6
+app.YunXin.appSecret=e3c970f4e51f
+app.YunXin.apiUrl=https://api.netease.im

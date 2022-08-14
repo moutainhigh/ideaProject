@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>hry.zjlijy.matching2019</groupId>
+        <artifactId>hurong_zjlijy_matching2019</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>hry_social</artifactId>
+    <packaging>war</packaging>
+
+
+    <properties>
+        <!-- 指定项目是JDK1.8版本 -->
+        <java-version>1.8</java-version>
+        <!--指定Maven用什么编码来读取源码及文档 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--指定Maven用什么编码来呈现 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- ***************************业务包依赖(开始)***************************** -->
+        <dependency>
+            <artifactId>hry_social_api</artifactId>
+            <groupId>hry.zjlijy.matching2019</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <!-- ***************************业务包依赖(结束)***************************** -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>hry.zjlijy.matching2019</groupId>
+            <artifactId>hry_single_api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!-- 默认 -->
+        <profile>
+            <id>main</id>
+            <properties>
+                <profile.active>main</profile.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+		<!--胡一茗商城测试-->
+		<profile>
+			<id>ahhym_cs</id>
+			<properties>
+				<profile.active>ahhym_cs</profile.active>
+			</properties>
+		</profile>
+		<!--胡一茗商城-->
+		<profile>
+			<id>ahhym_shangc</id>
+			<properties>
+				<profile.active>ahhym_shangc</profile.active>
+			</properties>
+		</profile>
+		<!--厦门自由客-->
+        <profile>
+            <id>fjxmzyk</id>
+            <properties>
+                <profile.active>fjxmzyk</profile.active>
+            </properties>
+        </profile>
+        <!--65社交+国际版商城-->
+        <profile>
+            <id>demo_65</id>
+            <properties>
+                <profile.active>demo_65</profile.active>
+            </properties>
+        </profile>
+		
+		<!--崔小龙电商+社交——测试系统-->
+        <profile>
+            <id>sxcuixl_ceshi</id>
+            <properties>
+                <profile.active>sxcuixl_ceshi</profile.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>sxcuixl</id>
+            <properties>
+                <profile.active>sxcuixl</profile.active>
+            </properties>
+        </profile>
+
+    <!--张某（老挝）-->
+        <profile>
+            <id>lwzhang</id>
+            <properties>
+                <profile.active>lwzhang</profile.active>
+            </properties>
+        </profile>
+    <!--李凯社交电商-->
+        <profile>
+            <id>lksd</id>
+            <properties>
+                <profile.active>lksd</profile.active>
+            </properties>
+        </profile>
+
+
+        
+    <!--尚诚电子tjscdz-->
+     <profile>
+      <id>tjscdz</id>
+      <properties>
+        <profile.active>tjscdz</profile.active>
+      </properties>
+     </profile>
+
+    </profiles>
+
+    <build>
+        <!-- 最终打包的名称 -->
+        <finalName>social</finalName>
+        <resources>
+            <resource>
+                <directory>src/${profile.active}/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- 编译的时候使用JDK7和UTF8编码 -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.19.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+
+            <plugin>
+                <groupId>hry_cash_base</groupId>
+                <artifactId>hry-maven-plugin</artifactId>
+                <version>0.0.2-SNAPSHOT</version>
+            </plugin>
+
+
+        </plugins>
+    </build>
+</project>

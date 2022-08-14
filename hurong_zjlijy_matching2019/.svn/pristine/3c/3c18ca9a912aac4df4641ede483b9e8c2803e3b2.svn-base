@@ -1,0 +1,1610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="hry_social:war exploded" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="97f6d1df-a8f7-4d0f-9429-943becfc54b8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/apply/RemoteApplyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/apply/RemoteApplyServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/apply/RemoteApplyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/apply/RemoteApplyService.java" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/hry_social_api/target/" />
+    <ignored path="$PROJECT_DIR$/hry_social/target/" />
+    <ignored path="$PROJECT_DIR$/hry_mall/target/" />
+    <ignored path="$PROJECT_DIR$/hry_mall_api/target/" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="-1880798954">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="5" />
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.open.time.16" value="1" />
+          <entry key="project.open.time.19" value="1" />
+          <entry key="project.open.time.2" value="2" />
+          <entry key="project.opened" value="5" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="class" value="1" />
+          <entry key="java" value="27" />
+          <entry key="name" value="1" />
+          <entry key="xml" value="17" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="CLASS" value="1" />
+          <entry key="JAVA" value="27" />
+          <entry key="PLAIN_TEXT" value="1" />
+          <entry key="XML" value="17" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="java" value="80" />
+          <entry key="xml" value="38" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="JAVA" value="80" />
+          <entry key="XML" value="38" />
+        </counts>
+      </usages-collector>
+    </session>
+    <session id="1330819783">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="class" value="6" />
+          <entry key="java" value="58" />
+          <entry key="properties" value="1" />
+          <entry key="xml" value="20" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="CLASS" value="6" />
+          <entry key="JAVA" value="58" />
+          <entry key="Properties" value="1" />
+          <entry key="XML" value="20" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="java" value="890" />
+          <entry key="xml" value="27" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="JAVA" value="890" />
+          <entry key="XML" value="27" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/apply/RemoteApplyService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="304">
+              <caret line="22" column="22" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/apply/RemoteApplyServiceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="464">
+              <caret line="48" column="39" lean-forward="true" selection-start-line="48" selection-start-column="39" selection-end-line="48" selection-end-column="39" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>categoryList</find>
+    </findStrings>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/service/SocialTaskItemService.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/service/impl/SocialTaskItemServiceImpl.java" />
+        <option value="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/task/RemoteTaskService.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/wishwall/RemoteWishWallServiceImpl.java" />
+        <option value="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/barrage/RemoteBarrageService.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/barrage/RemoteBarrageServiceImpl.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/feedback/service/SocialFeedbackService.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/feedback/service/impl/SocialFeedbackServiceImpl.java" />
+        <option value="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/feedback/RemoteFeedbackService.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/feedback/RemoteFeedbackServiceImpl.java" />
+        <option value="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/wishwall/RemoteWishWallService.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/runnable/SyncPickedRunnable.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/dao/SocialTaskItemDao.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/mapper/SocialTaskItemMapper.xml" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/task/RemoteTaskServiceImpl.java" />
+        <option value="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/task/SocialTask.java" />
+        <option value="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/task/SocialTaskType.java" />
+        <option value="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/apply/SocialApplyType.java" />
+        <option value="$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/apply/RemoteApplyService.java" />
+        <option value="$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/apply/RemoteApplyServiceImpl.java" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$PROJECT_DIR$/../apache-maven-3.3.9" />
+        <option name="userSettingsFile" value="D:\java\apache-maven-3.3.9\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="downloadDocsAutomatically" value="true" />
+        <option name="downloadSourcesAutomatically" value="true" />
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="hry_social_api" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="hry_social_api" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="hurong_matching2019" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+      </expand>
+      <select />
+    </treeState>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-10" />
+    <option name="y" value="-10" />
+    <option name="width" value="1350" />
+    <option name="height" value="1005" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State />
+          <State>
+            <id>Android</id>
+          </State>
+          <State>
+            <id>CorrectnessLintAndroid</id>
+          </State>
+          <State>
+            <id>LintAndroid</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Android</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+    <ConfirmationsSetting value="1" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="apply" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="barrage" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="feedback" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="task" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="wishwall" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+              <item name="model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="social" type="462c0819:PsiDirectoryNode" />
+              <item name="manage" type="462c0819:PsiDirectoryNode" />
+              <item name="remote" type="462c0819:PsiDirectoryNode" />
+              <item name="model" type="462c0819:PsiDirectoryNode" />
+              <item name="apply" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hurong_matching2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hurong_matching2019" type="462c0819:PsiDirectoryNode" />
+              <item name="hry_social_api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="hry" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="AndroidView" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1560946751463" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../social_zhugan" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.import" />
+    <property name="settings.editor.splitter.proportion" value="0.27868855" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="hry.social.manage.remote.model.apply" />
+      <recent name="hry.social.manage.remote.model.task" />
+    </key>
+  </component>
+  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
+    <UpdatedFiles>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Updated from server" />
+        <option name="myStatusName" value="Changed on server" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="CHANGED_ON_SERVER" />
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated" />
+          <option name="myStatusName" value="Changed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UPDATED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Created" />
+          <option name="myStatusName" value="Created" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CREATED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Deleted" />
+          <option name="myStatusName" value="Deleted" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="true" />
+          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Restored" />
+          <option name="myStatusName" value="Will be restored" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="RESTORED" />
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_poi_poi_3_9.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_slf4j_slf4j_simple_1_7_25.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_ehcache_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_event_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_web_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_servlet_jsp_jsp_api_2_2_1_b03.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_collections_commons_collections_3_2_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_plugin_spring_plugin_metadata_1_2_0_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_netty_netty_all_4_0_35_Final.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_fasterxml_jackson_core_jackson_core_2_5_0_rc1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_hibernate_hibernate_ehcache_4_3_7_Final.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_netty_netty_3_10_6_Final.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_slf4j_slf4j_api_1_7_25.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__tk_mybatis_mapper_3_5_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_fasterxml_jackson_core_jackson_annotations_2_7_5.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_logging_commons_logging_1_1_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__hry_common2018_hry_base_model_6_0_SNAPSHOT.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_google_guava_guava_25_0_jre.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_springfox_springfox_schema_2_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__hry_common2018_hry_base_redis_6_0_SNAPSHOT.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_jboss_logging_jboss_logging_annotations_1_2_0_Beta1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__log4j_apache_log4j_extras_1_2_17.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__antlr_antlr_2_7_7.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__mysql_mysql_connector_java_5_1_46.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_codehaus_mojo_animal_sniffer_annotations_1_14.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_google_code_findbugs_jsr305_1_3_9.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__stax_stax_api_1_0_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_aspectj_aspectjrt_1_8_13.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_springfox_springfox_swagger2_2_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_webmvc_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_jsoup_jsoup_1_11_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__software_amazon_ion_ion_java_1_0_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_activation_activation_1_1_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_httpcomponents_httpmime_4_5_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_jboss_logging_jboss_logging_3_1_3_GA.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_jboss_spec_javax_transaction_jboss_transaction_api_1_2_spec_1_0_0_Final.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_alibaba_druid_1_1_10.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_swagger_swagger_models_1_5_6.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_httpclient_commons_httpclient_3_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__hry_common2018_hry_base_utils_6_0_SNAPSHOT.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_cache_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_zookeeper_zookeeper_3_4_13.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_mail_mail_1_4_7.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_codehaus_woodstox_stax2_api_3_1_4.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_freemarker_freemarker_2_3_28.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__net_coobird_thumbnailator_0_4_8.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_persistence_persistence_api_1_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_data_spring_data_redis_1_6_4_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__net_sf_ezmorph_ezmorph_1_0_6.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__joda_time_joda_time_2_5.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_config_ogdl_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_config_core_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_opensymphony_quartz_quartz_1_6_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_lang_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_servlet_javax_servlet_api_3_0_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_github_sgroschupf_zkclient_0_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_io_commons_io_2_4.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_mangofactory_swagger_models_1_0_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__redis_clients_jedis_2_6_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_alibaba_fastjson_1_2_47.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_hibernate_javax_persistence_hibernate_jpa_2_1_api_1_0_0_Final.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_commons_commons_math3_3_6_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_springfox_springfox_spi_2_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_hibernate_hibernate_core_4_3_7_Final.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_dyuproject_protostuff_protostuff_api_1_0_11.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_expression_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_fasterxml_jackson_datatype_jackson_datatype_hibernate4_2_5_0_rc1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_jasig_cas_client_cas_client_core_3_2_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_google_j2objc_j2objc_annotations_1_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_servlet_jstl_1_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_mybatis_mybatis_spring_1_3_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_yetus_audience_annotations_0_5_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_codec_commons_codec_1_10.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_javaee_api_7_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_aliyun_oss_aliyun_sdk_oss_2_8_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_microsoft_azure_azure_storage_5_0_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_context_support_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_commons_commons_lang3_3_3_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__junit_junit_4_12.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_fasterxml_jackson_dataformat_jackson_dataformat_cbor_2_6_7.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_crazycake_shiro_redis_2_8_24.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_aspectj_aspectjweaver_1_8_13.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_core_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_rabbitmq_amqp_client_3_4_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_cas_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_dyuproject_protostuff_protostuff_collectionschema_1_0_11.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__net_bull_javamelody_javamelody_core_1_54_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_fasterxml_jackson_core_jackson_databind_2_5_0_rc1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_directwebremoting_dwr_3_0_0_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_httpcomponents_httpclient_4_5_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_aop_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_javassist_javassist_3_18_1_GA.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__log4j_log4j_1_2_17.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_amqp_spring_amqp_1_4_0_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_quartz_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_crypto_core_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_httpcomponents_httpcore_4_4_4.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_google_errorprone_error_prone_annotations_2_1_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_spring_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_springfox_springfox_swagger_ui_2_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_hibernate_common_hibernate_commons_annotations_4_0_5_Final.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_noggit_noggit_0_8.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_dyuproject_protostuff_protostuff_runtime_1_0_11.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_sun_mail_javax_mail_1_5_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__hry_base2019_hry_plugin_ueditor_6_0_SNAPSHOT.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_commons_commons_pool2_2_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_core_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_amqp_spring_rabbit_1_4_0_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_amazonaws_aws_java_sdk_s3_1_11_347.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_plugin_spring_plugin_core_1_2_0_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__net_sf_json_lib_json_lib_jdk15_2_2_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_beans_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_poi_poi_ooxml_schemas_3_9.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_amazonaws_aws_java_sdk_kms_1_11_347.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_orm_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_retry_spring_retry_1_1_2_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__jline_jline_0_9_94.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__it_sauronsoftware_javabase64_1_3_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_jboss_jandex_1_1_0_Final.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_slf4j_slf4j_log4j12_1_7_25.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_websocket_4_1_9_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_codehaus_woodstox_woodstox_core_asl_4_4_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_swagger_swagger_annotations_1_5_6.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_activation_activation_1_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_crypto_cipher_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__net_sf_ehcache_ehcache_core_2_4_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_hamcrest_hamcrest_core_1_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_web_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_springfox_springfox_swagger_common_2_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_checkerframework_checker_compat_qual_2_0_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_dyuproject_protostuff_protostuff_core_1_0_11.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_shiro_shiro_crypto_hash_1_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__taglibs_standard_1_1_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_github_jsqlparser_jsqlparser_0_9_5.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_oxm_4_1_9_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_solr_solr_solrj_7_5_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_alibaba_dubbo_2_5_10.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_jrobin_jrobin_1_5_9.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_slf4j_jcl_over_slf4j_1_7_24.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_json_json_20160810.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_messaging_4_1_2_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__xml_apis_xml_apis_1_0_b2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_belerweb_pinyin4j_2_5_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_slf4j_slf4j_nop_1_7_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__nl_bitwalker_UserAgentUtils_1_2_4.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_amazonaws_aws_java_sdk_core_1_11_347.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_mybatis_mybatis_3_4_6.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_xerial_snappy_snappy_java_1_1_4.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__javax_websocket_javax_websocket_api_1_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_beanutils_commons_beanutils_1_7_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_jdom_jdom_1_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_lang_commons_lang_2_4.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__dom4j_dom4j_1_6.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__junit_junit_4_11.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_net_commons_net_3_3.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_context_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_xmlbeans_xmlbeans_2_3_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_github_pagehelper_pagehelper_4_2_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__hry_common2018_hry_base_core_6_0_SNAPSHOT.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_apache_poi_poi_ooxml_3_9.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_microsoft_azure_azure_keyvault_core_0_8_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__commons_fileupload_commons_fileupload_1_3_1.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_springfox_springfox_core_2_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_tx_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__io_springfox_springfox_spring_web_2_4_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_amazonaws_jmespath_java_1_11_347.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_springframework_spring_jdbc_4_3_18_RELEASE.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_wordnik_swagger_annotations_1_3_11.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__org_nutz_nutz_1_b_51.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_mangofactory_swagger_springmvc_1_0_2.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\libraries\Maven__com_fasterxml_classmate_1_1_0.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\artifacts</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\artifacts\hry_social_war.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\artifacts\hry_social_war_exploded.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\artifacts\hry_mall_war.xml</PATH>
+          <PATH vcs="svn" revision="9036">D:\java\hurong_matching2019\.idea\artifacts\hry_mall_war_exploded.xml</PATH>
+        </FILE-GROUP>
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Modified" />
+        <option name="myStatusName" value="Modified" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MODIFIED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Skipped" />
+        <option name="myStatusName" value="Skipped" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SKIPPED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with conflicts" />
+        <option name="myStatusName" value="Will be merged with conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_CONFLICTS" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with tree conflicts" />
+        <option name="myStatusName" value="Merged with tree conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with property conflicts" />
+        <option name="myStatusName" value="Will be merged with property conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged" />
+        <option name="myStatusName" value="Will be merged" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Not in repository" />
+        <option name="myStatusName" value="Not in repository" />
+        <option name="mySupportsDeletion" value="true" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="UNKNOWN" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally added" />
+        <option name="myStatusName" value="Locally added" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_ADDED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally removed" />
+        <option name="myStatusName" value="Locally removed" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_REMOVED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Switched" />
+        <option name="myStatusName" value="Switched" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SWITCHED" />
+      </FILE-GROUP>
+    </UpdatedFiles>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Tomcat-8055-service" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat-8055-front" ALTERNATIVE_JRE_ENABLED="true" ALTERNATIVE_JRE_PATH="1.8">
+      <option name="UPDATE_ON_FRAME_DEACTIVATION" value="true" />
+      <option name="UPDATE_CLASSES_ON_FRAME_DEACTIVATION" value="true" />
+      <deployment>
+        <artifact name="hry_social:war exploded">
+          <settings>
+            <option name="CONTEXT_PATH" value="/" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="Unnamed_hurong_matching2019" />
+        <option name="HTTP_PORT" value="8055" />
+        <option name="JNDI_PORT" value="1055" />
+      </server-settings>
+      <predefined_log_file id="Tomcat" enabled="true" />
+      <predefined_log_file id="Tomcat Catalina" enabled="true" />
+      <predefined_log_file id="Tomcat Manager" enabled="false" />
+      <predefined_log_file id="Tomcat Host Manager" enabled="false" />
+      <predefined_log_file id="Tomcat Localhost Access" enabled="false" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="53265" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="JRebel Debug">
+        <option name="DEBUG_PORT" value="53267" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="JRebel Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="JRebel Executor">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="hry_social:war exploded" />
+        </option>
+      </method>
+    </configuration>
+  </component>
+  <component name="SshConsoleOptionsProvider">
+    <option name="myEncoding" value="UTF-8" />
+    <option name="myConnectionType" value="NONE" />
+  </component>
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
+    <configuration>C:\Users\yujl\AppData\Roaming\Subversion</configuration>
+    <supportedVersion>125</supportedVersion>
+    <option name="runUnderTerminal" value="true" />
+    <option name="sshConnectionType" value="PASSWORD" />
+  </component>
+  <component name="SvnFileUrlMappingImpl">
+    <option name="myMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\java\hurong_matching2019" />
+          <option name="myCopyRoot" value="D:\java\hurong_matching2019" />
+        </SvnCopyRootSimple>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\java\hurong_matching2019\.idea" />
+          <option name="myCopyRoot" value="D:\java\hurong_matching2019\.idea" />
+        </SvnCopyRootSimple>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\java\hurong_matching2019\hry_mall" />
+          <option name="myCopyRoot" value="D:\java\hurong_matching2019\hry_mall" />
+        </SvnCopyRootSimple>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\java\hurong_matching2019\hry_mall_api" />
+          <option name="myCopyRoot" value="D:\java\hurong_matching2019\hry_mall_api" />
+        </SvnCopyRootSimple>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\java\hurong_matching2019\hry_social" />
+          <option name="myCopyRoot" value="D:\java\hurong_matching2019\hry_social" />
+        </SvnCopyRootSimple>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\java\hurong_matching2019\hry_social_api" />
+          <option name="myCopyRoot" value="D:\java\hurong_matching2019\hry_social_api" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+    <option name="myMoreRealMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\java\hurong_matching2019" />
+          <option name="myCopyRoot" value="D:\java\hurong_matching2019" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="97f6d1df-a8f7-4d0f-9429-943becfc54b8" name="Default Changelist" comment="" />
+      <created>1559298602039</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1559298602039</updated>
+      <workItem from="1559298605030" duration="2073000" />
+      <workItem from="1559526171517" duration="20346000" />
+      <workItem from="1559612176422" duration="4908000" />
+      <workItem from="1559722172013" duration="700000" />
+      <workItem from="1560823165387" duration="7394000" />
+      <workItem from="1560836899093" duration="38006000" />
+    </task>
+    <task id="LOCAL-00001">
+      <created>1560845666943</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1560845666943</updated>
+    </task>
+    <task id="LOCAL-00002">
+      <created>1560845679001</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1560845679001</updated>
+    </task>
+    <task id="LOCAL-00003">
+      <created>1560850245102</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1560850245102</updated>
+    </task>
+    <task id="LOCAL-00004">
+      <created>1560850258031</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1560850258031</updated>
+    </task>
+    <task id="LOCAL-00005">
+      <created>1560853509470</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1560853509470</updated>
+    </task>
+    <task id="LOCAL-00006">
+      <created>1560853549155</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1560853549155</updated>
+    </task>
+    <task id="LOCAL-00007">
+      <created>1560853686702</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1560853686702</updated>
+    </task>
+    <task id="LOCAL-00008">
+      <created>1560853695921</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1560853695921</updated>
+    </task>
+    <task id="LOCAL-00009">
+      <created>1560930319048</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1560930319048</updated>
+    </task>
+    <task id="LOCAL-00010">
+      <created>1560935738047</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1560935738047</updated>
+    </task>
+    <task id="LOCAL-00011">
+      <created>1560935767906</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1560935767906</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="73427000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" weight="0.23391421" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Designer" order="2" />
+      <window_info id="JRebel" order="3" side_tool="true" />
+      <window_info id="Image Layers" order="4" />
+      <window_info id="UI Designer" order="5" />
+      <window_info id="Favorites" order="6" side_tool="true" />
+      <window_info id="Capture Tool" order="7" />
+      <window_info id="Web" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.27864215" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4427157" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Spring" order="7" />
+      <window_info anchor="bottom" id="JRebel remote servers log" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Java Enterprise" order="10" />
+      <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="12" weight="0.446959" />
+      <window_info anchor="bottom" id="Terminal" order="13" />
+      <window_info anchor="bottom" id="JRebel Executor" order="14" />
+      <window_info anchor="bottom" id="Application Servers" order="15" weight="0.32956153" />
+      <window_info anchor="bottom" id="Messages" order="16" weight="0.2036775" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Capture Analysis" order="4" />
+      <window_info anchor="right" id="JSF" order="5" />
+      <window_info anchor="right" id="Maven Projects" order="6" weight="0.3297587" />
+      <window_info anchor="right" id="Database" order="7" weight="0.3297587" />
+      <window_info anchor="right" id="Palette&#9;" order="8" />
+      <window_info anchor="right" id="Theme Preview" order="9" />
+      <window_info anchor="right" id="CDI" order="10" />
+      <window_info anchor="right" id="Bean Validation" order="11" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="LAST_COMMIT_MESSAGE" value="" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/service/impl/SocialTaskItemServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
+          <folding>
+            <element signature="e#808#809#0" expanded="true" />
+            <element signature="e#830#831#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/service/SocialTaskItemService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/task/SocialDownloadRecord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="24" column="13" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/sns/RemoteSnsService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="20" column="17" selection-start-line="20" selection-start-column="17" selection-end-line="20" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/mapper/SocialTaskRewardMapper.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/resources/spring/spring-dubbo-publish-shake.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="30" lean-forward="true" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/resources/spring/spring-dubbo-publish-task.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/wishwall/mapper/SocialWishWallMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1767" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/wishwall/service/SocialWishWallService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-68">
+          <caret line="25" column="17" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/wishwall/dao/SocialWishWallDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="18" column="17" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/resources/spring/spring-dubbo-publish-apply.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/resources/spring/spring-dubbo-sns-api.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/resources/spring/spring-dubbo-shake-api.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="98" selection-start-line="10" selection-start-column="98" selection-end-line="10" selection-end-column="98" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/resources/spring/spring-dubbo-task-api.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="42" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/shake/RemoteShakeService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1317">
+          <caret line="12" column="17" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/resources/jdbc.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="52" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/resources/spring/spring-dubbo-wishwall-api.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="46" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/mavenRepository/hry/global/mall/hry_web_service_api/0.0.1-SNAPSHOT/hry_web_service_api-0.0.1-SNAPSHOT.jar!/hry/manage/remote/model/User.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5473">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/mavenRepository/hry/global/mall/hry_web_service_api/0.0.1-SNAPSHOT/hry_web_service_api-0.0.1-SNAPSHOT.jar!/hry/manage/remote/model/AppCustomer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/resources/spring/spring-dubbo-barrage-api.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="45" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/wishwall/RemoteWishWallServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="559">
+          <caret line="229" column="2" selection-start-line="107" selection-start-column="4" selection-end-line="229" selection-end-column="2" />
+          <folding>
+            <element signature="e#747#748#0" expanded="true" />
+            <element signature="e#774#775#0" expanded="true" />
+            <element signature="e#1458#1459#0" expanded="true" />
+            <element signature="e#1485#1486#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/resources/spring/spring-dubbo-feedback-api.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="46" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/feedback/SocialFeedback.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="431">
+          <caret line="45" column="30" lean-forward="true" selection-start-line="45" selection-start-column="30" selection-end-line="45" selection-end-column="30" />
+          <folding>
+            <element signature="e#2995#2996#0" expanded="true" />
+            <element signature="e#3032#3033#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/feedback/service/impl/SocialFeedbackServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="996">
+          <caret line="76" selection-start-line="76" selection-end-line="76" />
+          <folding>
+            <element signature="e#1085#1086#0" expanded="true" />
+            <element signature="e#1107#1108#0" expanded="true" />
+            <element signature="e#1873#1888#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/feedback/service/SocialFeedbackService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/feedback/RemoteFeedbackService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/wishwall/RemoteWishWallService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="293">
+          <caret line="44" column="95" lean-forward="true" selection-start-line="44" selection-start-column="95" selection-end-line="44" selection-end-column="95" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/barrage/dao/SocialBarrageDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="17" column="33" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/mq/producer/service/GatherMessage.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/redis/SocialPickRedis.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/runnable/SyncPickedRunnable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1083">
+          <caret line="59" column="40" selection-start-line="59" selection-start-column="40" selection-end-line="59" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/apply/service/SocialApplyItemService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/feedback/RemoteFeedbackServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="265">
+          <caret line="40" column="21" selection-start-line="40" selection-start-column="21" selection-end-line="40" selection-end-column="21" />
+          <folding>
+            <element signature="e#513#514#0" expanded="true" />
+            <element signature="e#540#541#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/task/SocialTaskReward.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-266">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/mavenRepository/hry/global/mall/hry_web_service_api/0.0.1-SNAPSHOT/hry_web_service_api-0.0.1-SNAPSHOT.jar!/hry/manage/remote/model/AppDic.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/barrage/service/SocialBarrageService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/barrage/service/impl/SocialBarrageServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="26" column="25" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/apply/SocialApplyItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="24" column="13" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/task/SocialTaskItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-352">
+          <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/resources/spring/spring-dubbo-apply-api.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="43" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/dao/SocialTaskItemDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="17" selection-start-line="17" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/task/mapper/SocialTaskItemMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/apply/SocialApplyType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="56" column="50" selection-start-line="56" selection-start-column="50" selection-end-line="56" selection-end-column="50" />
+          <folding>
+            <element signature="e#564#565#0" expanded="true" />
+            <element signature="e#582#583#0" expanded="true" />
+            <element signature="e#619#620#0" expanded="true" />
+            <element signature="e#642#643#0" expanded="true" />
+            <element signature="e#670#671#0" expanded="true" />
+            <element signature="e#688#689#0" expanded="true" />
+            <element signature="e#725#726#0" expanded="true" />
+            <element signature="e#748#749#0" expanded="true" />
+            <element signature="e#777#778#0" expanded="true" />
+            <element signature="e#796#797#0" expanded="true" />
+            <element signature="e#835#836#0" expanded="true" />
+            <element signature="e#860#861#0" expanded="true" />
+            <element signature="e#935#936#0" expanded="true" />
+            <element signature="e#999#1000#0" expanded="true" />
+            <element signature="e#1034#1035#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/task/RemoteTaskServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="122">
+          <caret line="31" column="15" lean-forward="true" selection-start-line="31" selection-start-column="15" selection-end-line="31" selection-end-column="15" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/task/RemoteTaskService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="24" column="16" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="16" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/barrage/RemoteBarrageServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="10" column="65" selection-start-line="10" selection-start-column="65" selection-end-line="10" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/barrage/RemoteBarrageService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/model/task/SocialTaskType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="35" selection-start-line="25" selection-start-column="3" selection-end-line="35" />
+          <folding>
+            <element signature="e#601#602#0" expanded="true" />
+            <element signature="e#628#629#0" expanded="true" />
+            <element signature="e#668#669#0" expanded="true" />
+            <element signature="e#700#701#0" expanded="true" />
+            <element signature="e#731#732#0" expanded="true" />
+            <element signature="e#758#759#0" expanded="true" />
+            <element signature="e#798#799#0" expanded="true" />
+            <element signature="e#830#831#0" expanded="true" />
+            <element signature="e#862#863#0" expanded="true" />
+            <element signature="e#890#891#0" expanded="true" />
+            <element signature="e#932#933#0" expanded="true" />
+            <element signature="e#966#967#0" expanded="true" />
+            <element signature="e#1015#1016#0" expanded="true" />
+            <element signature="e#1046#1047#0" expanded="true" />
+            <element signature="e#1108#1109#0" expanded="true" />
+            <element signature="e#1148#1149#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/social/manage/remote/api/apply/RemoteApplyService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="22" column="22" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social_api/src/main/java/hry/util/NoticeTemplateUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3640">
+          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hry_social/src/main/java/hry/social/manage/remote/apply/RemoteApplyServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="48" column="39" lean-forward="true" selection-start-line="48" selection-start-column="39" selection-end-line="48" selection-end-column="39" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <last-edited>hry_mall:war</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Spring</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>hry_social</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Maven: antlr:antlr:2.7.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

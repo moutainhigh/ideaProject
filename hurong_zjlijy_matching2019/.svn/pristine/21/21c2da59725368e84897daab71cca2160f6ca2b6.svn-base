@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.app.account.dao.OtcAccountRecordDao">
+
+    <insert id ="insertRecord" parameterType="java.util.List" >
+        insert into otc_account_record
+        (accountId, customerId, recordType,coinCode,
+        transactionMoney, transactionNum, remark,remarkkey,balanceMoney,monteyType,orderNum
+        )
+        values
+        <foreach collection ="list" item="record" index= "index" separator =",">
+            (
+            #{record.accountId},
+            #{record.customerId},
+            #{record.recordType},
+            #{record.coinCode},
+            #{record.transactionMoney},
+            #{record.transactionNum},
+            #{record.remark},
+            #{record.remarkkey},
+            #{record.balanceMoney},
+            #{record.monteyType},
+            #{record.orderNum}
+            )
+        </foreach>
+
+    </insert >
+
+    <select id="finePageAccountRecord" parameterType="java.util.Map" resultType="hry.otc.manage.remote.model.account.OtcAccountRecord">
+        select
+        r.orderNum,
+        r.accountId,
+        r.customerId,
+        r.coinCode,
+        r.recordType,
+        r.transactionMoney,
+        r.balanceMoney,
+        r.transactionNum,
+        r.remark,
+        r.remarkkey,
+        r.monteyType,
+        r.created,
+        r.modified
+        from otc_account_record r
+        <where>
+            r.customerId = #{customerId}
+            <if test="accountId != null and accountId != ''" >
+                and r.accountId = #{accountId}
+            </if>
+            <if test="tradeType != null  and tradeType != ''" >
+                and r.remarkkey = #{tradeType}
+            </if>
+            <if test="time_gte != null and time_gte != ''">
+                <![CDATA[ and r.created >= #{time_gte} ]]>
+            </if>
+            <if test="time_lte != null and time_lte != ''">
+                <![CDATA[ and r.created <= #{time_lte} ]]>
+            </if>
+        </where>
+        order by r.created desc
+    </select>
+</mapper>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.financail.financing.dao.AppFinancialProductsDao">
+
+    <sql id="BASE_TABLE">
+      app_financial_products
+    </sql>
+    <sql id="BASE_COLUMN">
+        afp.id,
+        afp.productNum,
+        afp.productName,
+        afp.coinCode,
+        afp.lockUpPeriod,
+        afp.incomeYearFloor,
+        (	CASE
+        WHEN NOW() BETWEEN afp.preheatingTime and afp.startTime and afp.stage=4 THEN '预热中'
+        WHEN NOW() BETWEEN afp.startTime and afp.endTime and afp.stage=4 and afp.status=1 THEN '投资中'
+        ELSE '已结束'
+        END) AS stageStr,
+        afp.investmentPeriod,
+        afp.startTime,
+        afpt.incomeType,
+	    afpt.remarks AS typeRemarks
+    </sql>
+
+    <sql id="BaseResult">
+        af.incomeTypeId,af.id,af.productNum,af.productName,af.coinCode,af.incomeYearFloor,af.lockUpPeriod,af.investmentPeriod,af.earlyRedemption,af.buyRate,
+        af.redemptionRate,af.interestBearing,af.repayment,af.totalMoney,af.maxNumber,af.minimumMoney,af.incrementalMoney,af.investmentCeilingMoney,af.preheatingTime,af.startTime,
+        af.endTime,af.startingInterestTime,af.returnOfPrincipalTime,af.canUseRedPackets,af.isRecommended,af.stage,af.status,IFNULL(au.investmentMoney,0) investmentMoney,au.expectedIncome,
+        au.realIncome,au.isRedeem,au.redeemPoundage,au.redPacketsMoney
+  </sql>
+
+    <sql id="oneResult">
+        af.incomeTypeId,af.id,af.productNum,af.productName,af.coinCode,af.incomeYearFloor,af.lockUpPeriod,af.investmentPeriod,af.earlyRedemption,af.buyRate,
+        af.redemptionRate,af.interestBearing,af.repayment,af.totalMoney,af.maxNumber,af.minimumMoney,af.incrementalMoney,af.investmentCeilingMoney,af.preheatingTime,af.startTime,
+        af.endTime,af.created,af.startingInterestTime,af.returnOfPrincipalTime,af.canUseRedPackets,af.isRecommended,af.stage,af.status,IFNULL(au.investmentMoney,0) investmentMoney
+  </sql>
+
+
+    <select id="findOne" resultType="hry.remote.model.AppFinancialProducts" parameterType="java.util.Map">
+        select <include refid="oneResult"/>
+        from  app_financial_products af
+        LEFT JOIN (select sum(au1.coinMoney+au1.redPacketsMoney) investmentMoney ,
+        au1.productId
+        from app_financial_user au1
+        GROUP BY au1.productId)
+        au on af.id=au.productId
+        <where>
+            <if test="id != null and id != ''">
+               and af.id = #{id}
+            </if>
+            <if test="coinCode != null and coinCode != ''">
+                and af.coinCode = #{coinCode}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="findOne_cy" resultType="hry.remote.model.AppFinancialProducts" parameterType="java.util.Map">
+        select <include refid="oneResult"/>
+        from  app_financial_products af
+        LEFT JOIN (select sum(au1.coinMoney+au1.redPacketsMoney) investmentMoney ,
+        au1.productId
+        from app_financial_user au1
+        GROUP BY au1.productId)
+        au on af.id=au.productId
+        <where>
+            NOW() BETWEEN af.startTime and af.endTime and af.stage=4 and af.status=1
+            <if test="id != null and id != ''">
+                and af.id = #{id}
+            </if>
+            <if test="coinCode != null and coinCode != ''">
+                and af.coinCode = #{coinCode}
+            </if>
+        </where>
+        ORDER BY af.created DESC
+        LIMIT 1
+    </select>
+
+    <select id="findFinaningProductList" resultType="hry.remote.model.AppFinancialProducts" parameterType="java.util.Map">
+
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/> AS afp
+        LEFT JOIN app_financial_product_type AS afpt ON afp.incomeTypeId = afpt.id
+        <where>
+            afp.`status` = 1
+            <if test="stage == 0">
+                and 1=1
+                /* and NOW() BETWEEN afp.preheatingTime and afp.endTime and afp.stage=4 and afp.status=1*/
+            </if>
+            <if test="stage ==1">
+                and NOW() BETWEEN afp.preheatingTime and afp.startTime and afp.stage=4
+            </if>
+            <if test="stage == 2">
+                and NOW() BETWEEN afp.startTime and afp.endTime and afp.stage=4 and afp.status=1
+            </if>
+            <if test="stage == 3">
+                and NOW() > afp.endTime
+                /*and NOW() BETWEEN afp.startingInterestTime and afp.returnOfPrincipalTime and afp.stage=4 and afp.status=1*/
+            </if>
+            <if test="coinCode != null and coinCode != ''">
+                and afp.coinCode = #{coinCode}
+            </if>
+            <if test="incomeTypeId != null and incomeTypeId != ''">
+                and afp.incomeTypeId = #{incomeTypeId}
+            </if>
+          <if test="lockUpPeriod_LT != null and lockUpPeriod_LT != ''">
+              AND afp.lockUpPeriod >= #{lockUpPeriod_LT}
+          </if>
+            <if test="lockUpPeriod_GT != null and lockUpPeriod_GT != ''">
+                AND   <![CDATA[  afp.lockUpPeriod <=  #{lockUpPeriod_GT} ]]>
+            </if>
+
+            <if test="incomeYearFloor_LT != null and incomeYearFloor_LT !=''">
+                AND afp.incomeYearFloor >= #{incomeYearFloor_LT}
+            </if>
+            <if test="incomeYearFloor_GT != null and incomeYearFloor_GT != ''">
+                AND <![CDATA[  afp.incomeYearFloor <=  #{incomeYearFloor_GT} ]]>
+            </if>
+        </where>
+      ORDER BY afp.created DESC
+    </select>
+
+    <select id="findUserFinaningProductList" resultType="hry.remote.model.AppFinancialProducts" parameterType="java.util.Map" >
+        select <include refid="BaseResult"/>
+        from  app_financial_products af
+        JOIN
+        (select
+        au1.coinMoney  as investmentMoney ,
+        au1.redPacketsMoney,
+        au1.productId,
+        au1.expectedIncome,
+        au1.realIncome,
+        au1.isRedeem,
+        au1.redeemPoundage
+        from app_financial_user au1
+        where
+        au1.isDelete = 0 and
+        au1.customerId = #{customerId}
+        GROUP BY au1.productId) au
+        on af.id=au.productId
+        where  1=1
+        <choose>
+            <when test="stage == 2">
+                and af.status != 2 and (NOW() BETWEEN af.startTime and af.endTime) and au.isRedeem != 2
+            </when>
+            <when test="stage == 3">
+                and af.status != 2 and NOW() >= af.startingInterestTime and af.stage !=5 and af.stage !=6 and au.isRedeem != 2
+            </when>
+            <when test="stage == 5">
+                and af.stage = 5 OR au.isRedeem = 2
+            </when>
+            <when test="stage ==6">
+                and (af.status = 2 OR  af.stage = 6)
+            </when>
+        </choose>
+    </select>
+
+
+    <select id="findBetweenProduct" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM app_financial_products WHERE startTime <![CDATA[ <  ]]> NOW() AND returnOfPrincipalTime > NOW()
+    </select>
+</mapper>

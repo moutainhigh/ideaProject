@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.trade.entrust.dao.CommonDao"   >
+
+	<resultMap id="getAppcustomer" type="hry.customer.user.model.AppCustomer">
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+	</resultMap>
+	<select id="getAppUserByuserName"  parameterType="java.util.Map" resultMap="getAppcustomer" >
+    
+        select * from app_customer a where a.userName=#{userName,jdbcType=VARCHAR}  
+    </select>
+	<resultMap id="getAppPersonInfo" type="hry.customer.person.model.AppPersonInfo">
+		<result column="isOpenCoinFee" property="isOpenCoinFee" javaType="java.lang.Integer" />
+	</resultMap>
+	<select id="getAppPersonInfoBycustomerId"  parameterType="java.util.Map" resultMap="getAppPersonInfo" >
+
+		select isOpenCoinFee from app_person_info a where a.customerId=#{customerId,jdbcType=VARCHAR}
+	</select>
+
+	<resultMap id="getExcointocoin" type="hry.exchange.product.model.ExCointoCoin">
+		<result column="autoUsername" property="autoUsername" javaType="java.lang.String" />
+		<result column="customerId" property="customerId"  javaType="java.lang.Long"  />
+		<result column="autoCount" property="autoCount" javaType="java.math.BigDecimal" />
+		<result column="autoCountFloat" property="autoCountFloat" javaType="java.math.BigDecimal" />
+		<result column="autoPrice" property="autoPrice" javaType="java.math.BigDecimal" />
+		<result column="autoPriceFloat" property="autoPriceFloat" javaType="java.math.BigDecimal" />
+		<result column="isSratAuto" property="isSratAuto" javaType="java.lang.Integer" />
+		<result column="isFromChbtc" property="isFromChbtc" javaType="java.lang.Integer" />
+
+	</resultMap>
+	<select id="getExointocoinValid"  parameterType="java.util.Map" resultMap="getExcointocoin" >
+    
+       select * from ex_cointo_coin a   where a.state=1 
+    </select>
+
+  <select id="getExointocoinAll"  parameterType="java.util.Map" resultMap="getExcointocoin" > 
+    
+       select * from ex_cointo_coin 
+    </select>  
+	<resultMap id="getAppAccountmodel" type="hry.account.fund.model.AppAccount">
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="customerId" property="customerId"  javaType="java.lang.Long"  />
+		<result column="coldMoney" property="coldMoney" javaType="java.math.BigDecimal" />
+		<result column="hotMoney" property="hotMoney" javaType="java.math.BigDecimal" />
+		<result column="id" property="id"  javaType="java.lang.Long"  />
+	</resultMap>
+
+	<select id="getAppAccount"  parameterType="java.util.Map" resultMap="getAppAccountmodel" >
+    
+        select * from app_account a where a.customerId=#{customerId}  
+    </select>
+
+
+	<resultMap id="getListExDigitalmoneyAccountmodel" type="hry.exchange.account.model.ExDigitalmoneyAccount">
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="customerId" property="customerId"  javaType="java.lang.Long"  />
+		<result column="coldMoney" property="coldMoney" javaType="java.math.BigDecimal" />
+		<result column="hotMoney" property="hotMoney" javaType="java.math.BigDecimal" />
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+		<result column="id" property="id"  javaType="java.lang.Long"  />
+	</resultMap>
+	<select id="getListExDigitalmoneyAccount"  parameterType="java.util.Map" resultMap="getListExDigitalmoneyAccountmodel" >
+    
+      select * from ex_digitalmoney_account a where a.customerId=#{customerId}  
+    </select>
+
+	<resultMap id="getExRobot" type="hry.trade.robot.model.ExRobot">
+		<result column="priceSource" property="priceSource" javaType="java.lang.String" />
+		<result column="fixPriceCoinCode" property="fixPriceCoinCode" javaType="java.lang.String" />
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+
+	</resultMap>
+	<select id="getExRobotPriceSource"  parameterType="java.util.Map" resultMap="getExRobot" >
+    
+       select * from ex_robot a   where a.isSratAuto=1 and a.atuoPriceType=3 group by a.coinCode,a.fixPriceCoinCode ,a.priceSource 
+    </select>
+
+
+
+	<select id="getExRobotList"  parameterType="java.util.Map" resultMap="getExRobot" >
+    
+       select * from ex_robot a   where a.isSratAuto=1 and a.robotType=#{robotType} 
+      </select>
+      
+      <resultMap id="getExRobotDeep" type="hry.trade.robot.model.ExRobotDeep">
+		<result column="fixPriceCoinCode" property="fixPriceCoinCode" javaType="java.lang.String" />
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+ 	 </resultMap>
+ 	 
+      <select id="getExRobotDeepList"  parameterType="java.util.Map" resultMap="getExRobotDeep" >
+    
+       select * from ex_robot_deep a   where a.isSratAuto=1 and a.robotType=#{robotType} 
+      </select>
+</mapper>

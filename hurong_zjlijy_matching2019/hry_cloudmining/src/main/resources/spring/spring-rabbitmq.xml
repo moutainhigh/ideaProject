@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+						http://www.springframework.org/schema/rabbit/spring-rabbit-1.4.xsd
+						http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+						http://www.springframework.org/schema/context 
+       					http://www.springframework.org/schema/context/spring-context.xsd ">
+	 
+	  
+	<rabbit:connection-factory id="connectionFactory"
+		host="${rabbitmq.url}" port="${rabbitmq.port}" username="${rabbitmq.username}" password="${rabbitmq.password}"
+		virtual-host="${rabbitmq.virtual-host}" />
+		
+		<!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+		<rabbit:admin id="connectAdmin" connection-factory="connectionFactory" />
+		
+		<!-- 定义生产者 -->
+		<!--定义queue -->
+		<rabbit:queue name="toAccount" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toTrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<!-- CM -->
+		<rabbit:queue name="toCmAccount" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toCmSonAccount" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toMinerCoinageByDay" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toCmUpdateGrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toCmBuyAndcloseMinerUpdateGrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toCmProfit1" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toCmProfit2" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		 <rabbit:queue name="toSocialReward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin"/>
+		 <rabbit:queue name="toCmBonus" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin"/>
+		
+		
+		<!-- 定义direct exchange，绑定queueTest -->
+		<rabbit:direct-exchange name="exchangeToTrade" durable="true" auto-delete="false" declared-by="connectAdmin">
+			<rabbit:bindings>
+				<rabbit:binding queue="toTrade" key="toTradeKey"></rabbit:binding>
+				<rabbit:binding queue="toAccount" key="toAccountKey"></rabbit:binding>
+				<rabbit:binding queue="toCmAccount" key="toCmAccountKey"></rabbit:binding>
+				<rabbit:binding queue="toCmSonAccount" key="toCmSonAccountKey"></rabbit:binding>
+				<rabbit:binding queue="toMinerCoinageByDay" key="toMinerCoinageByDayKey"></rabbit:binding>
+				<rabbit:binding queue="toCmUpdateGrade" key="toCmUpdateGradeKey"></rabbit:binding>
+				<rabbit:binding queue="toCmBuyAndcloseMinerUpdateGrade" key="toCmBuyAndcloseMinerUpdateGradeKey"></rabbit:binding>
+				<rabbit:binding queue="toCmProfit1" key="toCmProfit1Key"></rabbit:binding>
+				<rabbit:binding queue="toCmProfit2" key="toCmProfit2Key"></rabbit:binding>
+				<rabbit:binding queue="toSocialReward" key="toSocialRewardKey"></rabbit:binding>
+				<rabbit:binding queue="toCmBonus" key="toCmBonusKey"></rabbit:binding>
+			</rabbit:bindings>
+		</rabbit:direct-exchange>
+	
+		<!--定义rabbit template用于数据的接收和发送 -->
+		<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" exchange="exchangeToTrade" />
+		
+		<!--Cm -->
+		<bean id="messageCmAccount" class="hry.cm.mq.MessageCmAccount"></bean>
+		<bean id="messageCmSonAccount" class="hry.cmson.mq.MessageCmAccount"></bean>
+		<bean id="messageCmUpdateGrade" class="hry.cm.mq.MessageCmUpdateGrade"></bean>
+		<bean id="messageCmProfit1Key" class="hry.cm.mq.MessageCmProfit1"></bean>
+		<rabbit:listener-container connection-factory="connectionFactory" requeue-rejected="false" acknowledge="manual">
+			<rabbit:listener queues="toCmAccount" ref="messageCmAccount" />
+			<rabbit:listener queues="toCmSonAccount" ref="messageCmSonAccount" />
+			<rabbit:listener queues="toCmUpdateGrade" ref="messageCmUpdateGrade" />
+			<rabbit:listener queues="toCmProfit1" ref="messageCmProfit1Key" />
+		</rabbit:listener-container>
+			
+		<bean id="messageMinerCoinageByDay" class="hry.cm.mq.MessageCmMinerCoinageByDay"></bean>
+		<bean id="messageCmBuyAndcloseMinerUpdateGrade" class="hry.cm.mq.MessageCmBuyAndcloseMinerUpdateGrade"></bean>
+		<bean id="messageCmProfit2Key" class="hry.cm.mq.MessageCmProfit2"></bean>
+		<bean id="messageCmBonusKey" class="hry.cm.mq.MessageCmBonus"></bean>
+		<rabbit:listener-container connection-factory="connectionFactory" requeue-rejected="false" acknowledge="auto">
+			<rabbit:listener queues="toMinerCoinageByDay" ref="messageMinerCoinageByDay" />
+			<rabbit:listener queues="toCmBuyAndcloseMinerUpdateGrade" ref="messageCmBuyAndcloseMinerUpdateGrade" />
+			<rabbit:listener queues="toCmProfit2" ref="messageCmProfit2Key" />
+			<rabbit:listener queues="toCmBonus" ref="messageCmBonusKey" />
+		</rabbit:listener-container>
+			
+</beans>
+
+

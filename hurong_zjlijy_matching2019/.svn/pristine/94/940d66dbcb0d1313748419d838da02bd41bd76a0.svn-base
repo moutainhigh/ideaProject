@@ -1,0 +1,31 @@
+/**
+ * Copyright:   
+ * @author:      zhouming
+ * @version:     V1.0 
+ * @Date:        2020-01-08 14:05:03 
+ */
+package hry.cm5.miner.service.impl;
+
+import hry.cm5.miner.model.Cm5MinerOrder;
+import hry.cm5.miner.service.Cm5MinerOrderService;
+import hry.core.mvc.dao.base.BaseDao;
+import hry.core.mvc.service.base.impl.BaseServiceImpl;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p> Cm5MinerOrderService </p>
+ * @author:         zhouming
+ * @Date :          2020-01-08 14:05:03  
+ */
+@Service("cm5MinerOrderService")
+public class Cm5MinerOrderServiceImpl extends BaseServiceImpl<Cm5MinerOrder, Long> implements Cm5MinerOrderService{
+	
+	@Resource(name="cm5MinerOrderDao")
+	@Override
+	public void setDao(BaseDao<Cm5MinerOrder, Long> dao) {
+		super.dao = dao;
+	}
+	
+
+}

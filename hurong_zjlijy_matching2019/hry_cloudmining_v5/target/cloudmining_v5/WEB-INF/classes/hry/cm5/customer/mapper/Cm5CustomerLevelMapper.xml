@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm5.customer.dao.Cm5CustomerLevelDao">
+
+    <select id="getCustomerAddRatio" parameterType="java.lang.Long">
+        select tc.addPipeRatio from cm5_customer_level cl
+        LEFT JOIN cm5_teamlevel_config tc
+        ON cl.teamLevelId = tc.id
+        where cl.customerId = #{customerId}
+    </select>
+
+    <select id="findNextCustomerLevel" resultType="hry.cm5.customer.model.Cm5CustomerLevel" parameterType="java.lang.Long">
+        select c.customerId, IFNULL(b.teamLevelSort,0) teamLevelSort, IFNULL(b.addPipeRatio,0) as addPipeRatio
+        from
+        (select atl.customerId from app_teamlevel atl
+        where atl.parentId = #{customerId}
+        and atl.`level` = '1') c
+        LEFT JOIN
+        (select cl.customerId, cl.teamLevelSort, tc.addPipeRatio from cm5_customer_level cl
+        LEFT JOIN cm5_teamlevel_config tc
+        ON cl.teamLevelId = tc.id) b
+        ON c.customerId = b.customerId
+    </select>
+</mapper>

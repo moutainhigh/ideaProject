@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.shake.dao.SocialShakeFriendDao">
+
+    <!--分页查询-->
+    <select id="findPageList" resultType="hry.social.manage.remote.model.shake.SocialShakeFriend" parameterType="java.util.Map">
+        SELECT
+        ssf.*,
+        apiFriend.nickName AS friendName,
+        apiFriend.headPortrait AS headPortrait
+        FROM
+        social_shake_friend ssf
+        LEFT JOIN app_person_info apiFriend ON ssf.customerId = apiFriend.customerId
+        <where>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND apiFriend.friendName LIKE #{friendName}
+            </if>
+            <if test="shakeId!=null and shakeId!='' ">
+                AND ssf.shakeId = #{shakeId}
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                AND ssf.customerId = #{customerId}
+            </if>
+            <if test="status!=null and status!='' ">
+                AND ssf.states = #{status}
+            </if>
+        </where>
+        ORDER BY ssf.created DESC
+    </select>
+
+    <update id="updateRecord" parameterType="hry.social.manage.remote.model.shake.SocialShakeFriend">
+        UPDATE social_shake_friend
+        SET modified = #{modified},`states` = #{states}
+        WHERE
+        shakeId = #{shakeId}
+        <if test="states==1 ">
+            AND customerId = #{customerId}
+        </if>
+    </update>
+
+</mapper>

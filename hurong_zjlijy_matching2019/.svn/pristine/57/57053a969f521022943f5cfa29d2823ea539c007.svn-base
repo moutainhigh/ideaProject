@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.financail.financing.dao.AppFinancialActiveDao">
+
+
+    <select id="findFinancialActive" resultType="hry.financail.financing.model.AppFinancialActive"
+            parameterType="java.util.Map">
+        SELECT
+        *
+        FROM
+            app_financial_active afa
+            <where>
+                <if test="coinCode != null and coinCode != ''">
+                  and afa.coinCode = #{coinCode}
+                </if>
+                <if test="status != null and status != ''">
+                    and afa.status = #{status}
+                </if>
+                <if test="giftType != null and giftType != ''">
+                    and afa.giftType = #{giftType}
+                </if>
+                <if test="endTime != null and endTime != ''">
+                    <![CDATA[ and #{endTime} between afa.startTime and afa.endTime]]>
+                    <!--<![CDATA[ and afa.endTime >= #{endTime} ]]>-->
+                </if>
+            </where>
+
+
+    </select>
+
+</mapper>

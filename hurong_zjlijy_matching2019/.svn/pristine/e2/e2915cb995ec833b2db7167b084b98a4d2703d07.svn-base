@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.friend.dao.SocialFriendCommentDao">
+
+    <select id="getComments" resultType="hry.social.manage.remote.model.friend.SocialFriendComment">
+        SELECT
+            IFNULL(
+                sfr.friendsNote,
+                api.nickName
+            ) AS nickName,
+            api.headPortrait AS headPortrait,
+            api.mobilePhone AS mobilePhone,
+            sfc.comments AS comments,
+            sfc.created,
+            sfc.id,
+            sfc.customerId,
+            IFNULL(
+                fsfr.friendsNote,
+                fapi.nickName
+            ) AS friendsNote,
+            fapi.headPortrait AS friendsPortrait
+        FROM
+            social_friend_comment sfc
+        LEFT JOIN social_friend_relation sfr ON (
+            sfc.customerId = sfr.friendId
+            AND sfr.customerId = #{customerId}
+        )
+        LEFT JOIN app_person_info api ON sfc.customerId = api.customerId
+        LEFT JOIN social_friend_relation fsfr ON (
+            sfc.friendId = fsfr.friendId
+            AND fsfr.customerId = #{customerId}
+        )
+        LEFT JOIN app_person_info fapi ON sfc.friendId = fapi.customerId
+        WHERE
+            sfc.circleId = #{sfcId}
+        AND sfc.states = 0
+        ORDER BY
+            sfc.id;
+    </select>
+</mapper>

@@ -1,0 +1,7 @@
+##
+app.name=hurong_single
+app.url=http://47.244.217.55/app
+
+###########################authorization#################################
+app.oauthKey=d5c1ba14a2a6486892f8328ffe1b62f1
+app.oauthIp=172.31.222.43

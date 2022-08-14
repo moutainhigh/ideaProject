@@ -1,0 +1,7 @@
+HRY_TABLE=cm_son_account_record
+HRY_MODEL=CmSonAccountRecord
+HRY_PACKAGE=hry.cmson.account
+HRY_AUTH=yaozh
+url=jdbc:mysql://192.168.0.55:3306/hry_cxl_global_mall
+user=root
+password=Credit_2018Admin

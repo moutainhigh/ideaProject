@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.app.otc.releaseAdvertisement.dao.OtcAppTransactionDao">
+
+    <resultMap id="BaseResultMap" type="hry.otc.manage.remote.model.releaseAdvertisement.OtcAppTransaction"/>
+
+
+    <select id="adUserBy30" resultType="java.math.BigDecimal">
+		SELECT sum(tradeNum) FROM otc_app_transaction where DATE_SUB(CURDATE(), INTERVAL 30 DAY) = date(created) and (sellUserId =#{arg0} or buyUserId = #{arg0}) and coinCode=#{arg1} and `status` = 14
+	</select>
+
+    <select id="adUserAll" resultType="java.math.BigDecimal">
+		select sum(tradeNum) from otc_app_transaction where (sellUserId
+		=#{arg0} or buyUserId = #{arg0}) and `status`=14 and coinCode=#{arg1}
+	</select>
+
+    <select id="allTradeCount" parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        select count(*) from otc_app_transaction where 1 = 1
+        <if test="id != null and id != ''">
+            and (sellUserId = #{id} or buyUserId = #{id})
+        </if>
+        <if test="status !=null and status != ''">
+            and status = #{status}
+        </if>
+    </select>
+
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultType="hry.otc.manage.remote.model.releaseAdvertisement.OtcAppTransaction">
+		SELECT
+		a.*,b.remark as advertisementRemark ,
+        c.mobilePhone as buyMobile ,c.email as buyEmail,
+        d.mobilePhone as sellMobile ,d.email as sellEmail
+        FROM
+		otc_app_transaction AS a
+		left join release_advertisement as b on b.id=a.advertisementId
+        left join app_person_info as c on c.customerId=a.buyUserId
+        left join app_person_info as d on d.customerId=a.sellUserId
+        <where>
+            <if test="status != null and status != ''">
+                and a.status in
+                <foreach collection="status" index="index" item="status" open="(" separator="," close=")" >
+                    #{status}
+                </foreach>
+            </if>
+            <if test="buyMobilePhone != null and buyMobilePhone != ''">
+                and c.mobilePhone =#{ buyMobilePhone}
+            </if>
+            <if test="buyEmail != null and buyEmail != ''">
+                and c.email =#{ buyEmail}
+            </if>
+
+            <if test="sellMobilePhone != null and sellMobilePhone != ''">
+                and d.mobilePhone =#{ sellMobilePhone}
+            </if>
+            <if test="sellEmail != null and sellEmail != ''">
+                and d.email =#{ sellEmail}
+            </if>
+        </where>
+
+	</select>
+
+    <select id="findFrontPageBySql" resultType="hry.otc.manage.remote.model.releaseAdvertisement.OtcAppTransaction" parameterType="java.util.Map">
+      SELECT  * FROM   otc_app_transaction oat
+      <where>
+          <if test="status != null and status == '3'">
+              and oat.status in  (3,6,7)
+          </if>
+          <if test="status != null and status == '4'">
+              and oat.status in (4,9,10,11,12,15,16)
+          </if>
+          <if test="status != null and status != '3' and  status != '4'">
+              and oat.status = #{status}
+          </if>
+          <if test="sellUserId != null and sellUserId != ''">
+              and oat.sellUserId = #{sellUserId}
+          </if>
+          <if test="buyUserId != null and buyUserId != ''">
+              and oat.buyUserId = #{buyUserId}
+          </if>
+          <if test="transactionNum != null and transactionNum != ''">
+              and oat.transactionNum like #{transactionNum}
+          </if>
+          <if test="coinCode != null and coinCode != ''">
+              and oat.coinCode = #{coinCode}
+          </if>
+          <if test="buyIsDeleted != null and buyIsDeleted != ''">
+              and oat.buyIsDeleted = 0
+          </if>
+          <if test="sellIsDeleted != null and sellIsDeleted != ''">
+              and oat.sellIsDeleted = 0
+          </if>
+
+          <if test="transactionMode != null and transactionMode == '3'">
+              and (oat.sellUserId = #{sellUserId} or oat.buyUserId = #{buyUserId})
+          </if>
+      </where>
+
+
+    </select>
+
+
+    <select id="findOtcAppTransactionListBySql" resultType="hry.otc.manage.remote.model.releaseAdvertisement.OtcAppTransaction" parameterType="java.util.Map">
+        SELECT  oat.* FROM   otc_app_transaction oat left join release_advertisement as b on b.id=oat.advertisementId
+        <where>
+            <if test="status != null and status == 3">
+                and oat.status in  (3,6,7)
+            </if>
+            <if test="status != null and status == 4">
+                and oat.status in (4,9,10,11,12,15,16)
+            </if>
+            <if test="status != null and status != 3 and  status != 4">
+                and oat.status = #{status}
+            </if>
+            <if test="sellUserId != null and sellUserId != ''">
+                and oat.sellUserId = #{sellUserId} and b.customerId !=#{sellUserId}
+            </if>
+            <if test="buyUserId != null and buyUserId != ''">
+                and oat.buyUserId = #{buyUserId} and b.customerId != #{buyUserId}
+            </if>
+            <if test="transactionNum != null and transactionNum != ''">
+                and oat.transactionNum like #{transactionNum}
+            </if>
+            <if test="coinCode != null and coinCode != ''">
+                and oat.coinCode = #{coinCode}
+            </if>
+            <if test="buyIsDeleted != null and buyIsDeleted != ''">
+                and oat.buyIsDeleted = 0
+            </if>
+            <if test="sellIsDeleted != null and sellIsDeleted != ''">
+                and oat.sellIsDeleted = 0
+            </if>
+            <if test="transactionMode != null and transactionMode == '3'">
+                and (oat.sellUserId = #{sellUserId} or oat.buyUserId = #{buyUserId})
+            </if>
+        </where>
+        order by oat.created desc
+
+    </select>
+
+    <select id="getTransactionSumById" resultType="java.util.Map">
+        SELECT
+            IFNULL(sum(a.tradeNum), 0) tradeNum,
+            IFNULL(sum(a.sellfee), 0) sellfee,
+            IFNULL(sum(a.buyfee), 0) buyfee,
+            IFNULL(sum(a.tradeMoney), 0) tradeMoney,
+            COUNT(*) con,a.`status`
+        FROM
+            otc_app_transaction a
+                LEFT JOIN release_advertisement b ON a.advertisementId = b.id
+        WHERE
+            a.advertisementId = #{arg0} GROUP BY a.`status`
+    </select>
+
+    <insert id="saveOtcLog">
+        insert into otc_log(transactionId, type,content, created,modified, saasId) values (
+         #{arg0},11,'超时自动取消',now(),now(),'1')
+    </insert>
+
+    <select id="getOrderSumBy30" resultType="java.lang.Integer">
+        <![CDATA[
+        SELECT count(o.id) FROM otc_app_transaction o LEFT JOIN release_advertisement r on o.advertisementId = r.id and o.customerId != r.customerId
+                  where DATE_SUB(CURDATE(), INTERVAL 30 DAY)<= date(o.created)
+                      and (o.sellUserId =#{arg0} or o.buyUserId = #{arg0}) and o.coinCode=#{arg1} and  o.`status` = 14]]>
+    </select>
+</mapper>

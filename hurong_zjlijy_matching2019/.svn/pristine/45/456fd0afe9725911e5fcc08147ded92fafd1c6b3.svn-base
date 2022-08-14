@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.feedback.dao.SocialFeedbackDao">
+
+    <select id="findPageList" resultType="hry.social.manage.remote.model.feedback.SocialFeedback">
+        SELECT
+        sf.*,
+        api.mobilePhone AS mobile,
+        api.nickName AS name
+        FROM
+        social_feedback sf
+        LEFT JOIN
+        app_person_info api
+        ON sf.customerId = api.customerId
+        <where>
+            <if test="customerId!=null and customerId!='' ">
+                AND sf.customerId = #{customerId}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                AND api.mobilePhone LIKE #{mobilePhone}
+            </if>
+            <if test="orderNum!=null and orderNum!='' ">
+                AND sf.orderNum = #{orderNum}
+            </if>
+            <if test="createdGT!=null and createdGT!='' ">
+                AND sf.created &gt;= #{createdGT}
+            </if>
+            <if test="createdLT!=null and createdLT!='' ">
+                AND sf.created &lt;= #{createdLT}
+            </if>
+        </where>
+        ORDER BY sf.created DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.social.force.dao.SocialForceCoinAdditionDao">
+
+    <!--统计有效的算力加成总和-->
+    <select id="findAddition" resultType="java.math.BigDecimal">
+		SELECT
+			IFNULL(SUM(addition),0)
+		FROM
+			social_force_coin_addition
+		WHERE
+			endTime > NOW() AND
+			additionType !=2 AND
+			customerId = #{customerId}
+    </select>
+
+    <select id="findVip" resultType="hry.social.manage.remote.model.force.SocialForceCoinAddition">
+		SELECT
+			*
+		FROM
+			social_force_coin_addition
+		WHERE
+			endTime > NOW() AND
+			sourceType = 2 AND
+			customerId = #{customerId}
+	</select>
+</mapper>

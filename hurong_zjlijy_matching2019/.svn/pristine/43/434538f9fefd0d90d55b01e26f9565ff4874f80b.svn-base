@@ -1,0 +1,40 @@
+app.admin=admin
+app.name=hurong_manage
+app.key=manage
+app.ip=127.0.0.1
+app.port=8080
+app.url=http\://www.200.net/static
+
+app.oauthKey=8d9bc97c4152412d9cb29f62448c2b30
+app.oauthIp=172.31.222.36
+
+app.emailurl_cn=http\://www.200.com/exmain
+app.emailurl_en=http\://www.200.com/exmain
+app.email.host = smtp.126.com
+app.email.auth = true
+app.email.protocol = smtp
+app.email.userName = wu_shuiming@126.com
+app.email.agreedUser = wu_shuiming
+app.email.agreedPwd = mike123456789
+
+app.smsServiceName=sdkService
+app.smsUrl=http\://www.200.net/manage
+app.smsKey=hurongyuseen
+app.sms.hxusername=101100-WEB-JZWW-482566
+app.sms.hxpassword=RUXUANSI
+app.sms.common=\u5C0A\u656C\u7684\u7528\u6237\uFF1A\u60A8\u7684\u9A8C\u8BC1\u7801\u4E3A\uFF1AHRY_CODE\u3010\u4E92\u878D\u4E91\u5E01\u3011
+
+app.properties
+jdbc.properties
+app.saasId=402880e4514780120151479ac3a50005
+app.socketUrl=ws\://172.16.1.222\:8080/hurong_socketserver
+app.coinip=http\://127.0.0.1\:6060
+app.website_en=hurongbi.com
+app.loadApp=exchange,account,customer,web,sms,thirdpay,calculate,mqapp
+app.loadweb=cn=cny
+app.exEntrustIsUseMongo=0
+app.differetCustomer=common
+app.isClosePlate=true
+#\u673A\u5668\u4EBA\u6700\u5927\u6570
+app.maxAutoAddExEntrust=100
+app.isStartExRobot4=true

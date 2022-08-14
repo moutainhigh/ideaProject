@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.cm2.account.dao.Cm2AccountRecordDao">
+
+    <resultMap id="BaseResultMap" type="hry.cm2.account.model.Cm2AccountRecord">
+    </resultMap>
+
+    <insert id ="insertRecord" parameterType="java.util.List" >
+        insert into cm2_account_record
+        (accountId, customerId, coinCode,
+        transactionMoney, transactionNum, remark, remarkkey, monteyType,recordType
+        )
+        values
+        <foreach collection ="list" item="record" index= "index" separator =",">
+            (
+            #{record.accountId},
+            #{record.customerId},
+
+            #{record.coinCode},
+            #{record.transactionMoney},
+            #{record.transactionNum},
+
+            #{record.remark},
+            #{record.remarkkey},
+            #{record.monteyType},
+            #{record.recordType}
+            )
+        </foreach>
+
+    </insert >
+
+    <!-- 获取用户收益统计信息	 -->
+    <select id="getProfitStatistics" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+			car.customerId,
+			car.remarkkey,
+			SUM(car.transactionMoney) AS transactionMoney
+		FROM
+			cm2_account_record car
+		WHERE
+			car.remarkkey IN (6, 7, 8, 9,10)
+		AND car.customerId = #{customerId}
+		AND car.coinCode = #{coinCode}
+		GROUP BY
+			car.remarkkey
+    </select>
+
+    <select id="finePageAccountRecord" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        r.orderNum,
+        r.accountId,
+        r.customerId,
+        r.coinCode,
+        r.recordType,
+        r.transactionMoney,
+        r.balanceMoney,
+        r.transactionNum,
+        r.remark,
+        r.remarkkey,
+        r.monteyType,
+        r.created,
+        r.modified
+        from cm2_account_record r
+        <where>
+            r.customerId = #{customerId}
+            <if test="accountId != null and accountId != ''" >
+                and r.accountId = #{accountId}
+            </if>
+            <if test="tradeType != null  and tradeType != ''" >
+                and r.remarkkey = #{tradeType}
+            </if>
+            <if test="time_gte != null and time_gte != ''">
+                <![CDATA[ and r.created >= #{time_gte} ]]>
+            </if>
+            <if test="time_lte != null and time_lte != ''">
+                <![CDATA[ and r.created <= #{time_lte} ]]>
+            </if>
+        </where>
+        order by r.created desc
+    </select>
+
+</mapper>
