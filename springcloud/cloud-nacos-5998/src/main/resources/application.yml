@@ -1,0 +1,25 @@
+server:
+  port: 5998
+#  servlet:
+#    context-path:
+spring:
+  application:
+    name: nacos-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848 #nacos地址
+    gateway:
+      # 开启自动，如配置了 routes 则不会在走自动配置
+#      discovery:
+#        locator:
+#          enabled: true #是否与服务发现组件进行结合，通过serviceId(服务名称)转发到具体的服务实例。
+#                        # 默认为false，设为true便开启通过服务中心的自动根据 serviceId 创建路由的功能
+      routes: # 路由
+        - id: nacos-producer #路由ID，没有固定要求，但是要保证唯一，建议配合服务名
+          uri: lb://nacos-producer # 匹配提供服务的路由地址 lb:// 代表开启负载均衡
+          predicates: # 断言
+            - Path=/zm/** #匹配对应地址
+          # 过滤器
+#          filters:
+#            - StripPrefix=1 # 去掉地址中的第一部分

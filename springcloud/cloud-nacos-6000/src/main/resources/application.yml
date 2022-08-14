@@ -1,0 +1,28 @@
+
+# 激活Sentinel对OpenFeign的支持
+feign:
+  sentinel:
+    enabled: true
+
+#设置feign客户端超时时间（OpenFeign默认支持ribbon）
+ribbon:
+  #指的是建立连接所用的时间，适用于网络正常的情况下，两端连接所用的时间
+  ReadTimeout: 5000
+  #指的是建立连接后从服务器读取到可用资源所用的时间
+  ConnectTimeout: 5000
+
+# openFegin 日志
+logging:
+  level:
+    com.zming.cloudnacos6000.service.OpenFeginService: debug
+
+# 消费者将要去访问的微服务名称（注册成功的Nacos的微服务提供者）
+service-url:
+  nacos-user-service: http://nacos-producer
+
+# 暴露服务
+management:
+  endpoint:
+    web:
+      exposure:
+        include: '*'

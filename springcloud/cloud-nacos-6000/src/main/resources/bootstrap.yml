@@ -1,0 +1,32 @@
+# nacos配置  bootstrap优先级比application要高
+server:
+  port: 6003
+spring:
+  application:
+    name: nacos-sentienl-consumer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848 #nacos地址
+#      config:
+#        server-addr: localhost:8848 #Nacos服务中心地址
+#        file-extension: yaml #指定以yaml格式获取
+#        group: DEV_GROUP # 增加分组
+#        namespace: 2e8f5560-1409-4161-a75f-5854ea62ba88 # 添加命名空间 命名空间id
+# DataID 命名规则：${spring.application.name}-${spring.profiles.active}.${file-extension}
+    sentinel:
+      transport:
+        # 配置 sentinel 仪表盘地址 默认端口8080
+        dashboard: localhost:8080
+        # 默认端口 8179 sentinel本地端口 多开时 端口占用，会自动 8179+1
+        port: 8719
+      datasource: # 配置Sentinel的规则持久化
+        nacos:
+          nacos:
+            serverAddr: 127.0.0.1:8848 #nacos注册地址
+            groupId: DEFAULT_GROUP
+            dataId: order-sentinel.json
+            ruleType: flow
+# 读取nacos配置
+  profiles:
+    active: test

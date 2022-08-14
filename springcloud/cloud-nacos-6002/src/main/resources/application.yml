@@ -1,0 +1,15 @@
+server:
+  port: 6002
+spring:
+  application:
+    name: nacos-producer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+# 暴露服务
+management:
+  endpoint:
+    web:
+      exposure:
+        include: '*'

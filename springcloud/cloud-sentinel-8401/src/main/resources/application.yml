@@ -1,0 +1,24 @@
+server:
+  port: 8401
+spring:
+  application:
+    name: cloud-sentinel-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    sentinel:
+      transport:
+        # 配置 sentinel 仪表盘地址 默认端口8080
+        dashboard: localhost:8080
+        # 默认端口 8179 sentinel本地端口 多开时 端口占用，会自动 8179+1
+        port: 8719
+      web-context-unify: false
+# 消费者将要去访问的微服务名称（注册成功的Nacos的微服务提供者）
+service-url:
+  nacos-user-service: http://nacos-provider
+management:
+  endpoint:
+    web:
+      exposure:
+        include: '*'

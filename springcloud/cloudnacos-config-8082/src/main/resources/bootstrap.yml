@@ -1,0 +1,16 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: nacos-config
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #Nacos服务中心地址
+      config:
+        server-addr: localhost:8848 #Nacos服务中心地址
+        file-extension: yaml #指定以yaml格式获取
+        group: DEV_GROUP # 增加分组
+        namespace: 2e8f5560-1409-4161-a75f-5854ea62ba88 # 添加命名空间 命名空间id
+
+# DataID 命名规则：${spring.application.name}-${spring.profiles.active}.${file-extension}
