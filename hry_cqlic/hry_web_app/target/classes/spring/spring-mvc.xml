@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 开启aop aspectj注解 -->
+	<aop:aspectj-autoproxy/>
+	<aop:config ></aop:config>
+	<bean class="hry.core.swagger.MySwaggerConfig" />
+	<!-- 自动扫描controller包下的所有类，使其成为spring mvc的控制器，扫描aop包下所有类，使项目认识Aspect -->
+	<context:component-scan base-package="hry.*.*.controller,hry.*.*.*.controller,hry.*.aop" />
+	<context:component-scan base-package="hry.*.*.dao,hry.*.*.service,hry.*.mvc" />
+	<context:component-scan base-package="hry.app.lend.aspect" />
+
+	<!-- 只要在方法上加上@ResponseBody注解，就可以返回json -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+			  <property name="objectMapper">
+                    <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                        <property name="dateFormat">
+                            <bean class="java.text.SimpleDateFormat">
+                                <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>text/json;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<mvc:default-servlet-handler />
+
+	<!-- 文件上传配置 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding">
+			<value>UTF-8</value>
+		</property>
+		<property name="maxUploadSize">
+			<value>1048576000</value><!-- 总上传文件大小限制为1000M，31*1024*1024 -->
+		</property>
+		<property name="maxInMemorySize"><!-- 大于10K用临时文件 -->
+			<value>10240</value>
+		</property>
+	</bean>
+
+
+	<!-- 拦截器 -->
+	<mvc:interceptors>
+		<!--
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="hry.front.interceptor.HtmlInterceptor"></bean>
+		</mvc:interceptor>
+		 -->
+		<!-- 国际化操作 拦截器 必需配置,可以和其它国际化方式通用 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+    <!-- 基于Cookie的本地化解析器 -->
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+       <!-- 设置最大有效时间，如果是-1，则不存储，浏览器关闭后即失效，默认为Integer.MAX_INT-->
+       <property name="cookieMaxAge" value="-1"/>
+       <property name="defaultLocale" value="zh_CN"/>
+       <!-- 设置cookieName名称，可以根据名称通过js来修改设置，也可以像上面演示的那样修改设置，默认的名称为 类名+LOCALE（
+       		即：org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE-->
+       <property name="cookieName" value="Language"></property>
+    </bean>
+	<!-- 基于Session的本地化解析器 -->
+    <!--<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />-->
+	<!--<mvc:view-controller path="/" view-name="index"/>-->
+
+	<!-- 配置spring getBean的util类 -->
+	<bean id="springUtil" class="hry.util.SpringUtil" ></bean>
+
+</beans>

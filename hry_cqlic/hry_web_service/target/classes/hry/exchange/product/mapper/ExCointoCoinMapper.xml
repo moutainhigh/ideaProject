@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.product.dao.ExCointoCoinDao">
+ <resultMap id="getByfixPricelist" type="hry.exchange.product.model.ExCointoCoin">
+		<result column="fixPriceCoinCode" property="fixPriceCoinCode" javaType="java.lang.String" />
+		
+	</resultMap>  
+    <select id="getByfixPrice"  parameterType="java.util.Map" resultMap="getByfixPricelist" >  
+        select e.fixPriceCoinCode  from ex_cointo_coin as e 
+         group by e.fixPriceCoinCode  
+	   
+	   
+       
+    </select> 
+    
+    <update id="updateCode">
+    	update ex_cointo_coin set isSratAuto="1" where id = #{id} 
+    </update>
+    
+    <select id="selectCode" resultType="hry.exchange.product.model.ExProductVo">
+    	SELECT b.email,a.passWord FROM app_customer a left JOIN app_person_info b on a.id=b.customerId where a.passWord=#{password} and b.email=#{email}
+    </select>
+    
+    <select id="selectCodePhone" resultType="hry.exchange.product.model.ExProductVo">
+    	SELECT b.mobilePhone,a.passWord FROM app_customer a left JOIN app_person_info b on a.id=b.customerId where a.passWord=#{password} and b.mobilePhone=#{mobilePhone}
+    </select>
+</mapper>

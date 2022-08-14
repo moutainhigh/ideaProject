@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.AppConfigDao">
+
+    <resultMap type="hry.admin.web.model.AppConfig" id="keyList">
+        <result column="typekey" property="typekey" javaType="java.lang.String"/>
+        <result column="typename" property="typename" javaType="java.lang.String"/>
+    </resultMap>
+    <select id="findType" resultMap="keyList">
+        SELECT
+        typekey
+        FROM app_config group by typekey
+    </select>
+
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.licqb.record.dao.DealRecordDao">
+    <resultMap id="findPageBySqlMap" type="hry.admin.licqb.record.model.DealRecord">
+
+    </resultMap>
+    <select id="findPageBySql" resultMap="findPageBySqlMap" parameterType="java.util.Map">
+        select api.email, api.mobilePhone, ldr.coinCode, ldr.ratio,
+        ldr.dealType, ldr.actualMoney, ldr.transactionNum, ldr.dealMoney, ldr.serviceCharge, ldr.dealStatus,ldr.created
+        FROM
+        lc_deal_record ldr
+        LEFT JOIN app_person_info api
+        ON ldr.customerId = api.customerId
+        WHERE 1=1
+        <if test="transactionNum != null and transactionNum != ''">
+            and ldr.transactionNum like #{transactionNum}
+        </if>
+        <if test="customerId != null and customerId != ''">
+            and ldr.customerId = #{customerId}
+        </if>
+        <if test="coinCode != null and coinCode != ''">
+            and ldr.coinCode = #{coinCode}
+        </if>
+        <if test="email != null and email != ''">
+            and api.email like #{email}
+        </if>
+        <if test="mobilePhone != null and mobilePhone != ''">
+            and api.mobilePhone like #{mobilePhone}
+        </if>
+        <if test="dealType != null and dealType != ''">
+            and ldr.dealType = #{dealType}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and ldr.created >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and ldr.created<![CDATA[ <= ]]> #{endTime}
+        </if>
+        <if test="dealTypes != null">
+            and ldr.dealType in
+            <foreach item="item" index="index" collection="dealTypes" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by ldr.id DESC limit #{offset},#{limit}
+
+    </select>
+
+    <select id="findPageBySqlCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        select count(1)
+        FROM
+        lc_deal_record ldr
+        <if test="mobilePhone != null and mobilePhone != '' or email != null and email != ''">
+            LEFT JOIN app_person_info api
+            ON ldr.customerId = api.customerId
+        </if>
+        WHERE 1=1
+        <if test="transactionNum != null and transactionNum != ''">
+            and ldr.transactionNum like #{transactionNum}
+        </if>
+        <if test="customerId != null and customerId != ''">
+            and ldr.customerId = #{customerId}
+        </if>
+        <if test="coinCode != null and coinCode != ''">
+            and ldr.coinCode = #{coinCode}
+        </if>
+        <if test="email != null and email != ''">
+            and api.email like #{email}
+        </if>
+        <if test="mobilePhone != null and mobilePhone != ''">
+            and api.mobilePhone like #{mobilePhone}
+        </if>
+        <if test="dealType != null and dealType != ''">
+            and ldr.dealType = #{dealType}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and ldr.created >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and ldr.created<![CDATA[ <= ]]> #{endTime}
+        </if>
+        <if test="dealTypes != null">
+            and ldr.dealType in
+            <foreach item="item" index="index" collection="dealTypes" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getUserMaxTier" resultType="java.lang.Integer">
+        select max(`level`) from app_team_level
+    </select>
+
+    <select id="getUserAllLevel" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        select max(`level`) from app_team_level where parentId = #{parentId}
+    </select>
+
+    <select id="getUserNum" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        select count(1) from app_team_level where parentId = #{parentId}
+    </select>
+
+    <select id="getAppTeamLevel" resultType="hry.admin.licqb.record.model.AppTeamLevel" parameterType="java.lang.Long">
+        select * from app_team_level WHERE 1=1 and id = (select max(id) FROM app_team_level WHERE customerId = #{customerId} ORDER BY id DESC)
+    </select>
+
+    <select id="findUserTeamInfo" resultType="hry.admin.licqb.platform.model.CustomerLevel" parameterType="java.util.Map">
+        select api.customerId, api.email, api.mobilePhone, lcl.teamLevelName, lcl.levelName
+        from lc_customer_level lcl
+        LEFT JOIN app_person_info api
+        ON lcl.customerId = api.customerId
+        WHERE 1=1
+        <if test="email != null and email != ''">
+            and api.email like #{email}
+        </if>
+        <if test="mobilePhone != null and mobilePhone != ''">
+            and api.mobilePhone like #{mobilePhone}
+        </if>
+        and lcl.teamLevelName is not null ORDER BY teamLevelName desc
+    </select>
+
+
+    <select id="getDealDmMoney" resultType="java.lang.Long" parameterType="java.lang.Integer">
+        select sum(transactionMoney)
+        from ex_dm_transaction
+        WHERE 1=1
+        and optType = #{optType} and `status` = 2
+    </select>
+
+
+
+
+</mapper>

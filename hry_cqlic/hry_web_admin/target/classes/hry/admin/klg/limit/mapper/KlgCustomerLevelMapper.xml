@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.klg.limit.dao.KlgCustomerLevelDao">
+
+    <update id="customerRewardAdd">
+        update
+        klg_customer_level
+        set
+        <if test="gradation!=null and gradation!='' ">
+            gradation =  #{gradation},
+        </if>
+        <if test="pointAlgebra!=null and pointAlgebra!='' ">
+            pointAlgebra =  #{pointAlgebra},
+        </if>
+        <if test="fixedGradation!=null and fixedGradation!='' ">
+            fixedGradation =  #{fixedGradation},
+        </if>
+        <if test="rewardNum!=null and rewardNum!='' ">
+            rewardNum  = rewardNum +#{rewardNum},
+        </if>
+        modified= now()
+        where
+        customerId = #{customerId}
+    </update>
+
+    <select id="findPageBySql" parameterType="java.util.Map" resultType="hry.admin.klg.limit.model.KlgCustomerLevel">
+        select kcl.id ,
+        ap.email  ,
+        ap.mobilePhone ,
+        kcl.customerId ,
+        kcl.levelId ,
+        kcl.levelName ,
+        kcl.sort ,
+        kcl.gradation,
+        kcl.pointAlgebra,
+        kcl.rewardNum,
+        kcl.created,
+        kcl.modified,
+        kcl.nowSort,
+        kcl.fixedGradation
+        from klg_customer_level  kcl
+        LEFT JOIN app_person_info ap on kcl.customerId=ap.customerId
+        <where>
+            1 = 1
+            <if test="email!=null and email!='' " >
+                and ap.email like #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' " >
+                and ap.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and startTime!='' " >
+                and kcl.created <![CDATA[ >= ]]> #{startTime,jdbcType=DATE}
+            </if>
+            <if test="endTime!=null and endTime!='' " >
+                and kcl.created <![CDATA[ <= ]]> date_add(#{endTime,jdbcType=DATE},interval 1 day)
+            </if>
+        </where>
+        ORDER BY kcl.created desc
+    </select>
+</mapper>

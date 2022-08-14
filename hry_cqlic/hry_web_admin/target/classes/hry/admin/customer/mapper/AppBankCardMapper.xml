@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.customer.dao.AppBankCardDao">
+
+    <resultMap id="findPageBySqlMap"   type="hry.admin.customer.model.AppBankCard">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+        <result column="accountId" property="accountId" javaType="java.lang.Long" />
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+        <result column="trueName" property="trueName" javaType="java.lang.String" />
+        <result column="surname" property="surname" javaType="java.lang.String" />
+
+        <result column="currencyType" property="currencyType" javaType="java.lang.String" />
+        <result column="cardName" property="cardName" javaType="java.lang.String" />
+        <result column="cardNumber" property="cardNumber" javaType="java.lang.String" />
+        <result column="cardBank" property="cardBank" javaType="java.lang.String" />
+        <result column="bankAddress" property="bankAddress" javaType="java.lang.String" />
+        <result column="bankProvince" property="bankProvince" javaType="java.lang.String" />
+        <result column="subBank" property="subBank" javaType="java.lang.String" />
+        <result column="subBankNum" property="subBankNum" javaType="java.lang.String" />
+
+        <association property="appPersonInfo" javaType="hry.admin.customer.model.AppPersonInfo">
+            <result column="created" property="created" javaType="java.util.Date" />
+            <result column="modified" property="modified" javaType="java.util.Date" />
+            <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+            <result column="email" property="email" javaType="java.lang.String" />
+            <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+            <result column="country" property="country" javaType="java.lang.String" />
+        </association>
+    </resultMap>
+
+
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        SELECT
+        a.id,
+        a.surname,
+        a.trueName,
+        a.bankProvince,
+        a.bankAddress,
+        a.cardBank,
+        a.subBank,
+        a.cardNumber,
+
+        b.email,
+        b.mobilePhone,
+        b.surname,
+        b.trueName,
+        b.country
+        FROM app_bank_card AS a
+        LEFT JOIN app_person_info
+        AS b ON a.customerId = b.customerId
+        <where>
+            <if test="email!=null and email!='' ">
+                b.email like
+                #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                and b.mobilePhone like
+                #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            and a.isDelete=0
+        </where>
+    </select>
+
+
+</mapper>

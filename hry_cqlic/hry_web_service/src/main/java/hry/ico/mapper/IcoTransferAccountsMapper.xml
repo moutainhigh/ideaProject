@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.ico.dao.IcoTransferAccountsDao">
+    <resultMap id="resultObj"   type="hry.ico.model.IcoTransferAccounts">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="serialNumber" property="serialNumber" javaType="java.lang.String" />
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+        <result column="toCustomerId" property="toCustomerId" javaType="java.lang.Long" />
+        <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+        <result column="money" property="money" javaType="java.math.BigDecimal" />
+        <result column="remark" property="remark" javaType="java.lang.String" />
+        <result column="account" property="account" javaType="java.lang.String" />
+        <result column="toAccount" property="toAccount" javaType="java.lang.String" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+    </resultMap>
+
+    <select id="getTransferAccountsInfo"  resultMap="resultObj" >
+SELECT
+	ita.*, (
+		SELECT
+			CASE email when "" THEN mobilePhone ELSE email  end as account
+		FROM
+			app_person_info
+		WHERE  customerId = ita.customerId
+	) as account,
+(
+		SELECT
+			CASE email when "" THEN mobilePhone ELSE email  end as account
+		FROM
+			app_person_info
+		WHERE  customerId = ita.toCustomerId
+	) as toAccount
+FROM
+	ico_transfer_accounts ita
+WHERE
+	id =  #{keyId}
+
+    </select>
+</mapper>

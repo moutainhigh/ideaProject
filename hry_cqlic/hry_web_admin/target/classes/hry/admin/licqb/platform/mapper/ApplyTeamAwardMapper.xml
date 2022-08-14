@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.licqb.platform.dao.ApplyTeamAwardDao">
+    <resultMap id="pageMap" type="hry.admin.licqb.platform.model.ApplyTeamAward"></resultMap>
+
+    <select id="findApplyPage" resultMap="pageMap" parameterType="java.util.Map">
+        select app.email, app.mobilePhone,lc.id,lc.customerId,lc.socialType,
+        lc.socialAccount,lc.socialGroupImg, lc.applyStatus, lc.auditStatus,
+        lc.auditExplain,lc.created,lc.modified
+        from lc_apply_team_award lc
+        LEFT JOIN app_person_info app
+        ON lc.customerId = app.customerId
+        where 1=1
+        <if test="customerId != null and customerId != ''">
+            and lc.customerId = #{customerId}
+        </if>
+        <if test="id != null and id != ''">
+            and lc.id = #{id}
+        </if>
+        <if test="email != null and email != ''">
+            and app.email like #{email}
+        </if>
+        <if test="mobilePhone != null and mobilePhone != ''">
+            and app.mobilePhone like #{mobilePhone}
+        </if>
+        <if test="socialType != null and socialType != ''">
+            and lc.socialType = #{socialType}
+        </if>
+
+        <if test="applyStatus != null and applyStatus != ''">
+            and lc.applyStatus = #{applyStatus}
+        </if>
+        <if test="auditStatus != null and auditStatus != ''">
+            and lc.auditStatus = #{auditStatus}
+        </if>
+    </select>
+</mapper>

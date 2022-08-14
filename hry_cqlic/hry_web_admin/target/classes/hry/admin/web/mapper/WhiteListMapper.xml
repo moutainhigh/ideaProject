@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.WhiteListDao">
+
+    <!--findCustomListByPage-->
+    <select id="findCustomListByPage" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            la.userId,
+            ac.id,
+            api.mobilePhone,
+            api.email,
+            api.surname,
+            api.trueName,
+            api.cardType,
+            api.cardId,
+            la.ip as loginIp,
+            count(1) as loginNum,
+            (select lap.created from login_aop lap where lap.userId = la.userId and lap.ip = la.ip ORDER BY lap.created desc LIMIT 1) as loginLastTime
+        FROM
+          login_aop la
+        LEFT JOIN app_customer ac on la.userId = ac.id
+        LEFT JOIN app_person_info api on ac.id = api.customerId
+        <where>
+            1 = 1
+            <if test="email!=null and email!='' " >
+                and api.email like #{email}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' " >
+                and api.mobilePhone like #{mobilePhone}
+            </if>
+            <if test="trueName!=null and trueName!='' " >
+                and api.trueName like #{trueName}
+            </if>
+            <if test="cardId!=null and cardId!='' " >
+                and api.cardId like #{cardId}
+            </if>
+            <if test="isBlacklist!=null and isBlacklist!='' ">
+                and ac.isBlacklist = #{isBlacklist}
+            </if>
+            <if test="userId!=null and userId!='' ">
+                and la.userId = #{userId}
+            </if>
+        </where>
+        GROUP BY la.userId,la.ip
+        ORDER BY la.created desc
+    </select>
+    
+    <select id="findWhiteListBySql" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            wl.id,
+            wl.userId,
+            wl.tel,
+            wl.email,
+            wl.trueName,
+            wl.ip,
+            (
+                SELECT
+                    count(1)
+                FROM
+                    login_aop lap
+                WHERE
+                    lap.userId = wl.userId
+                AND lap.ip = wl.ip
+                GROUP BY
+                    lap.userId,
+                    lap.ip
+                ORDER BY
+                    lap.created DESC
+            ) AS loginNum,
+            (select lap.created from login_aop lap where lap.userId = wl.userId and lap.ip = wl.ip ORDER BY lap.created desc LIMIT 1)as loginLast,
+            wl.created,
+            wl.type
+        FROM
+            white_list wl
+        <where>
+            1 = 1
+            <if test="email!=null and email!='' " >
+                and wl.email like #{email}
+            </if>
+            <if test="tel!=null and tel!='' " >
+                and wl.tel like #{tel}
+            </if>
+            <if test="trueName!=null and trueName!='' " >
+                and wl.trueName like #{trueName}
+            </if>
+            <if test="ip!=null and ip!='' " >
+                and wl.ip = #{ip}
+            </if>
+            <if test="type!=null and type!='' ">
+                and wl.type = #{type}
+            </if>
+        </where>
+        ORDER BY wl.created desc
+    </select>
+</mapper>

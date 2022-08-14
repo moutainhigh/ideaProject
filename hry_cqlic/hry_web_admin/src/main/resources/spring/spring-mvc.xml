@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:c="http://www.springframework.org/schema/c" xmlns:cache="http://www.springframework.org/schema/cache" xmlns:context="http://www.springframework.org/schema/context" xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:lang="http://www.springframework.org/schema/lang" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 开启aop aspectj注解 -->
+	<!-- <aop:aspectj-autoproxy proxy-target-class="true" /> -->
+
+	<aop:aspectj-autoproxy />
+
+	<!-- 自动扫描controller包下的所有类，使其成为spring mvc的控制器，扫描aop包下所有类，使项目认识Aspect -->
+	<context:component-scan base-package="hry.*.*.controller,hry.*.*.*.controller,hry.*.aop" />
+	<context:component-scan base-package="hry.*.*.dao,hry.*.*.*.dao,hry.*.service,hry.*.*.service,hry.*.mvc" />
+
+
+	<!-- 只要在方法上加上@ResponseBody注解，就可以返回json -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+			  <property name="objectMapper">  
+                    <bean class="com.fasterxml.jackson.databind.ObjectMapper">  
+                        <property name="dateFormat">  
+                            <bean class="java.text.SimpleDateFormat">  
+                                <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />  
+                            </bean>  
+                        </property>  
+                    </bean>  
+                </property>  
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>text/json;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<mvc:resources mapping="/static/**" location="/static/" />
+
+	
+	
+	<!--FreeMarker视图解析器 -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="suffix" value=".ftl" />
+		<property name="contentType" value="text/html;charset=UTF-8"></property>
+		<property name="viewClass" value="hry.util.freemarker.FreeMarkerViewUtil" />
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="requestContextAttribute" value="request"/>
+		<property name="allowSessionOverride" value="true"/>
+		<property name="cache" value="false"/>
+	</bean>
+	
+	<bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape" />
+	<bean id="hrySelect" class="hry.oauth.directive.HrySelectDirective" />
+	
+	
+	<!-- Freemarker配置 -->
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/view/" />
+		<!-- 自定义数据库TemplateLoader -->  
+        <!-- <property name="postTemplateLoaders" ref="dbTemplateLoader" /> --> 
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="xml_escape" value-ref="fmXmlEscape" />
+				<entry key="HrySelect" value-ref="hrySelect" />
+			</map>
+		</property>
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">0</prop>
+				<prop key="default_encoding">UTF-8</prop>
+				<prop key="number_format">0.##########</prop>
+				<prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+				<prop key="date_format">yyyy-MM-dd</prop>  
+                <prop key="time_format">HH:mm:ss</prop>  
+				<prop key="classic_compatible">true</prop>
+				<prop key="template_exception_handler">ignore</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 文件上传配置 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding">
+			<value>UTF-8</value>
+		</property>
+		<!-- 上传临时文件 -->
+		<!-- <property name="uploadTempDir"> <value>fileUpload/temp</value> </property> -->
+		<property name="maxUploadSize">
+			<value>1048576000</value><!-- 总上传文件大小限制为1000M，31*1024*1024 -->
+		</property>
+		<property name="maxInMemorySize"><!-- 大于10K用临时文件 -->
+			<value>10240</value>
+		</property>
+	</bean>
+	<!--定义一个线程池-->
+	<bean id="serverManagementTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="keepAliveSeconds" value="200" />
+		<property name="maxPoolSize" value="10" />
+		<property name="queueCapacity" value="20" />
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+		</property>
+	</bean>
+	<!-- 拦截器 -->
+	<mvc:interceptors>
+		<!-- <bean class="hry.core.interceptors.CommonDataInterceptor"> <property name="excludeUrlPatterns"> <value> <![CDATA[ /*/admin/polling/* ]]> </value> </property> </bean> -->
+
+		<!-- 配置Token拦截器，防止用户重复提交数据 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="hry.core.interceptors.TokenInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<aop:config></aop:config>
+	
+	<mvc:view-controller path="/" view-name="index"/>
+
+	<!-- 配置spring getBean的util类 -->
+	<bean id="springUtil" class="hry.util.SpringUtil" ></bean>
+
+
+
+</beans>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.ico.account.dao.IcoTransactionRecordDao">
+
+    <resultMap id="findPageBySqlMap"   type="hry.admin.ico.account.model.IcoTransactionRecord">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+        <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+        <result column="projectNumber" property="projectNumber" javaType="java.lang.String" />
+
+        <result column="type" property="type" javaType="java.lang.Integer" />
+        <result column="transactionCount" property="transactionCount" javaType="java.math.BigDecimal" />
+        <result column="state" property="state" javaType="java.lang.Integer" />
+        <result column="remark" property="remark"  javaType="java.lang.String" />
+
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+        <result column="email" property="email" javaType="java.lang.String" />
+    </resultMap>
+
+
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        select api.mobilePhone,api.email,
+        itr.created,itr.modified,itr.projectNumber,
+        itr.coinCode,itr.hotMoney,
+        itr.coldMoney,itr.state,
+        itr.type,itr.remark,itr.transactionCount
+        from app_person_info api,ico_transaction_record itr
+        <where>
+            api.customerId=itr.customerId
+            <if test="email!=null and email!='' ">
+                and api.email like
+                #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                and api.mobilePhone like
+                #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                and itr.coinCode =
+                #{coinCode,jdbcType=VARCHAR}
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                and itr.customerId =
+                #{customerId,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and endTime!=null  ">
+                and itr.created BETWEEN  #{startTime,jdbcType=DATE}
+                and date_add(#{endTime,jdbcType=DATE},interval 1 day)
+            </if>
+            <if test="state!=null and state!='' ">
+                and itr.state =
+                #{state,jdbcType=INTEGER}
+            </if>
+            <if test="type!=null and type!='' ">
+                and itr.type =
+                #{type,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by itr.created desc
+    </select>
+</mapper>

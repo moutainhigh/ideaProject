@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.ico.account.dao.IcoBuyOrderDao">
+
+    <resultMap id="findPageBySqlMap"   type="hry.admin.ico.account.model.IcoBuyOrder">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+        <result column="orderNumber" property="orderNumber" javaType="java.lang.String" />
+        <result column="payCoinName" property="payCoinName" javaType="java.lang.String" />
+        <result column="payCoinCode" property="payCoinCode" javaType="java.lang.String" />
+        <result column="payNumber" property="payNumber" javaType="java.math.BigDecimal" />
+
+        <result column="buyPrice" property="buyPrice" javaType="java.math.BigDecimal" />
+        <result column="buyNumber" property="buyNumber" javaType="java.math.BigDecimal" />
+        <result column="buyCoinCode" property="buyCoinCode"  javaType="java.lang.String" />
+
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+        <result column="email" property="email" javaType="java.lang.String" />
+    </resultMap>
+
+
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        select api.mobilePhone,api.email,
+        ibo.orderNumber,ibo.payCoinName,
+        ibo.payCoinCode,ibo.payNumber,
+        ibo.created,ibo.modified,
+        ibo.buyPrice,ibo.buyCoinCode,ibo.buyNumber
+        from app_person_info api,ico_buy_order ibo
+        <where>
+             api.customerId=ibo.customerId
+            <if test="email!=null and email!='' ">
+                and api.email like
+                #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                and api.mobilePhone like
+                #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="payCoinCode!=null and payCoinCode!='' ">
+                and ibo.payCoinCode =
+                #{payCoinCode,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and endTime!=null  ">
+                and ibo.created BETWEEN  #{startTime,jdbcType=DATE}
+                and date_add(#{endTime,jdbcType=DATE},interval 1 day)
+            </if>
+        </where>
+        order by ibo.created desc
+    </select>
+
+</mapper>

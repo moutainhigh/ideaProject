@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.ico.upgraderecord.dao.IcoUpgradeRecordDao">
+
+    <select id="findPageBySql" parameterType="java.util.Map" resultType="hry.admin.ico.upgraderecord.model.IcoUpgradeRecord">
+        select ir.id id,
+               ap.email customer_email ,
+               ap.mobilePhone customer_mobile,
+               ir.oldLevel  oldLevel,
+               ir.newLevel newLevel,
+               ir.upgradeNote upgradeNote,
+               ir.created  created
+        from ico_upgrade_record  ir
+        LEFT JOIN app_person_info ap on ir.customer_id=ap.customerId
+        <where>
+            1 = 1
+            <if test="customer_email!=null and customer_email!='' " >
+                and ap.email like #{customer_email,jdbcType=VARCHAR}
+            </if>
+            <if test="customer_mobile!=null and customer_mobile!='' " >
+                and ap.mobilePhone like #{customer_mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="oldLevel!=null and oldLevel!='' " >
+                and ir.oldLevel = #{oldLevel,jdbcType=VARCHAR}
+            </if>
+            <if test="newLevel!=null and newLevel!='' " >
+                and ir.newLevel = #{newLevel,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and startTime!='' " >
+                and ir.created <![CDATA[ >= ]]> #{startTime,jdbcType=DATE}
+            </if>
+            <if test="endTime!=null and endTime!='' " >
+                and ir.created <![CDATA[ <= ]]> #{endTime,jdbcType=DATE}
+            </if>
+
+        </where>
+        ORDER BY ir.created desc
+    </select>
+</mapper>

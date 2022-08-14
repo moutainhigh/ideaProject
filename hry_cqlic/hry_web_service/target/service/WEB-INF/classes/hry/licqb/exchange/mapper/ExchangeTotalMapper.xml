@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.licqb.exchange.dao.ExchangeTotalDao">
+    <select id="getExchangeNum" resultType="hry.licqb.exchange.model.ExchangeTotal" parameterType="java.lang.String">
+        select
+        IFNULL(sum(gainNum), 0) gainNum
+        from lc_exchange_record
+        WHERE 1=1
+        <if test="gainCoinCode != null and gainCoinCode != ''">
+            and gainCoinCode = #{gainCoinCode}
+        </if>
+        and DATEDIFF(created, NOW()) = -1
+    </select>
+
+    <select id="getExtractNum" resultType="hry.licqb.exchange.model.ExchangeTotal" parameterType="java.lang.String">
+        select
+        IFNULL(sum(transactionMoney-fee), 0) extractNum
+        FROM
+        ex_dm_transaction
+        WHERE 1=1
+        <if test="gainCoinCode != null and gainCoinCode != ''">
+            and coinCode = #{gainCoinCode}
+        </if>
+        and optType = 2
+        and transactionType = 2
+        and `status` = 2
+        and DATEDIFF(modified, NOW()) = -1
+    </select>
+</mapper>

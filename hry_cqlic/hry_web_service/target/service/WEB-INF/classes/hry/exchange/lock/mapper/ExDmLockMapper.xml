@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.lock.dao.ExDmLockDao">
+	<resultMap id="BaseResultMap" type="hry.exchange.lock.model.ExDmLock">
+		<id column="id" property="id" javaType="java.lang.Long" />
+	    <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+		<result column="lockStartLimit" property="lockStartLimit" javaType="java.math.BigDecimal" />
+		<result column="lockRatio" property="lockRatio" javaType="java.math.BigDecimal" />
+		<result column="lockEndTime" property="lockEndTime" javaType="java.util.Date" />
+		<result column="isLock" property="isLock" javaType="java.lang.Integer" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+	</resultMap>
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT 
+			lk.id,
+			lk.coinCode,
+			lk.lockStartLimit,
+			lk.lockRatio,
+			lk.lockEndTime,
+			lk.isLock,
+			lk.created,
+			lk.modified
+		FROM 
+			ex_dm_lock as lk
+		<where>
+			1 = 1
+			<if test="coinCode!=null and coinCode!='' " >
+				and lk.coinCode = #{coinCode,jdbcType=VARCHAR}
+			</if>
+			<if test="lockEndTime!=null and lockEndTime!='' " >
+			    and lk.lockEndTime = #{lockEndTime,jdbcType=DATE} 
+			</if> 
+			<if test="isLock!=null and isLock!='' " >
+			    and lk.isLock = #{isLock,jdbcType=TINYINT} 
+			</if>
+		</where>
+		ORDER BY lk.created desc
+	</select>
+</mapper>

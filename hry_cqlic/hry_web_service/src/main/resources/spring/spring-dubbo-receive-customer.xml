@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+      <!-- remoteAppCustomerService -->
+      <dubbo:reference id="remoteAppCustomerService" interface="hry.customer.remote.RemoteAppCustomerService"  check="false"></dubbo:reference>  
+     
+      <!-- remoteAppPersonInfoService -->
+      <dubbo:reference id="remoteAppPersonInfoService" interface="hry.customer.remote.RemoteAppPersonInfoService"  check="false"></dubbo:reference>  
+      
+
+      <!-- remoteAppAgentsService -->
+      <dubbo:reference id="remoteAppAgentsService" interface="hry.customer.remote.RemoteAppAgentsService"  check="false"></dubbo:reference>  
+
+
+      <dubbo:reference id="remoteAppTradeFactorageService" interface="hry.customer.remote.RemoteAppTradeFactorageService"  check="false"></dubbo:reference>  
+
+    
+
+</beans> 

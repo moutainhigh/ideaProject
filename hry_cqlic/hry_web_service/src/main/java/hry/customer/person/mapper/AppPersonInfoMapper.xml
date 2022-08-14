@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.customer.person.dao.AppPersonInfoDao">
+<resultMap id="BaseResultMap" type="hry.customer.person.model.AppPersonInfo">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="customerType" property="customerType" javaType="java.lang.Integer" />
+		<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+		<result column="email" property="email" javaType="java.lang.String" />
+		<result column="surname" property="surname" javaType="java.lang.String" />
+		<result column="trueName" property="trueName" javaType="java.lang.String" />
+		<result column="sex" property="sex" javaType="java.lang.Integer" />
+		<result column="birthday" property="birthday" javaType="java.lang.String" />
+		<result column="country" property="country" javaType="java.lang.String" />
+		<result column="cardType" property="cardType" javaType="java.lang.Integer" />
+		<result column="cardId" property="cardId" javaType="java.lang.String" />
+		<result column="customerSource" property="customerSource" javaType="java.lang.Integer" />
+		<result column="realTime" property="realTime" javaType="java.util.Date" />
+		<result column="cardIdUsd" property="cardIdUsd" javaType="java.lang.String" />
+		<result column="cardIdValidPeriod" property="cardIdValidPeriod" javaType="java.lang.String" />
+		<result column="postalAddress" property="postalAddress" javaType="java.lang.String" />
+		<result column="contacts" property="contacts" javaType="java.lang.String" />
+		<result column="postCode" property="postCode" javaType="java.lang.Integer" />
+		<result column="stage" property="stage" javaType="java.lang.Integer" />
+		<result column="contactsTel" property="contactsTel" javaType="java.lang.String" />
+		<result column="handIdCardUrl" property="handIdCardUrl" javaType="java.lang.String" />
+		<result column="idCardFrontUrl" property="idCardFrontUrl" javaType="java.lang.String" />
+		<result column="idCardBackUrl" property="idCardBackUrl" javaType="java.lang.String" />
+		<result column="handDealUrl" property="handDealUrl" javaType="java.lang.String" />
+		<result column="isExamine" property="isExamine" javaType="java.lang.Integer" />
+		<result column="eamineRefusalReason" property="eamineRefusalReason" javaType="java.lang.String" />
+		
+		<result column="vipUserId" property="vipUserId" javaType="java.lang.Long" />
+		<result column="agentUserId" property="agentUserId" javaType="java.lang.Long" />
+		<result column="vipName" property="vipName" javaType="java.lang.String" />
+		<result column="agentName" property="agentName" javaType="java.lang.String" />
+		<result column="surname" property="surname" javaType="java.lang.String" />
+		<result column="isCancle" property="isCancle" javaType="java.lang.Integer" />
+		<result column="cancleReason" property="cancleReason" javaType="java.lang.String" />
+		<result column="vipNumber" property="vipNumber" javaType="java.lang.String" />
+		<result column="agentNumber" property="agentNumber" javaType="java.lang.String" />
+		<result column="withdrawCheckMoney" property="withdrawCheckMoney" javaType="java.math.BigDecimal" />
+		
+		
+		<result column="isGivePerAgentRecommendCoin" property="isGivePerAgentRecommendCoin" javaType="java.lang.String" />
+		<result column="hasRecommendNum" property="hasRecommendNum" javaType="java.lang.Integer" />
+		<result column="jkApplyState" property="jkApplyState" javaType="java.lang.Integer" />
+		<result column="jkApplyType" property="jkApplyType" javaType="java.lang.Integer" />
+		<result column="jkAgentType" property="jkAgentType" javaType="java.lang.Integer" />
+		<result column="jkApplyAuthorizationCode" property="jkApplyAuthorizationCode" javaType="java.lang.String" />
+		<result column="jkApplyAuthorizationCodeState" property="jkApplyAuthorizationCodeState" javaType="java.lang.Integer" />
+		<result column="jkApplyAgentProvince" property="jkApplyAgentProvince" javaType="java.lang.String" />
+		<result column="jkApplyAgentProvinceCode" property="jkApplyAgentProvinceCode" javaType="java.lang.String" />
+		<result column="jkApplyAgentCity" property="jkApplyAgentCity" javaType="java.lang.String" />
+		<result column="jkApplyAgentCityCode" property="jkApplyAgentCityCode" javaType="java.lang.String" />
+		<result column="jkApplyAgentCounty" property="jkApplyAgentCounty" javaType="java.lang.String" />
+		<result column="jkApplyAgentCountyCode" property="jkApplyAgentCountyCode" javaType="java.lang.String" />
+		<result column="withdrawCheckMoney" property="withdrawCheckMoney" javaType="java.math.BigDecimal" />
+		<result column="lendTimes" property="lendTimes" javaType="java.math.BigDecimal" />
+		<result column="lengPing" property="lengPing" javaType="java.math.BigDecimal" />
+		<result column="lengRiskRate" property="lengRiskRate" javaType="java.math.BigDecimal" />
+		
+		<association property="appBankCard"
+			javaType="hry.account.fund.model.AppBankCard">
+			<id column="id" property="id" javaType="java.lang.Long" />
+			<result column="created" property="created" javaType="java.util.Date" />
+			<result column="modified" property="modified" javaType="java.util.Date" />
+			<result column="saasId" property="saasId" javaType="java.lang.String" />
+			
+			<result column="accountId" property="accountId" javaType="java.lang.Long" />
+			<result column="customerId" property="customerId" javaType="java.lang.Long" />
+			<result column="userName" property="userName" javaType="java.lang.String" />
+			<result column="btrueName" property="trueName" javaType="java.lang.String" />
+			<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+			<result column="cardName" property="cardName" javaType="java.lang.String" />
+			<result column="cardNumber" property="cardNumber" javaType="java.lang.String" />
+			<result column="cardBank" property="cardBank" javaType="java.lang.String" />
+			<result column="bankAddress" property="bankAddress" javaType="java.lang.String" />
+			<result column="subBank" property="subBank" javaType="java.lang.String" />
+			<result column="website" property="website" javaType="java.lang.String" />
+			<result column="bankProvince" property="bankProvince" javaType="java.lang.String" />
+			<result column="signBank" property="signBank" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+	
+	<!-- 金科新加用户资金报表的分页查询 -->
+	<resultMap id="BaseResultMap1" type="hry.customer.person.model.AppPersonInfo">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+		<result column="trueName" property="trueName" javaType="java.lang.String" />
+		
+		<result column="totalAvailableMoney" property="totalAvailableMoney" javaType="java.math.BigDecimal" />
+		<result column="totalFrozenMoney" property="totalFrozenMoney" javaType="java.math.BigDecimal" />
+		<result column="totalRechargeMoney" property="totalRechargeMoney" javaType="java.math.BigDecimal" />
+		<result column="totalWithdrawalsMoney" property="totalWithdrawalsMoney" javaType="java.math.BigDecimal" />
+		<result column="moneyChangeRate" property="moneyChangeRate" javaType="java.math.BigDecimal" />
+		<result column="profitRate" property="profitRate" javaType="java.math.BigDecimal" />
+	</resultMap>
+	
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+				select person.* from app_person_info person left JOIN 
+						app_customer cus on person.customerId=cus.id
+			<where>
+					person.isExamine=0 and cus.isReal=0 and  person.country!='' and person.trueName is not null and person.trueName !=""
+					<if test="userName!=null and userName!='' " >
+						and	person.mobilePhone like #{userName,jdbcType=VARCHAR}
+					</if>
+					<if test="trueName!=null and trueName!='' " >
+						and	person.trueName like #{trueName,jdbcType=VARCHAR}
+					</if>
+					<if test="cardId!=null and cardId!='' " >
+						and	person.cardId like #{cardId,jdbcType=VARCHAR}
+					</if>
+			</where>
+	</select>
+	
+	
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql1" parameterType="java.util.Map"   resultMap="BaseResultMap1" >
+				SELECT
+					person.id customerId,
+					person.mobilePhone mobilePhone,
+					person.trueName trueName,
+					IFNULL(acc.hotMoney, 0) totalAvailableMoney,
+					IFNULL(acc.coldMoney, 0) totalFrozenMoney
+				FROM
+					app_person_info person
+				LEFT JOIN app_account acc ON person.customerId = acc.customerId
+			<where>
+				1=1
+					<if test="userName!=null and userName!='' " >
+						and	person.mobilePhone like #{userName,jdbcType=VARCHAR}
+					</if>
+					<if test="trueName!=null and trueName!='' " >
+						and	person.trueName like #{trueName,jdbcType=VARCHAR}
+					</if>
+			</where>
+	</select>
+	
+	
+	<!-- 通过sql查询申请代理商的列表 -->
+	<select id="findAgentApplyList" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+				select person.* from app_person_info person left JOIN 
+						app_customer cus on person.customerId=cus.id
+			<where>
+					cus.isReal=1 and person.jkApplyState=0
+					<if test="userName!=null and userName!='' " >
+						and	person.mobilePhone like #{userName,jdbcType=VARCHAR}
+					</if>
+					<if test="trueName!=null and trueName!='' " >
+						and	person.trueName like #{trueName,jdbcType=VARCHAR}
+					</if>
+					
+					
+			</where>
+			
+	</select>
+	
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findrefuselist" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+			SELECT
+					*,bank.trueName as btrueName
+				FROM
+					app_person_info person
+				LEFT JOIN app_agents_custromer customer ON person.customerId = customer.id
+				LEFT JOIN app_bank_card bank ON customer.id = bank.customerId
+				
+			<where>
+					 person.eamineRefusalReason is not null
+			
+					<if test="userName!=null and userName!='' " >
+						and	person.mobilePhone like #{userName,jdbcType=VARCHAR}
+					</if>
+					<if test="trueName!=null and trueName!='' " >
+						and	person.trueName like #{trueName,jdbcType=VARCHAR}
+					</if>
+					<if test="cardId!=null and cardId!='' " >
+						and	person.cardId like #{cardId,jdbcType=VARCHAR}
+					</if>
+			</where>
+			
+	</select>
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findcanclelist" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+			SELECT
+					*,bank.trueName as btrueName
+				FROM
+					app_person_info person
+				LEFT JOIN app_agents_custromer customer ON person.customerId = customer.id
+				LEFT JOIN app_bank_card bank ON customer.id = bank.customerId
+				
+			<where>
+					 person.isCancle =1			
+					<if test="userName!=null and userName!='' " >
+						and	person.mobilePhone like #{userName,jdbcType=VARCHAR}
+					</if>
+					<if test="trueName!=null and trueName!='' " >
+						and	person.trueName like #{trueName,jdbcType=VARCHAR}
+					</if>
+					<if test="cardId!=null and cardId!='' " >
+						and	person.cardId like #{cardId,jdbcType=VARCHAR}
+					</if>
+			</where>
+			
+	</select>
+	
+	<!-- 查询单个对象 -->
+	<select id="getById" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+		SELECT *,bank.trueName as btrueName
+			FROM app_person_info person
+			LEFT JOIN app_bank_card bank ON person.customerId = bank.customerId
+			<where>
+				<if test="id!=null and id!='' " >
+					person.id = #{id,jdbcType=VARCHAR}
+				</if>
+				
+			</where>
+	</select>
+	
+	<!-- 根据customerId查询单个对象 -->
+	<select id="getByCustomerId" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+		SELECT *,bank.trueName as btrueName
+			FROM app_person_info person
+			LEFT JOIN app_bank_card bank ON person.customerId = bank.customerId
+			<where>
+				<if test="customerId!=null and customerId!='' " >
+					person.customerId = #{customerId,jdbcType=VARCHAR}
+				</if>
+				
+			</where>
+	</select>
+	
+	<!-- 根据代理等级和区域编码获取代理商对象 -->
+	<select id="findAgentByTypeAndAreacode" resultMap="BaseResultMap" >
+		SELECT *
+			FROM app_person_info person	  
+				<where>
+					1=1  	
+					<if test="jkAgentType!=null and jkAgentType==1 " >
+						and person.jkAgentType=#{jkAgentType} and  person.jkAgentCountyCode=#{areaCode}
+					</if>
+					<if test="jkAgentType!=null and jkAgentType==2 " >
+						and person.jkAgentType=#{jkAgentType} and  person.jkAgentCityCode=#{areaCode}
+					</if>
+					<if test="jkAgentType!=null and jkAgentType==3 " >
+						and person.jkAgentType=#{jkAgentType} and  person.jkAgentProvinceCode=#{areaCode}
+					</if>
+				</where>
+	</select>
+	
+	
+	<!-- 获取推荐人的personinfo对象 -->
+	<select id="getAgentPerson" resultType="hry.customer.person.model.AppPersonInfo" >
+		SELECT *
+			FROM app_person_info person	  
+			where person.mobilePhone=(select ac.referralCode from app_customer ac where ac.id=#{customerid});
+	</select>
+	
+	<!-- 获取一个用户的总充值 -->
+	<select id="getTotalRechargeMoney" resultType="java.math.BigDecimal" >
+		SELECT
+			IFNULL(SUM(transactionMoney), 0)
+		FROM
+			app_transaction
+		WHERE
+			transactionType IN (1, 3, 5)
+		AND STATUS = 1
+		AND customerId = #{0}
+	</select>
+	<!-- 获取一个用户的总充值 -->
+	<select id="getTotalWithdrawalsMoney" resultType="java.math.BigDecimal" >
+		SELECT
+			IFNULL(SUM(transactionMoney), 0)
+		FROM
+			app_transaction
+		WHERE
+			transactionType IN (2,4)
+		AND STATUS = 1
+		AND customerId = #{0}
+	</select>
+		<select id="getAppPersonInfoByCardId" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+			SELECT
+					id,cardId
+				FROM
+					app_person_info person
+				
+				
+			<where>
+					 person.cardId =#{cardId,jdbcType=VARCHAR}		
+			
+			</where>
+			
+	</select>
+	
+	
+		<select id="getAppPersonInfoByCustomerId" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+			SELECT
+					id,trueName,customerType,surname
+				FROM
+					app_person_info person
+				
+			<where>
+					 person.customerId =#{customerId,jdbcType=VARCHAR}		
+			
+			</where>
+			
+	</select>
+	
+	<select id="getAppPersonInfoByEmailPhone" resultMap="BaseResultMap" parameterType="java.util.Map">
+	 SELECT * FROM app_person_info person where 
+	 person.mobilePhone in 
+	 <foreach collection="listId" index="index" item="item" open="(" separator="," close=")">  
+        #{item}  
+    </foreach>  
+    	or
+    	person.email in 
+    <foreach collection="listId" index="index" item="item" open="(" separator="," close=")">  
+        #{item}  
+    </foreach>  
+	</select>
+	
+</mapper>

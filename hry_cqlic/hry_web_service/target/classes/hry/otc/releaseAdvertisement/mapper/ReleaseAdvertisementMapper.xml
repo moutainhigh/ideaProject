@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.otc.releaseAdvertisement.dao.ReleaseAdvertisementDao">
+
+	<resultMap id="BaseResultMap" type="hry.otc.releaseAdvertisement.model.ReleaseAdvertisement"></resultMap>
+	
+	<select id="avgTime" parameterType="java.lang.Long" resultType="java.lang.String">
+		select avg(paymentTerm) from release_advertisement where customerId=#{customerId}
+	</select>
+
+	<!--条件查询 走分页-->
+	<select id="findPageHall" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT * FROM	release_advertisement
+		WHERE	 state=0 and status=1 
+		<if test="payType!=null and payType!='' ">
+		and payType like concat("%",#{payType},"%")  
+		</if>
+		<if test="nationality!=null and nationality!='' ">
+		and nationality=#{nationality} 
+		</if>
+		<if test="coinCode!=null and coinCode!='' ">
+		and coinCode=#{coinCode}
+		</if>
+		<if test="transactionMode!=null and transactionMode!='' ">
+		and transactionMode=#{transactionMode}
+		</if>
+		<if test="legalCurrency!=null and legalCurrency!='' ">
+			and legalCurrency=#{legalCurrency}
+		</if>
+		<if test="transactionMode!=null and transactionMode == 1">
+		order by tradeMoney asc
+		</if>
+		<if test="transactionMode!=null and transactionMode == 2">
+			order by tradeMoney desc
+		</if>
+	</select>
+	
+	<select id="findPageBySql" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			release_advertisement
+		WHERE  	customerId=#{customerId} order by created desc
+	</select>
+
+
+	<!--条件查询 走分页-->
+	<select id="findPageByAll" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT a.id,a.coinCode,a.transactionMode,a.nationality,a.premium,a.isFixed,a.tradeMoney,
+		a.initialCoinNumMax,a.coinNumMax,a.remark,a.status,a.created,
+		b.mobilePhone as mobilePhone,b.email as email
+		FROM	release_advertisement as a
+		left join  app_person_info as b on b.customerId = a.customerId
+		<where>
+			<if test="status!=null and status!='' ">
+				and a.status=#{status}
+			</if>
+			<if test="mobilePhone != null and mobilePhone != ''">
+				and b.mobilePhone =#{ mobilePhone}
+			</if>
+			<if test="email != null and email != ''">
+				and b.email =#{ email}
+			</if>
+		</where>
+		order by a.created desc
+	</select>
+</mapper>

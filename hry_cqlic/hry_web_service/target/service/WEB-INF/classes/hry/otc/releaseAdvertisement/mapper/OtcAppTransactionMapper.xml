@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.otc.releaseAdvertisement.dao.OtcAppTransactionDao">
+
+    <resultMap id="BaseResultMap" type="hry.otc.releaseAdvertisement.model.OtcAppTransaction"/>
+
+
+    <select id="adUserBy30" resultType="java.math.BigDecimal">
+		SELECT sum(tradeNum) FROM otc_app_transaction where DATE_SUB(CURDATE(), INTERVAL 30 DAY) = date(created) and (sellUserId =#{arg0} or buyUserId = #{arg0}) and coinCode=#{arg1} and `status` = 14
+	</select>
+
+    <select id="adUserAll" resultType="java.math.BigDecimal">
+		select sum(tradeNum) from otc_app_transaction where (sellUserId
+		=#{arg0} or buyUserId = #{arg0}) and `status`=14 and coinCode=#{arg1}
+	</select>
+
+    <select id="allTradeCount" parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        select count(*) from otc_app_transaction where 1 = 1
+        <if test="id != null and id != ''">
+            and (sellUserId = #{id} or buyUserId = #{id})
+        </if>
+        <if test="status !=null and status != ''">
+            and status = #{status}
+        </if>
+    </select>
+
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultType="hry.otc.releaseAdvertisement.model.OtcAppTransaction">
+		SELECT
+		a.*,b.remark as advertisementRemark ,
+        c.mobilePhone as buyMobile ,c.email as buyEmail,
+        d.mobilePhone as sellMobile ,d.email as sellEmail
+        FROM
+		otc_app_transaction AS a
+		left join release_advertisement as b on b.id=a.advertisementId
+        left join app_person_info as c on c.customerId=a.buyUserId
+        left join app_person_info as d on d.customerId=a.sellUserId
+        <where>
+            <if test="status != null and status != ''">
+                and a.status in
+                <foreach collection="status" index="index" item="status" open="(" separator="," close=")" >
+                    #{status}
+                </foreach>
+            </if>
+            <if test="buyMobilePhone != null and buyMobilePhone != ''">
+                and c.mobilePhone =#{ buyMobilePhone}
+            </if>
+            <if test="buyEmail != null and buyEmail != ''">
+                and c.email =#{ buyEmail}
+            </if>
+
+            <if test="sellMobilePhone != null and sellMobilePhone != ''">
+                and d.mobilePhone =#{ sellMobilePhone}
+            </if>
+            <if test="sellEmail != null and sellEmail != ''">
+                and d.email =#{ sellEmail}
+            </if>
+        </where>
+
+	</select>
+</mapper>

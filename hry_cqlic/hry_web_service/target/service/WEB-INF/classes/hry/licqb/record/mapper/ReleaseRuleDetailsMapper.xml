@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.licqb.record.dao.ReleaseRuleDetailsDao">
+
+    <resultMap id="resultMap" type="hry.licqb.record.model.ReleaseRuleDetails"></resultMap>
+    
+    <select id="findReleaseRuleDetailsList" resultMap="resultMap">
+        select rd.id,rd.customerId,rd.customerLevelId,
+                rd.teamLevelId,rd.teamLevelName,rd.teamSort,
+                rd.startTeamAward,rd.startTime,rd.endTime,
+                rd.created,rd.modified,rd.lastMonthTeamAward
+        from lc_apply_team_award ata,lc_release_rule_details rd
+        WHERE ata.customerId = rd.customerId
+        and ata.auditStatus = 1
+        /*and rd.startTime > '2020-09-30 23:30:00'
+        and rd.startTime <![CDATA[ <= ]]> '2020-09-30 23:59:59'*/
+        /*and rd.lastMonthTeamAward = 0*/
+        /*and DATE_FORMAT(NOW(),'%m-%d-%Y') >= DATE_FORMAT(rd.endTime,'%m-%d-%Y')*/
+    </select>
+    
+</mapper>

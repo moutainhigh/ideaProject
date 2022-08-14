@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.lock.dao.ExDmLockReleaseTimeDao">
+    <select id="getReleaseTime" parameterType="java.util.Map" resultType="hry.exchange.lock.model.ExDmLockReleaseTime">
+        SELECT
+            timer.id,
+            timer.recordId,
+            timer.releaseTime,
+            sum(timer.releaseVal) AS releaseVal,
+            timer.state,
+            timer.created,
+            timer.modified
+        FROM
+            ex_dm_lock_releasetime timer LEFT JOIN ex_dm_lock_record record on timer.recordId = record.id
+        WHERE
+            timer.state = 0
+            <![CDATA[ and TO_DAYS(timer.releaseTime) <= TO_DAYS(NOW()) ]]>
+            and record.unlockState != 3
+            and record.unlockType = 1
+            and record.optType != 2
+        GROUP BY
+            timer.recordId
+    </select>
+
+    <!--自动-更新释放记录-->
+    <update id="updReleaseTimeForAuto">
+        UPDATE ex_dm_lock_releasetime
+        SET state = 1,
+        modified = NOW()
+        WHERE
+        state = 0
+        <![CDATA[ and TO_DAYS(releaseTime) <= TO_DAYS(NOW()) ]]>
+        and recordId = #{recordId}
+    </update>
+
+    <!--手动-更新释放记录-->
+    <update id="updReleaseTimeForManual">
+        UPDATE ex_dm_lock_releasetime
+        SET state = 1,
+        modified = NOW()
+        WHERE
+        state = 0
+        and recordId = #{recordId}
+    </update>
+
+</mapper>

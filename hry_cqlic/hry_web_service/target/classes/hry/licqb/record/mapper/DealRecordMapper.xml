@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.licqb.record.dao.DealRecordDao">
+
+    <resultMap id="findPageBySqlMap" type="hry.licqb.record.model.CommendInfo"></resultMap>
+
+    <resultMap id="resultMap" type="hry.licqb.record.model.DealRecord">
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+        <result column="newShiftToMoney" property="newShiftToMoney" javaType="java.math.BigDecimal" />
+        <result column="teamAsset" property="teamAsset" javaType="java.math.BigDecimal" />
+    </resultMap>
+
+    <select id="findNewDealRecord" resultMap="resultMap" parameterType="java.util.Map">
+        select customerId,SUM(dealMoney) as newShiftToMoney FROM lc_deal_record
+        WHERE 1=1
+        <if test="dealType != null and dealType != ''">
+            and dealType = #{dealType}
+        </if>
+        <if test="dealTypes != null">
+            and dealType in
+            <foreach item="item" index="index" collection="dealTypes" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dateType == 'today'">
+            and DATEDIFF(created, NOW()) = 0
+        </if>
+        <if test="dateType == 'yesterday'">
+            and DATEDIFF(created, NOW()) = -1
+        </if>
+        GROUP BY customerId
+        <if test="offset != null and limit != null">
+            limit #{offset},#{limit}
+        </if>
+    </select>
+
+    <select id="getCountNewDealRecord" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*)
+        from (
+            select customerId,SUM(dealMoney) as newShiftToMoney FROM lc_deal_record
+            WHERE 1=1
+            <if test="dealType != null and dealType != ''">
+                and dealType = #{dealType}
+            </if>
+            <if test="dealTypes != null">
+                and dealType in
+                <foreach item="item" index="index" collection="dealTypes" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="dateType == 'today'">
+                and DATEDIFF(created, NOW()) = 0
+            </if>
+            <if test="dateType == 'yesterday'">
+                and DATEDIFF(created, NOW()) = -1
+            </if>
+            GROUP BY customerId
+        ) c
+    </select>
+
+    <select id="findNewlyTeamAsset" resultMap="resultMap" parameterType="java.util.Map">
+        select tt.parentId as customerId, IFNULL(sum(ldr.dealMoney),0) as teamAsset
+        from
+        (
+        select t.customerId,t.parentId
+        from app_team_level t
+        where t.parentId = #{customerId}
+        ) tt
+        LEFT JOIN lc_deal_record ldr
+        ON tt.customerId = ldr.customerId
+        WHERE ldr.dealType in (8,13)
+        and ldr.created >= #{startTime}
+    </select>
+
+    <select id="findDateTeamAsset" resultMap="resultMap" parameterType="java.util.Map">
+        select tt.parentId as customerId, IFNULL(sum(ldr.dealMoney),0) as teamAsset
+        from
+        (
+        select t.customerId,t.parentId
+        from app_team_level t
+        where t.parentId = #{customerId}
+        ) tt
+        LEFT JOIN lc_deal_record ldr
+        ON tt.customerId = ldr.customerId
+        WHERE ldr.dealType in (8,13)
+        <if test="startTime != null and  startTime != '' and endTime != null and endTime != ''">
+            and ldr.created >= #{startTime} and ldr.created <![CDATA[ <= ]]> #{endTime}
+        </if>
+        <!--<if test="dateType == 'lastMonth'">
+            and PERIOD_DIFF(date_format(now(), '%Y%m' ), date_format(ldr.created, '%Y%m' )) =2
+        </if>
+        <if test="dateType == 'thisMonth'">
+            and PERIOD_DIFF(date_format(now(), '%Y%m' ), date_format(ldr.created, '%Y%m' )) =1
+        </if>-->
+    </select>
+
+    <select id="findDateTeamAssetTwo" resultMap="resultMap" parameterType="java.util.Map">
+        select tt.parentId as customerId, IFNULL(sum(ldr.dealMoney),0) as teamAsset
+        from
+        (
+        select t.customerId,t.parentId
+        from app_team_level t
+        where t.parentId = #{customerId}
+        ) tt
+        LEFT JOIN lc_deal_record ldr
+        ON tt.customerId = ldr.customerId
+        WHERE ldr.dealType in (8,13)
+        <if test="startTime != null and  startTime != '' and endTime != null and endTime != ''">
+            and ldr.created >= #{startTime} and ldr.created <![CDATA[ <= ]]> #{endTime}
+        </if>
+        <!--<if test="dateType == 'lastMonth' and thisDate != ''">
+          and PERIOD_DIFF(date_format(#{thisDate}, '%Y%m' ), date_format(ldr.created, '%Y%m' )) =1
+        </if>
+        <if test="dateType == 'thisMonth' and thisDate != ''">
+            and PERIOD_DIFF(date_format(#{thisDate}, '%Y%m' ), date_format(ldr.created, '%Y%m' )) = 0
+        </if>-->
+    </select>
+
+
+
+
+    <select id="countDealMoney" resultType="java.math.BigDecimal" parameterType="java.util.Map">
+        select IFNULL(sum(ldr.dealMoney),0) as allDealMoney
+        FROM lc_deal_record ldr
+        where 1=1
+        <if test="customerId != null and customerId != ''">
+            and ldr.customerId = #{customerId}
+        </if>
+        <if test="outInfoId != null and outInfoId != ''">
+            and ldr.outInfoId = #{outInfoId}
+        </if>
+        <if test="dealType != null and dealType != ''">
+            and ldr.dealType = #{dealType}
+        </if>
+        <if test="dealTypes != null">
+            and ldr.dealType in
+            <foreach item="item" index="index" collection="dealTypes" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dateType == 'today'">
+            and to_days(ldr.created) = to_days(now());
+        </if>
+        <if test="dateType == 'yesterday'">
+            and DATEDIFF(ldr.created, NOW()) = -1
+        </if>
+        <if test="dateType == 'thisWeek'">
+            and YEARWEEK(date_format(ldr.created,'%Y-%m-%d')) = YEARWEEK(now())
+        </if>
+        <if test="startTime != null and  startTime != '' and endTime != null and endTime != ''">
+            and ldr.created >= #{startTime} and ldr.created <![CDATA[ <= ]]> #{endTime}
+        </if>
+    </select>
+
+    <select id="countActualMoney" resultType="java.math.BigDecimal" parameterType="java.util.Map">
+        select IFNULL(sum(ldr.actualExpendLimit),0) as allActualMoney
+        FROM lc_deal_record ldr
+        where 1=1
+        and ldr.customerId = #{customerId}
+        <if test="outInfoId != null and outInfoId != ''">
+            and ldr.outInfoId = #{outInfoId}
+        </if>
+        <if test="coinCode != null and coinCode != ''">
+            and ldr.coinCode = #{coinCode}
+        </if>
+        <if test="dealType != null and dealType != ''">
+            and ldr.dealType = #{dealType}
+        </if>
+        <if test="dealTypes != null">
+            and ldr.dealType in
+            <foreach item="item" index="index" collection="dealTypes" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dateType == 'yesterday'">
+            and DATEDIFF(ldr.created, NOW()) = -1
+        </if>
+        <if test="dateType == 'thisWeek'">
+            and YEARWEEK(date_format(ldr.created,'%Y-%m-%d')) = YEARWEEK(now())
+        </if>
+        <if test="dateType == 'thisMonth'">
+            and DATE_FORMAT(ldr.created,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+        </if>
+        <if test="dateType == 'lastMonth'">
+            and DATE_FORMAT(ldr.created,'%Y-%m') = DATE_FORMAT(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+        </if>
+    </select>
+
+    <select id="findPageBySql" resultMap="resultMap" parameterType="java.util.Map">
+        select ldr.coinCode, ldr.ratio,
+        ldr.dealType, ldr.actualMoney, ldr.transactionNum, ldr.dealMoney,ldr.serviceCharge, ldr.dealStatus, ldr.created
+        FROM
+        lc_deal_record ldr
+        WHERE 1=1
+        <if test="customerId != null and customerId != ''">
+            and ldr.customerId = #{customerId}
+        </if>
+        <if test="coinCode != null and coinCode != ''">
+            and ldr.coinCode = #{coinCode}
+        </if>
+        <if test="dealType != null and dealType != ''">
+            and ldr.dealType = #{dealType}
+        </if>
+        <if test="dealTypes != null">
+            and ldr.dealType in
+            <foreach item="item" index="index" collection="dealTypes" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by ldr.id DESC
+    </select>
+
+    <select id="countTeamUser" parameterType="java.util.Map" resultType="java.util.Map">
+        select count(0) as userNum,IFNULL(sum(lc.baseMoney),0) as teamAsset
+        FROM
+        (
+        select t.customerId,t.parentId,t.parentInvitationCode,t.`level`
+        from app_team_level t
+        where t.parentId = #{customerId}
+        and t.parentId != 0
+        ) tt
+        LEFT JOIN
+        lc_out_info lc
+        ON tt.customerId = lc.customerId
+        where 1=1 and lc.`status` = 0
+        <if test="level == '1' or level == 1 ">
+            and tt.`level` = 1
+        </if>
+        <if test="level == '2' or level == 2 ">
+            and tt.`level` = 2
+        </if>
+        <if test="level == '3' or level == 3 ">
+            and tt.`level` >= 3
+        </if>
+        <if test="dateType == 'thisMonth'">
+            and DATE_FORMAT(lc.created,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+        </if>
+    </select>
+
+    <select id="countTeamDealMoney" resultType="java.math.BigDecimal" parameterType="java.util.Map">
+        SELECT IFNULL(sum(ldr.dealMoney),0) as allDealMoney
+        from app_team_level t
+        LEFT JOIN lc_deal_record ldr
+        ON t.customerId = ldr.customerId
+        where t.parentId = #{customerId}
+        and t.parentId != 0
+        <if test="dealType != null and dealType != ''">
+            and ldr.dealType = #{dealType}
+        </if>
+        <if test="dealTypes != null">
+            and ldr.dealType in
+            <foreach item="item" index="index" collection="dealTypes" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dateType == 'thisMonth'">
+            and DATE_FORMAT(ldr.created,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+        </if>
+        <if test="dateType == 'lastMonth'">
+            and DATE_FORMAT(ldr.created,'%Y-%m') = DATE_FORMAT(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+        </if>
+    </select>
+
+
+    <select id="findCommendUserInfo" parameterType="java.util.Map" resultMap="findPageBySqlMap">
+        select cu.customerId,IFNULL(cu.baseMoney,0) as investMoney, cu.levelName, IFNULL(cu.sort,0) as sort, api.email, api.mobilePhone
+        FROM
+        (
+        select tt.customerId,lc.baseMoney,lcl.levelName,lcl.sort
+        FROM
+        (
+        select t.customerId,t.parentId,t.parentInvitationCode,t.`level`
+        from app_team_level t
+        where t.parentId = #{customerId}
+        and t.parentId != 0
+        <if test="level != null and level != ''">
+            and t.`level` = #{level}
+        </if>
+        ) tt
+        LEFT JOIN
+        lc_out_info lc
+        ON tt.customerId = lc.customerId
+        LEFT JOIN lc_customer_level lcl
+        ON lcl.customerId = tt.customerId
+        WHERE (lc.`status` = 0 or lc.`status` is null)) cu
+        LEFT JOIN app_person_info api
+        ON cu.customerId = api.customerId
+    </select>
+
+
+    <select id="findUserLevelNum" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(cu.id) as levelNum
+        from
+        (
+        select tt.customerId,tt.parentId,lc.id
+        FROM
+        (
+        select t.customerId,t.parentId
+        from app_team_level t
+        where t.parentId = #{customerId}
+        and t.parentId != 0
+        ) tt
+        LEFT JOIN
+        lc_out_info lc
+        ON tt.customerId = lc.customerId
+        where lc.`status` = 0
+        ) cu
+        LEFT JOIN lc_customer_level cl
+        ON cu.customerId = cl.customerId
+        where 1=1
+        <if test="sort == 1">
+            and cl.sort = 1
+        </if>
+        <if test="sort == 2">
+            and cl.sort = 2
+        </if>
+        <if test="sort == 3">
+            and cl.sort >= 3
+        </if>
+    </select>
+
+    <select id="findEarningsTopTen" resultType="java.util.HashMap">
+        select api.email,dr.dealMoney
+        from (
+        select customerId,sum(dealMoney) as dealMoney
+        from lc_deal_record
+        where 1=1 and dealType in (1,2,3,4,5)
+        and to_days(now()) = to_days(created)
+        group by customerId HAVING 1=1 ORDER BY dealMoney DESC LIMIT 0,10
+        ) as dr
+        LEFT JOIN
+        app_person_info api
+        ON dr.customerId = api.customerId
+    </select>
+
+    <!--````````分表操作```````````-->
+    <!-- ~~~ 对created进行月份分组~~~ -->
+    <select id = "findGroupByCreated" resultType="java.lang.String">
+        SELECT DATE_FORMAT(created,'%Y-%m') created from lc_deal_record GROUP BY DATE_FORMAT(created,'%Y-%m')
+    </select>
+    <!-- ~~~ 判断表是否在 ~~~-->
+    <select id="existTable" parameterType="String" resultType="Integer">
+        select count(*)
+        from information_schema.TABLES
+        where LCASE(table_name)=#{tableName}
+    </select>
+    <!-- ~~~ 动态创建表 ~~~-->
+    <update id="createNewTable" parameterType="java.lang.String">
+        CREATE TABLE ${tableName} (
+          id bigint(20) NOT NULL COMMENT '主键id',
+          outInfoId bigint(20) DEFAULT NULL COMMENT '出局信息表Id',
+          accountId bigint(20) DEFAULT NULL COMMENT '数币账户Id',
+          customerId bigint(20) DEFAULT NULL COMMENT '用户id',
+          transactionNum varchar(255) DEFAULT null COMMENT '流水号',
+          coinCode varchar(20) DEFAULT null COMMENT '币种代码',
+          dealType int(1) DEFAULT NULL COMMENT '//交易类型 1：静态收益 2：见点奖 3：管理奖 4：级别奖 5：共建社区奖励 6：出局 7：兑入 12:兑出 8：投入 13:理财 9:周释放10:月释放 11:年释放 14:提币 15:充币',
+          ratio decimal(20,10) DEFAULT null COMMENT '比例',
+          dealMoney decimal(20,10) DEFAULT null COMMENT '交易金额',
+          codeValue decimal(20,10) DEFAULT null COMMENT '当前币价值（USDT）',
+          predictExpendLimit decimal(20,10) DEFAULT null COMMENT '预计消耗额度',
+          actualExpendLimit decimal(20,10) DEFAULT null COMMENT '实际消耗额度',
+          predictMoney decimal(20,10) DEFAULT null COMMENT '预计释放基数金额',
+          actualMoney decimal(20,10) DEFAULT NULL COMMENT '实际基数',
+          serviceCharge decimal(20,10) DEFAULT '0.0000000000' COMMENT '手续费',
+          dealStatus int(1) unsigned DEFAULT '2' COMMENT '1：交易中（待审核）2：交易完成 3：交易失败',
+          remark varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+          saasid varchar(255) COLLATE utf8_bin DEFAULT NULL,
+          created datetime DEFAULT CURRENT_TIMESTAMP COMMENT '{name:''创建时间''}',
+          modified datetime DEFAULT CURRENT_TIMESTAMP COMMENT '{name:''修改时间''}',
+          PRIMARY KEY (id))
+    </update>
+
+    <!-- ~~~ 备份指定数据 ~~~~-->
+    <insert id="backupsData" parameterType="java.lang.String">
+        INSERT INTO ${tableName}
+        (
+            id, outInfoId, accountId, customerId, transactionNum,
+            coinCode, dealType, ratio, dealMoney, codeValue, predictExpendLimit,
+            actualExpendLimit, predictMoney, actualMoney, serviceCharge,
+            dealStatus, remark, created, modified
+        )
+        SELECT
+        id, outInfoId, accountId, customerId, transactionNum,
+        coinCode, dealType, ratio, dealMoney, codeValue, predictExpendLimit,
+        actualExpendLimit, predictMoney, actualMoney, serviceCharge,
+        dealStatus, remark, created, modified
+        FROM lc_deal_record where created <![CDATA[ >= ]]> #{sTime} and created <![CDATA[ < ]]> #{eTime}
+    </insert>
+    <!-- ~~~ 对备份数据进行分组统计统计 ~~~ -->
+    <insert id="totalMonthsData" parameterType="java.lang.String">
+         INSERT INTO lc_months_record
+         (
+            customerId,coinCode,
+            dealType,totalDealMoney,months
+         ) select customerId,coinCode,
+           dealType,sum(dealMoney) as totalDealMoney, DATE_FORMAT(created,'%Y-%m') as months
+           from lc_deal_record where created <![CDATA[ >= ]]> #{sTime} and created <![CDATA[ < ]]> #{eTime}
+           GROUP BY customerId,dealType
+    </insert>
+
+    <!--清空统计表-->
+    <delete id="delTotalAllData">
+        truncate table lc_deal_total
+    </delete>
+    <!-- ~~~ 对已经统计好的数据再进行分组统计-->
+    <insert id="totalAllData" parameterType="java.lang.String">
+        INSERT INTO lc_deal_total
+        (
+           customerId,coinCode,dealType,dealMoney
+        )select customerId,coinCode,dealType,sum(totalDealMoney) as dealMoney
+        from lc_months_record where 1=1 GROUP BY  dealType,customerId
+    </insert>
+
+    <!-- 批量删除 -->
+    <delete id="delBatch" parameterType="java.lang.String">
+        delete from lc_deal_record where created <![CDATA[ >= ]]> #{sTime} and created <![CDATA[ < ]]> #{eTime}
+    </delete>
+
+</mapper>

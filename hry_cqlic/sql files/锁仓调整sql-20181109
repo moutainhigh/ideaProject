@@ -1,0 +1,25 @@
+-- 1、在ex_dm_lock表中，添加释放频率字段
+ALTER TABLE `ex_dm_lock`
+ADD COLUMN `releaseFrequency` decimal(10,0) NULL DEFAULT '1' COMMENT '锁仓释放频率/间隔' AFTER `saasId`;
+
+-- 2、添加锁仓释放时间表
+CREATE TABLE `ex_dm_lock_releasetime` (
+`id`  bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键' ,
+`recordId`  bigint(20) NULL DEFAULT NULL COMMENT '锁仓记录表主键' ,
+`releaseTime`  datetime NULL DEFAULT NULL COMMENT '释放时间' ,
+`releaseVal`  decimal(20,10) NULL DEFAULT NULL COMMENT '释放值' ,
+`state`  int(1) NULL DEFAULT 0 COMMENT '释放状态 0：未释放 1：已释放 2: 自动转手动' ,
+`created`  datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间' ,
+`modified`  datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间' ,
+`saasId`  varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_bin
+AUTO_INCREMENT=10
+ROW_FORMAT=COMPACT
+;
+
+-- 3、释放记录表中修改optType的注释
+ALTER TABLE `ex_dm_unlock_history`
+MODIFY COLUMN `optType`  bigint(2) NULL DEFAULT 1 COMMENT '操作类型：1自动 2手动' AFTER `coinCode`;

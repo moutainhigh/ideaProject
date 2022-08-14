@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+	
+    <bean id="remoteIcoServiceImpl" class="hry.ico.remote.RemoteIcoServiceImpl" />
+    <dubbo:service ref="remoteIcoServiceImpl"  interface="hry.ico.remote.RemoteIcoService"   />
+    <bean id="remoteIcoRewardServiceImpl" class="hry.ico.remote.RemoteIcoRewardServiceImpl" />
+    <dubbo:service ref="remoteIcoRewardServiceImpl"  interface="hry.ico.remote.RemoteIcoRewardService"   />
+
+    <bean id="remoteRemindServiceImpl" class="message.remote.RemoteRemindServiceImpl" />
+    <dubbo:service ref="remoteRemindServiceImpl"  interface="hry.message.remote.RemoteRemindService"   />
+</beans>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.customer.commend.dao.AppCommendMoneyDao">
+	<resultMap id="findPageBySqlMap"   type="hry.customer.commend.model.AppCommendMoney">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+		<result column="commendOne" property="commendOne" javaType="java.math.BigDecimal" />
+	    <result column="commendTwo" property="commendTwo" javaType="java.math.BigDecimal" />
+		<result column="commendThree" property="commendThree" javaType="java.math.BigDecimal" />
+		<result column="commendLater" property="commendLater" javaType="java.math.BigDecimal" />
+		<result column="moneyNum" property="moneyNum" javaType="java.math.BigDecimal" />
+		<result column="paidMoney" property="paidMoney" javaType="java.math.BigDecimal" />
+		<result column="custromerId" property="custromerId" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<association property="appPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="surname" property="surname" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+			
+		</association>
+	</resultMap>
+<!-- 通过sql分页查询 -->
+	<select id="findPageBySqlList" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap" >
+		select 	c.*,
+		  b.email,
+			b.mobilePhone,
+		  b.surname,
+		  b.trueName from (SELECT
+			a.id,
+			a.commendOne,
+			a.commendTwo,
+			a.commendThree,
+			a.commendLater,
+			a.moneyNum,
+			a.paidMoney,
+		
+		   a.coinCode,
+		  a.custromerId
+		 
+		  FROM
+			app_commend_money AS a 
+		<where>
+			<if test="cusomerId!=null and cusomerId!='' ">
+				a.custromerId =
+				#{cusomerId}
+			</if>
+			
+		</where>  limit #{start},#{end}) as c
+		LEFT JOIN app_person_info AS b ON c.custromerId = b.customerId 
+
+	</select>
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySqlCount" resultType="Long">
+		SELECT
+				count(*)
+		FROM app_commend_money
+			 AS a
+			<where>
+			<if test="cusomerId!=null and cusomerId!='' ">
+				a.custromerId =
+				#{cusomerId}
+			</if>
+		
+		</where>
+	
+
+  
+	</select>
+	
+	<select id="findPageBySql" resultMap="findPageBySqlMap" parameterType="java.util.Map">
+		SELECT
+			c.*, 
+			b.email,
+			b.mobilePhone,
+			b.surname,
+			b.trueName
+		FROM
+			(
+				SELECT
+					a.id,
+					a.commendOne,
+					a.commendTwo,
+					a.commendThree,
+					a.commendLater,
+					a.moneyNum,
+					a.paidMoney,
+					a.coinCode,
+					a.custromerId
+				FROM
+					app_commend_money AS a
+			) AS c
+		LEFT JOIN app_person_info AS b ON c.custromerId = b.customerId
+		<where>
+		  1=1
+			  <if test="email != null and email != ''">
+			    and b.email like #{email}
+			  </if>
+			  <if test="mobilePhone != null and mobilePhone != ''">
+			   and b.mobilePhone like #{mobilePhone}
+			  </if>
+		</where>
+	</select>
+	
+</mapper>

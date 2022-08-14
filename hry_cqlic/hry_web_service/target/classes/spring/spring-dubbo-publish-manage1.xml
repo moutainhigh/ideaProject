@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- 具体的实现bean -->
+    <bean id="remoteManageServiceImpl" class="hry.manage.remote.RemoteManageServiceImpl" />   
+    <!-- 声明需要暴露的服务接口 -->  
+    <dubbo:service ref="remoteManageServiceImpl"  interface="hry.manage.remote.RemoteManageService"   /> 
+   
+     <bean id="remoteAppTransactionManageServiceImpl" class="hry.manage.remote.RemoteAppTransactionManageServiceImpl" />   
+     <dubbo:service ref="remoteAppTransactionManageServiceImpl"  interface="hry.manage.remote.RemoteAppTransactionManageService"  /> 
+
+      <bean id="RemoteLendServiceImpl" class="hry.manage.remote.RemoteLendServiceImpl" />   
+     <dubbo:service ref="RemoteLendServiceImpl"  interface="hry.manage.remote.RemoteLendService"  /> 
+     
+     <bean id="remoteCoinSecurityServiceImpl" class="hry.account.remote.RemoteCoinSecurityServiceImpl" />   
+    <dubbo:service ref="remoteCoinSecurityServiceImpl"  interface="hry.manage.remote.RemoteCoinSecurityService"  /> 
+     
+     <!-- 提币管理服务接口 -->
+     <bean id="remoteWithdrawMoneyServiceImpl" class="hry.exchange.remote.dmtransaction.RemoteWithdrawMoneyServiceImpl" />   
+    <dubbo:service ref="remoteWithdrawMoneyServiceImpl"  interface="hry.manage.remote.RemoteWithdrawMoneyService"  /> 
+     
+     <!-- 归币管理服务接口 -->
+     <bean id="remoteTokenCollectServiceImpl" class="hry.web.remote.RemoteTokenCollectServiceImpl" />   
+    <dubbo:service ref="remoteTokenCollectServiceImpl"  interface="hry.manage.remote.RemoteTokenCollectService"  />
+
+    <!--系统配置服务接口-->
+    <bean id="remoteSysConfigServiceImpl" class="hry.manage.remote.RemoteSysConfigServiceImpl" />
+    <dubbo:service ref="remoteSysConfigServiceImpl"  interface="hry.manage.remote.RemoteSysConfigService"  />
+
+</beans>  

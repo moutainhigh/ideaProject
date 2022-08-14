@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.ico.account.dao.IcoAccountDao">
+    <resultMap id="icoAccountAtioPo"   type="hry.admin.ico.account.model.IcoAccountAtioPo">
+        <result column="accountAtio" property="accountAtio" javaType="java.lang.String" />
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+        <result column="level_id" property="level_id" javaType="java.lang.Long" />
+        <result column="sort" property="sort" javaType="java.lang.Integer" />
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+        <result column="email" property="email" javaType="java.lang.String" />
+        <result column="gradeName" property="gradeName" javaType="java.lang.String" />
+        <result column="additionRatio" property="additionRatio" javaType="java.lang.String" />
+        <result column="storageMoney" property="storageMoney" javaType="java.lang.String" />
+    </resultMap>
+
+    <select id="getAccountAtioBylevelSort" resultMap="icoAccountAtioPo" parameterType="java.util.Map">
+        SELECT
+        t3.accountAtio,
+        t3.customerId,
+        t3.level_id,
+        t3.sort,
+        t3.mobilePhone,
+        t3.email,
+        t3.gradeName,
+        t3.additionRatio,
+        t3.storageMoney
+        FROM
+        (
+        SELECT
+        ROUND(
+        t2.storageMoney / t1.allStorageMoney,
+        6
+        ) AS accountAtio,
+        t2.customerId,
+        t2.level_id,
+        t2.sort,
+        t2.mobilePhone,
+        t2.email,
+        t2.gradeName,
+        t2.additionRatio,
+        t2.storageMoney
+        FROM
+        (
+        SELECT
+        sum(ia.storageMoney) AS allStorageMoney
+        FROM
+        ico_account ia
+        WHERE
+        ia.storageMoney > 0
+        ) t1,
+        (
+        SELECT
+        ic.storageMoney,
+        ic.customerId,
+        icl.level_id,
+        icl.gradeName,
+        icl.sort,
+        api.mobilePhone,
+        api.email,
+        iuc.additionRatio
+        FROM
+        ico_account ic,
+        ico_customer_level icl,app_person_info api,ico_upgrade_config iuc
+        WHERE
+        ic.customerId = icl.customer_id and api.customerId=ic.customerId and iuc.id=icl.level_id
+        <if test="levelId!=null and levelId!='' ">
+            and icl.level_id  =  #{levelId,jdbcType=INTEGER}
+        </if>
+        <if test="email!=null and email!='' ">
+            and api.email like
+            #{email,jdbcType=VARCHAR}
+        </if>
+        <if test="mobilePhone!=null and mobilePhone!='' ">
+            and api.mobilePhone like
+            #{mobilePhone,jdbcType=VARCHAR}
+        </if>
+        ) t2
+        ) t3
+    </select>
+</mapper>

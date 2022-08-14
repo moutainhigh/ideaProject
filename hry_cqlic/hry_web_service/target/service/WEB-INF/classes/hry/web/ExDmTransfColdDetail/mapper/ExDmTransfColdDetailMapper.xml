@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.ExDmTransfColdDetail.dao.ExDmTransfColdDetailDao">
+
+	<select id="findFrontPageBySql" resultType="hry.web.ExDmTransfColdDetail.model.ExDmTransfColdDetail">
+		select * from ex_dm_transfcold_detail
+	</select>
+	
+	<resultMap id="frontPageMap"  type="hry.manage.remote.model.ExDmTransfColdDetailManage">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="fromAddress" property="fromAddress" javaType="java.lang.String" />
+		<result column="toAddress" property="toAddress" javaType="java.lang.String" />
+		<result column="amount" property="amount" javaType="java.math.BigDecimal" />
+		<result column="operator" property="operator" javaType="java.lang.String" />
+		<result column="tx" property="tx" javaType="java.lang.String" />
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+	</resultMap>
+	
+	<select id="selectByPId" parameterType="java.lang.Long" resultMap="frontPageMap">
+		select * from ex_dm_transfcold_detail where id = #{id}
+	</select>
+</mapper>

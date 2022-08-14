@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.customer.agents.dao.AppAgentsCustromerDao"   >
+
+	<select id="findAgentsCustromerByNum" resultType="hry.customer.person.model.AppPersonInfo" >
+		
+		 SELECT
+				a.*
+			FROM
+				customer_as_agents AS c
+			LEFT JOIN app_person_info AS a ON c.customerId = a.customerId
+			LEFT JOIN app_customer AS ac  ON a.customerId = ac.id
+			WHERE
+			 	ac.isDelete != 1  AND 
+			 	
+			 	<if test="num == 1">
+					c.oneParentId = #{userId}
+				</if>
+				<if test="num == 2">
+					c.twoParentId = #{userId}
+				</if>
+				<if test="num == 3">
+					c.threeParentId = #{userId}
+				</if>
+					 
+	</select>
+	
+	<select id="selectCountByCustromerId" resultType="hry.customer.agents.model.vo.CustromerToAgentsNum" >
+		SELECT (SELECT COUNT(*) FROM customer_as_agents b WHERE b.`oneParentId` = #{custromerId}) AS oneAgentsNum,
+		     (SELECT COUNT(*) FROM customer_as_agents b WHERE b.`twoParentId` = #{custromerId}) AS twoAgentsNum,
+	       (SELECT COUNT(*) FROM customer_as_agents b WHERE b.`threeParentId` = #{custromerId}) AS threeAgentsNum
+	</select>
+
+	<select id="findAgentsByCustromerName" resultType="hry.customer.agents.model.AppAgentsCustromer" >
+		SELECT * FROM app_agents_custromer b WHERE 
+			b.customerName = 
+	
+		<if test="num == 1">
+			(SELECT a.oneParentName FROM customer_as_agents a WHERE a.customerId = (SELECT id FROM app_customer WHERE userName = #{custromerName}) )
+		</if>
+		<if test="num == 2">
+			(SELECT a.twoParentName FROM customer_as_agents a WHERE a.customerId = (SELECT id FROM app_customer WHERE userName = #{custromerName}) )
+		</if>
+		<if test="num == 3">
+			(SELECT a.threeParentName FROM customer_as_agents a WHERE a.customerId = (SELECT id FROM app_customer WHERE userName = #{custromerName}) )
+		</if>
+			
+	</select>
+	
+	
+	
+	<select id="findAgentsForMoney" resultType="hry.customer.agents.model.vo.AgentsForMoney" >
+SELECT
+	*
+FROM
+	(
+		SELECT
+			jj.*, (sumMoney - deawalMoney) surplusMoney
+		FROM
+			(
+				SELECT
+					gg.*, (
+						oneMoney + twoMoney + threeMoney
+					) sumMoney,
+					IFNULL(hh.drawalMoney, 0) deawalMoney,
+					IFNULL(
+						hh.modified,
+						'2017-01-01 00:00:01'
+					) modified
+				FROM
+					(
+						SELECT
+							ee.*, CASE
+						WHEN ee.fx5 IS NOT NULL THEN
+							ee.fx5
+						WHEN ee.fx2 IS NOT NULL THEN
+							ee.fx2
+						ELSE
+							ff.fx3
+						END AS fixPriceCoinCode,
+						CASE
+					WHEN ee.ft5 IS NOT NULL THEN
+						ee.ft5
+					WHEN ee.ft2 IS NOT NULL THEN
+						ee.ft2
+					ELSE
+						ff.ft3
+					END AS fixPriceType,
+					IFNULL(ff.threeMoney, 0) threeMoney
+				FROM
+					(
+						SELECT
+							cc.*, dd.fx2,
+							dd.ft2,
+							IFNULL(dd.twoMoney, 0) twoMoney
+						FROM
+							(
+								SELECT
+									aa.id,
+									aa.customerName,
+									aa.address,
+									aa.created,
+									bb.fx5,
+									bb.ft5,
+									IFNULL(bb.oneMoney, 0) oneMoney
+								FROM
+									app_agents_custromer aa
+								LEFT JOIN (
+									SELECT
+										a.fixPriceCoinCode AS fx5,
+										a.fixPriceType ft5,
+										a.oneParentName agentName,
+										IFNULL(a.`oneParentMoney`, 0) oneMoney
+									FROM
+										app_trade_factorage a,
+										app_agents_custromer b
+									WHERE
+										a.oneParentName = b.customerName
+								) bb ON aa.customerName = bb.agentName
+							) cc
+						LEFT JOIN (
+							SELECT
+								c.fixPriceCoinCode AS fx2,
+								c.fixPriceType ft2,
+								c.twoParentName agentName,
+								IFNULL(c.`twoParentMoney`, 0) twoMoney
+							FROM
+								app_trade_factorage c,
+								app_agents_custromer d
+							WHERE
+								c.twoParentName = d.customerName
+						) dd ON cc.customerName = dd.agentName
+					) ee
+				LEFT JOIN (
+					SELECT
+						e.fixPriceCoinCode AS fx3,
+						e.fixPriceType ft3,
+						e.threeParentName agentName,
+						IFNULL(e.`threeParentMoney`, 0) threeMoney
+					FROM
+						app_trade_factorage e,
+						app_agents_custromer f
+					WHERE
+						e.threeParentName = f.customerName
+				) ff ON ee.customerName = ff.agentName
+					) gg
+				LEFT JOIN (
+					SELECT
+						agentName,
+						fixPriceCoinCode,
+						SUM(drawalMoney) drawalMoney,
+						modified
+					FROM
+						angest_as_money
+					WHERE
+						state = 1
+					GROUP BY
+						fixPriceCoinCode , agentName
+				) hh ON gg.customerName = hh.agentName and gg.fixPriceCoinCode=hh.fixPriceCoinCode
+			) jj
+		ORDER BY
+			surplusMoney DESC
+	) totalTable 
+		
+	
+	 <if test="customerName != null and customerName != ''">
+		WHERE totalTable.customerName LIKE #{customerName}
+	</if> 
+	<if test="fixPriceCoinCode != null and fixPriceCoinCode != ''">
+		and totalTable.fixPriceCoinCode LIKE #{fixPriceCoinCode}
+	</if>
+	</select>
+	
+	
+	<select id="findCustromerInfo" resultType="hry.customer.agents.model.vo.CustromerInfo">
+		SELECT 
+		  b.trueName,
+		  c.userName 
+		FROM
+		  customer_as_agents a,
+		  app_person_info b,
+		  app_customer c 
+		WHERE a.customerId = b.customerId 
+		  AND b.customerId = c.id 
+		  <if test="rank == 1">
+		  AND a.oneParentName = #{agentName} 
+		  </if>
+		  <if test="rank == 2">
+		  AND a.twoParentName = #{agentName} 
+		  </if>
+		  <if test="rank == 3">
+			  AND a.threeParentName = #{agentName} 
+		  </if>
+	</select>
+	
+
+
+</mapper>

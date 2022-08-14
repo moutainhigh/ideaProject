@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.lock.dao.ExDmManualUnlockDao">
+
+	<select id="findPageByCondition" parameterType="java.util.Map" resultType="hry.exchange.lock.model.vo.DigitalmoneyAccountAndTransaction">
+		SELECT 
+			api.email,
+			api.mobilePhone,
+			api.surname,
+			api.trueName,
+			api.country,
+			edt.customerId,
+			edt.coinCode,
+			sum(edt.transactionMoney) coldMoneySum,
+			edt.accountId id,
+			eda.hotMoney,
+			eda.coldMoney,
+			edl.lockEndTime
+		FROM ex_dm_transaction edt
+		LEFT JOIN app_person_info api on edt.customerId = api.customerId
+		LEFT JOIN ex_digitalmoney_account eda on edt.accountId = eda.id
+		LEFT JOIN ex_dm_lock edl on edt.coinCode = edl.coinCode
+		WHERE 1 = 1
+			and edt.optType = 10
+			and edt.status = 1
+			<if test="coinCode!=null and coinCode!='' " >
+			    and edt.coinCode = #{coinCode,jdbcType=VARCHAR}
+			</if>
+			<if test="email!=null and email!='' " >
+			    and api.email like #{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' " >
+			    and api.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="surname!=null and surname!='' " >
+			    and api.surname like #{surname,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName!=null and trueName!='' " >
+			    and api.trueName like #{trueName,jdbcType=VARCHAR}
+			</if>
+		GROUP BY edt.customerId,edt.coinCode
+	</select>
+	
+	<update id="updateByAccountId">
+		update ex_dm_transaction set status = 3 where accountId = #{accountId} and optType = 10
+    </update>
+    
+    <!-- 查询今天到期的锁仓记录 -->
+    <select id="selectLockRecordByTime" resultType="hry.exchange.lock.model.ExDmLock">
+    	SELECT 
+    		* 
+   		FROM ex_dm_lock 
+   		WHERE 1 = 1 
+   			and isLock = 1 
+   			and TO_DAYS(lockEndTime) = TO_DAYS(NOW()) 
+    </select>
+</mapper>

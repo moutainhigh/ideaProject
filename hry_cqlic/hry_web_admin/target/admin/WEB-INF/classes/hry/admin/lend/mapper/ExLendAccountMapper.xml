@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.lend.dao.ExLendAccountDao">
+    <select id="findPageBySql" resultType="hry.admin.lend.model.ExLendAccount" parameterType="java.util.Map">
+        select * from v_ex_lend_account
+        <where>
+            <if test="null!=email and email!=''">
+              and email like "%"#{email}"%"
+            </if>
+            <if test="null!=mobilePhone and mobilePhone!=''">
+              and mobilePhone like "%"#{mobilePhone}"%"
+            </if>
+            <if test="null!=coinCode and coinCode!=''">
+              and coinCode = #{coinCode}
+            </if>
+        </where>
+    </select>
+</mapper>

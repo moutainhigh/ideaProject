@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="hry_web_service:war">
+    <output-path>$PROJECT_DIR$/hry_web_service/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>hry_web_service</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="service.war">
+      <element id="artifact" artifact-name="hry_web_service:war exploded" />
+    </root>
+  </artifact>
+</component>

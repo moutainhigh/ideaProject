@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.article.dao.AppArticleDao">
+
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" 
+		resultType="hry.web.app.model.AppArticle">
+		SELECT
+		id,title,content,isOutLink,outLink,categoryName,categoryId,titleImage,shortContent,writer,source,hits,created modified
+		FROM
+		app_article AS t WHERE t.categoryId = #{0} 
+		AND t.website = #{1}
+		AND t.status = 0 ORDER
+		BY sort ,created DESC
+	</select>
+
+	<select id="firstnews" 
+		resultType="hry.web.app.model.AppArticle">
+		SELECT
+			t.id,
+			t.title,
+			t.categoryName,
+			t.categoryId,
+			t.titleImage,
+			t.shortContent,
+			t.writer,
+			t.source,
+			t.hits,
+			t.modified
+		FROM
+			app_article AS t
+		LEFT JOIN app_artic_category AS ac ON t.categoryId = ac.id
+		WHERE
+			ac.type = 'news'
+		AND t.STATUS = 0
+		ORDER BY
+			t.id desc 
+		LIMIT 1
+	</select>
+
+
+
+	<select id="findUpActicle" parameterType="java.lang.Long"
+		resultType="hry.web.app.model.AppArticle">
+		<![CDATA[ SELECT id,title,categoryName,categoryId,titleImage,shortContent,writer,source,hits,modified
+		FROM
+		app_article AS t WHERE t.id < #{0} AND t.categoryName=(SELECT categoryName FROM app_article a WHERE a.id = #{0}) AND t.status = 0 ORDER BY sort, modified DESC LIMIT 0,1 ]]>
+	</select>
+
+	<select id="findNextActicle" parameterType="java.lang.Long"
+		resultType="hry.web.app.model.AppArticle">
+		<![CDATA[ SELECT id,title,categoryName,categoryId,titleImage,shortContent,writer,source,hits,modified
+		FROM
+		app_article AS t WHERE t.id > #{0} AND t.categoryName=(SELECT categoryName FROM app_article a WHERE a.id = #{0}) AND t.status = 0 ORDER BY sort, modified DESC LIMIT 0,1 ]]>
+	</select>
+
+
+
+
+	<resultMap type="hry.web.app.model.AppArticleVo" id="AppArticleAndCategory">
+		<!-- 订单信息 -->
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<collection property="list" ofType="hry.web.app.model.AppArticle">
+			<id column="aId" property="id" />
+			<result column="title" property="title" />
+		</collection>
+	</resultMap>
+	
+	<select id="findArtricAndCategory" parameterType="java.lang.Long"
+		resultMap="AppArticleAndCategory">
+		<![CDATA[  SELECT c.id,c.name,a.id aId,a.title FROM app_artic_category AS c,app_article AS a WHERE a.categoryId = c.id 
+		 ]]>
+	</select>
+
+	<select id="findArticList" resultType="hry.web.app.model.AppArticle">
+		SELECT
+		id,title,categoryName,categoryId,shortContent,STATUS,writer,source,hits,modified
+		FROM app_article WHERE categoryName=#{0} AND STATUS = 0 LIMIT 0,#{1}
+	</select>
+
+	<select id="findArticListById" resultType="hry.web.app.model.AppArticle">
+		SELECT
+		id,title,categoryName,categoryId,shortContent,STATUS,writer,source,hits,modified
+		FROM app_article WHERE id=#{0} AND STATUS = 0 LIMIT 0,#{1}
+	</select>
+	
+	<select id="findArticListByIdLimit" resultType="hry.web.app.model.AppArticle">
+		SELECT
+		id,title,writer,hits,modified,content,created
+		FROM app_article WHERE categoryId=#{categoryId} AND STATUS = 0 AND website = #{language} ORDER BY modified desc LIMIT 0,#{size}
+	</select>
+
+
+	<resultMap type="hry.web.app.model.vo.AppArticlePageVo" id="AppArticlePageVo">
+		<result column="totalPage" property="totalPage" />
+		<collection property="list" ofType="hry.web.app.model.AppArticle">
+			<id column="id" property="id" />
+			<result column="title" property="title" />
+			<result column="categoryName" property="categoryName" />
+			<result column="categoryId" property="categoryId" />
+			<result column="outLink" property="outLink" />
+			<result column="isOutLink" property="isOutLink" />
+			<result column="writer" property="writer" />
+			<result column="hits" property="hits" />
+		</collection>
+	</resultMap>
+
+	<select id="findArticListByPage" resultMap="AppArticlePageVo">
+		SELECT 
+		  (SELECT 
+		    COUNT(*) 
+		  FROM
+		    app_article WHERE categoryId=#{id} AND STATUS=0 ) totalPage,
+		  a.* 
+		FROM
+		  (SELECT 
+		    a.id,
+		    a.title,
+		    a.categoryName,
+		    a.categoryId,
+		    a.outLink,
+		    a.isOutLink,
+		    a.writer,
+		    a.hits
+		  FROM
+		    app_article a WHERE categoryId=#{id} AND STATUS=0 LIMIT #{stat},#{end} ORDER BY created DESC) a 
+		GROUP BY totalPage 
+	</select>
+	
+	
+    <!-- 前台分页查询 -->
+    <resultMap id="FrontMap" type="hry.manage.remote.model.Article">
+	</resultMap>
+	<select id="findFrontPageBySql" parameterType="java.util.Map" resultMap="FrontMap">
+		SELECT
+			id,
+			title,
+			categoryId,
+			seoTitle,
+			titleImage,
+			shortContent,
+			writer,
+			hits,
+			created,
+			modified
+		FROM
+			app_article
+		where categoryId = #{categoryid} and website = #{website}
+		order by created desc
+
+	</select>
+
+	<select id="findFrontPageByCondition" parameterType="java.util.Map" resultMap="FrontMap">
+		SELECT
+			aa.id,
+			aa.title,
+			aa.categoryId,
+			aa.seoTitle,
+			aa.titleImage,
+			aa.shortContent,
+			aa.writer,
+			aa.content,
+			aa.hits,
+			aa.created,
+			aa.modified
+		FROM
+			app_article aa LEFT JOIN new_app_dic nad on aa.langId = nad.id
+		<where>
+			1 = 1
+			<if test="categoryid!=null and categoryid!='' " >
+				and aa.categoryId = #{categoryid}
+			</if>
+			<if test="lang!=null and lang!='' " >
+				and nad.value = #{lang}
+			</if>
+			<if test="categoryids!=null and categoryids!='' ">
+				and aa.categoryId in
+				<foreach collection="categoryids" index="index" item="item"
+						 open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="title!=null and title!='' " >
+				and aa.title like #{title,jdbcType=VARCHAR}
+			</if>
+		</where>
+		ORDER BY aa.created DESC
+	</select>
+
+</mapper>

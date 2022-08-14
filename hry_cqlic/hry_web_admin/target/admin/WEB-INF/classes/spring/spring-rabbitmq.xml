@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+						http://www.springframework.org/schema/rabbit/spring-rabbit-1.4.xsd
+						http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+						http://www.springframework.org/schema/context 
+       					http://www.springframework.org/schema/context/spring-context.xsd ">
+
+	<bean id="messageProducer" class="hry.admin.mq.producer.service.MessageProducer"></bean>
+	<rabbit:connection-factory id="connectionFactory"
+							   host="${rabbitmq.url}" port="${rabbitmq.port}" username="${rabbitmq.username}" password="${rabbitmq.password}"
+							   virtual-host="${rabbitmq.virtual-host}" />
+
+	<!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+	<rabbit:admin id="connectAdmin" connection-factory="connectionFactory" />
+
+
+	<!-- 定义生产者 -->
+	<!--定义queue -->
+	<rabbit:queue name="toAccount" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue name="toTrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue name="chongbiCallBack" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue name="toLendPing" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue name="toLendRepay" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue name="toAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue name="toReleaseOrder" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue name="toRecommendReward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<!--平台币 -->
+	<rabbit:queue name="toPlatformCurrency" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<!-- 消息提醒-->
+	<rabbit:queue name="toMessageWarn" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<!-- 自动锁仓-->
+	<rabbit:queue name="toLockStorage" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<!-- KLG -->
+	<rabbit:queue name="toKlgBuyPay" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue name="toBuySellAccount" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+	<!-- 定义direct exchange，绑定queueTest -->
+	<rabbit:direct-exchange name="exchangeToTrade" durable="true" auto-delete="false" declared-by="connectAdmin">
+		<rabbit:bindings>
+			<rabbit:binding queue="toKlgBuyPay" key="toKlgBuyPayKey"></rabbit:binding>
+			<rabbit:binding queue="toTrade" key="toTradeKey"></rabbit:binding>
+			<rabbit:binding queue="toAccount" key="toAccountKey"></rabbit:binding>
+			<rabbit:binding queue="chongbiCallBack" key="chongbiCallBackKey"></rabbit:binding>
+			<rabbit:binding queue="toLendPing" key="toLendPingKey"></rabbit:binding>
+			<rabbit:binding queue="toLendRepay" key="toLendRepayKey"></rabbit:binding>
+			<rabbit:binding queue="toPlatformCurrency" key="toPlatformCurrencyKey"></rabbit:binding>
+			<rabbit:binding queue="toBuySellAccount" key="toBuySellAccountKey"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+	<!--定义rabbit template用于数据的接收和发送 -->
+	<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" exchange="exchangeToTrade" />
+
+
+	<bean id="messageChongbiCallBack" class="hry.admin.mq.producer.MessageChongbiCallBack"></bean>
+
+	<bean id="messageLendPing" class="hry.admin.mq.producer.MessageLendPing"></bean>
+	<bean id="messageLendRepay" class="hry.admin.mq.producer.MessageLendRepay"></bean>
+
+	<bean id="messageToAward" class="hry.admin.mq.producer.MessageToAward"></bean>
+	<bean id="messageToReleaseOrder" class="hry.admin.mq.producer.MessageToReleaseOrder"></bean>
+	<bean id="messageToRecommendReward" class="hry.admin.mq.producer.MessageToRecommendReward"></bean>
+	<bean id="messageToPlatformCurrency" class="hry.admin.mq.producer.MessageToPlatformCurrency"></bean>
+	<bean id="messageToWarn" class="hry.admin.mq.producer.MessageToWarn"></bean>
+	<bean id="messageToLockStorage" class="hry.admin.mq.producer.MessageToLockStorage"></bean>
+	<rabbit:listener-container connection-factory="connectionFactory" requeue-rejected="false">
+		<rabbit:listener queues="chongbiCallBack" ref="messageChongbiCallBack" />
+		<rabbit:listener queues="toLendPing" ref="messageLendPing" />
+		<rabbit:listener queues="toLendRepay" ref="messageLendRepay" />
+		<rabbit:listener queues="toAward" ref="messageToAward" />
+		<rabbit:listener queues="toReleaseOrder" ref="messageToReleaseOrder" />
+		<rabbit:listener queues="toRecommendReward" ref="messageToRecommendReward" />
+		<rabbit:listener queues="toMessageWarn" ref="messageToWarn" />
+		<rabbit:listener queues="toLockStorage" ref="messageToLockStorage" />
+	</rabbit:listener-container>
+	<rabbit:listener-container connection-factory="connectionFactory" requeue-rejected="false" acknowledge="manual">
+		<rabbit:listener queues="toPlatformCurrency" ref="messageToPlatformCurrency" />
+	</rabbit:listener-container>
+</beans>
+
+

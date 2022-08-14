@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.ico.account.dao.IcoTransferAccountsDao">
+
+    <resultMap id="findPageBySqlMap"   type="hry.admin.ico.account.model.IcoTransferAccounts">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+        <result column="serialNumber" property="serialNumber" javaType="java.lang.String" />
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+        <result column="toCustomerId" property="toCustomerId" javaType="java.lang.Long" />
+        <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+        <result column="money" property="money" javaType="java.math.BigDecimal" />
+        <result column="remark" property="remark"  javaType="java.lang.String" />
+
+        <result column="account" property="account" javaType="java.lang.String" />
+        <result column="toAccount" property="toAccount" javaType="java.lang.String" />
+    </resultMap>
+
+
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        SELECT tt.*,case api.mobilePhone when "" then api.email else mobilePhone end as toAccount
+        from (
+        select  str.*,case api.mobilePhone when "" then api.email else mobilePhone end as account from ico_transfer_accounts  as str
+        inner JOIN app_person_info as api on str.customerId=api.customerId
+        where 1=1
+        <if test="email!=null and email!='' ">
+            and api.email like
+            #{email,jdbcType=VARCHAR}
+        </if>
+        <if test="mobilePhone!=null and mobilePhone!='' ">
+            and api.mobilePhone like
+            #{mobilePhone,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime!=null and endTime!=null  ">
+            and str.created BETWEEN  #{startTime,jdbcType=DATE}
+            and date_add(#{endTime,jdbcType=DATE},interval 1 day)
+        </if>
+
+        ) as tt,app_person_info api where api.customerId=tt.toCustomerId
+            <if test="toEmail!=null and toEmail!='' ">
+                and api.email like
+                #{toEmail,jdbcType=VARCHAR}
+            </if>
+            <if test="toMobilePhone!=null and toMobilePhone!='' ">
+                and api.mobilePhone like
+                #{toMobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                and tt.coinCode =
+                #{coinCode,jdbcType=VARCHAR}
+            </if>
+        order by tt.created desc
+    </select>
+</mapper>

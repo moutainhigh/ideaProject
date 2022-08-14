@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.licqb.record.dao.CustomerFreezeDao">
+
+    <select id="getCustomerFreeze" parameterType="java.lang.Long" resultType="hry.licqb.record.model.CustomerFreeze">
+        select da.customerId, da.coinCode, da.hotMoney, da.coldMoney, cf.freezeMoney, cf.id
+        from ex_digitalmoney_account da
+        LEFT JOIN lc_customer_freeze cf
+        ON da.customerId = cf.customerId
+        LEFT JOIN lc_out_info oi
+        ON cf.customerId = oi.customerId
+        WHERE 1=1
+        and da.coinCode = 'USDT'
+        and oi.`status` = 0
+        and cf.freezeMoney > da.coldMoney
+        and da.customerId = #{customerId}
+    </select>
+</mapper>

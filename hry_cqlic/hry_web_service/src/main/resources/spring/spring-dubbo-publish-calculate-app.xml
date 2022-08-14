@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- 具体的实现bean -->
+  <!--   <bean id="remoteAppAccountServiceImpl" class="hry.account.remote.RemoteAppAccountServiceImpl" />   
+  			  声明需要暴露的服务接口 
+   		 <dubbo:service ref="remoteAppAccountServiceImpl"  interface="hry.account.remote.RemoteAppAccountService"   /> 
+     --> 
+ 
+   	  <bean id="remoteAppReportSettlementServiceImpl" class="hry.calculate.remote.settlement.RemoteAppReportSettlementServiceImpl"></bean>
+    <dubbo:service ref="remoteAppReportSettlementServiceImpl"  interface="hry.calculate.remote.settlement.RemoteAppReportSettlementService"   /> 
+                                                                
+   
+
+     
+</beans>  

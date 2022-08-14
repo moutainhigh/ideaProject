@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.product.dao.ExProductDao"   >
+
+	<select id="selectProductByCustomerId"  resultType="hry.exchange.product.model.ExProduct">
+		SELECT id,NAME,coinCode,picturePath FROM ex_product WHERE coinCode IN                                
+			(SELECT coinCode FROM ex_digitalmoney_account WHERE customerId = #{customerId})
+	</select>
+
+</mapper>
+
+
+
+

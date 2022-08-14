@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.klg.level.dao.KlgLevelConfigDao">
+    <resultMap id="resultBase" type="hry.klg.level.model.KlgLevelConfig">
+    </resultMap>
+    
+    <select id="getLevelConfigByCustomerId"  resultMap="resultBase">
+       SELECT
+        klc.*
+    FROM
+        klg_level_config klc
+    INNER JOIN klg_customer_level kcl ON klc.id = kcl.levelId
+    WHERE
+        kcl.customerId =  #{customerId}
+    </select>
+</mapper>

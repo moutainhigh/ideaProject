@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.lock.dao.ExDmLockRecordDao">
+	<resultMap id="BaseResultMap" type="hry.exchange.lock.model.ExDmLockRecord">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="lockId" property="lockId" javaType="java.lang.Long" />
+		<result column="accountId" property="accountId" javaType="java.lang.Long" />
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+		<result column="accountBalance" property="accountBalance" javaType="java.math.BigDecimal" />
+		<result column="coldNum" property="coldNum" javaType="java.math.BigDecimal" />
+		<result column="amountReleased" property="amountReleased" javaType="java.math.BigDecimal" />
+		<result column="remainingRelease" property="remainingRelease" javaType="java.math.BigDecimal" />
+		<result column="unlockState" property="unlockState" javaType="java.lang.Integer" />
+		<result column="releaseMethod" property="releaseMethod" javaType="java.lang.Integer" />
+		<result column="releaseMethodVal" property="releaseMethodVal" javaType="java.lang.String" />
+		<result column="currentRelease" property="currentRelease" javaType="java.math.BigDecimal" />
+		<result column="optUser" property="optUser" javaType="java.lang.String" />
+		<result column="optType" property="optType" javaType="java.lang.Integer" />
+		<result column="transactionNum" property="transactionNum" javaType="java.lang.String" />
+		<result column="releaseTime" property="releaseTime" javaType="java.lang.String" />
+		<result column="releaseVal" property="releaseVal" javaType="java.math.BigDecimal" />
+		<result column="isComplete" property="isComplete" javaType="java.lang.Integer" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<association property="appPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="country" property="country" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+			<result column="surname" property="surname" javaType="java.lang.String" />
+		</association>
+		<association property="exDmLock" javaType="hry.exchange.lock.model.ExDmLock">
+			<result column="releaseMethod" property="releaseMethod" javaType="java.lang.Integer" />
+			<result column="releaseMethodVal" property="releaseMethodVal" javaType="java.lang.String" />
+			<result column="dailyReleaseOfUserRatio" property="dailyReleaseOfUserRatio" javaType="java.math.BigDecimal" />
+		</association>
+	</resultMap>
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map" resultMap="BaseResultMap" >
+		SELECT
+		r.id,
+		r.customerId,
+		r.lockId,
+		r.accountId,
+		i.email,
+		i.mobilePhone,
+		i.country,
+		r.coinCode,
+		r.accountBalance,
+		r.coldNum,
+		r.releaseMethod,
+		r.releaseMethodVal,
+		r.amountReleased,
+		r.remainingRelease,
+		r.currentRelease,
+		r.unlockState,
+		r.created
+		FROM
+		ex_dm_lock_record r
+		LEFT JOIN app_person_info i ON r.customerId = i.customerId
+		<where>
+			1 = 1
+			<if test="email!=null and email!='' " >
+				and i.email like #{email}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' " >
+				and i.mobilePhone like #{mobilePhone}
+			</if>
+			<if test="coinCode!=null and coinCode!='' " >
+				and r.coinCode = #{coinCode}
+			</if>
+			<if test="unlockState!=null and unlockState!='' " >
+				and r.unlockState = #{unlockState}
+			</if>
+			<if test="listType!=null and listType!='' " >
+				and r.optType = #{listType}
+			</if>
+		</where>
+		ORDER BY r.created desc
+	</select>
+
+	<!--获取今天的锁仓记录-->
+	<select id="getRecordBycurdate" parameterType="java.util.Map" resultType="hry.exchange.lock.model.ExDmLockRecord">
+		SELECT
+		r.id,
+		r.customerId,
+		r.lockId,
+		r.accountId,
+		r.coinCode,
+		r.accountBalance,
+		r.coldNum,
+		r.amountReleased,
+		r.remainingRelease,
+		r.currentRelease,
+		r.unlockState,
+		r.releaseTime,
+		r.releaseVal,
+		r.created
+		FROM
+		ex_dm_lock_record r
+		<where>
+			1 = 1
+			and r.unlockType = 1
+			and r.unlockState != 3
+			and r.optType != 2
+			<![CDATA[
+                and LOCATE(DATE_FORMAT(NOW(),'%Y%m%d'), r.releaseTime) > 0;
+            ]]>
+		</where>
+	</select>
+</mapper>

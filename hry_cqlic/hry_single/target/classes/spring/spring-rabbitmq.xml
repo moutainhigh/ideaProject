@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+						http://www.springframework.org/schema/rabbit/spring-rabbit-1.4.xsd
+						http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+						http://www.springframework.org/schema/context 
+       					http://www.springframework.org/schema/context/spring-context.xsd ">
+    <rabbit:connection-factory id="connectionFactory"
+                               host="${rabbitmq.url}" port="${rabbitmq.port}" username="${rabbitmq.username}"
+                               password="${rabbitmq.password}"
+                               virtual-host="${rabbitmq.virtual-host}"/>
+
+    <!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+    <rabbit:admin id="connectAdmin" connection-factory="connectionFactory"/>
+
+    <!--定义queue -->
+    <rabbit:queue name="toGather" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin"/>
+    <rabbit:queue name="toShakeSite" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin"/>
+    <rabbit:queue name="toSocialReward" durable="true" auto-delete="false" exclusive="false"
+                  declared-by="connectAdmin"/>
+    <rabbit:queue name="toUserDeal" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin"/>
+
+    <!--licqb-->
+    <!-- 用户等级升级 -->
+    <rabbit:queue name="toUserUpGrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+    <rabbit:queue name="toUserUpTeamGrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+    <rabbit:queue name="toOutManageAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+    <rabbit:queue name="toOutSeeAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+    <rabbit:queue name="toOutStaticAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+    <rabbit:queue name="teamAwardRule" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+    <rabbit:queue name="toUpdateOutInfo" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+    <rabbit:queue name="toSurplusUSDTAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+    <rabbit:queue name="toSurplusBBGOAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+    <rabbit:queue name="toSurplusUSDTAwardTwo" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+    <rabbit:queue name="toSurplusBBGOAwardTwo" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+    <!-- 定义direct exchange，绑定queueTest -->
+    <rabbit:direct-exchange name="exchangeToTrade" durable="true" auto-delete="false" declared-by="connectAdmin">
+        <rabbit:bindings>
+            <rabbit:binding queue="toGather" key="toGatherKey"></rabbit:binding>
+            <rabbit:binding queue="toShakeSite" key="toShakeSiteKey"></rabbit:binding>
+            <rabbit:binding queue="toSocialReward" key="toSocialRewardKey"></rabbit:binding>
+            <rabbit:binding queue="toUserDeal" key="toUserDealKey"></rabbit:binding>
+
+            <!--licqb-->
+            <rabbit:binding queue="toUserUpGrade" key="toUserUpGradeKey"></rabbit:binding>
+            <rabbit:binding queue="toUserUpTeamGrade" key="toUserUpTeamGradeKey"></rabbit:binding>
+            <rabbit:binding queue="toOutManageAward" key="toOutManageAwardKey"></rabbit:binding>
+            <rabbit:binding queue="toOutSeeAward" key="toOutSeeAwardKey"></rabbit:binding>
+            <rabbit:binding queue="toOutStaticAward" key="toOutStaticAwardKey"></rabbit:binding>
+            <rabbit:binding queue="teamAwardRule" key="teamAwardRuleKey"></rabbit:binding>
+            <rabbit:binding queue="toUpdateOutInfo" key="toUpdateOutInfoKey"></rabbit:binding>
+
+            <rabbit:binding queue="toSurplusUSDTAward" key="toSurplusUSDTAwardKey"></rabbit:binding>
+            <rabbit:binding queue="toSurplusBBGOAward" key="toSurplusBBGOAwardKey"></rabbit:binding>
+
+            <rabbit:binding queue="toSurplusUSDTAwardTwo" key="toSurplusUSDTAwardTwoKey"></rabbit:binding>
+            <rabbit:binding queue="toSurplusBBGOAwardTwo" key="toSurplusBBGOAwardTwoKey"></rabbit:binding>
+
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <!--定义rabbit template用于数据的接收和发送 -->
+    <rabbit:template id="amqpTemplate" connection-factory="connectionFactory" exchange="exchangeToTrade"/>
+
+
+    <!-- 消息接收者 -->
+    <bean id="messageMessageGather" class="hry.mq.consumer.MessageMiningReward"></bean>
+    <bean id="messageMessageShakeSite" class="hry.mq.consumer.MessageShakeSite"></bean>
+    <bean id="messageMessageOutReward" class="hry.mq.consumer.MessageOutReward"></bean>
+    <bean id="messageMessageUser" class="hry.mq.consumer.MessageUser"></bean>
+
+    <!-- 李超钱包-->
+    <bean id="messageUserUpGrade" class="hry.mq.licqb.MessageUserUpGrade"></bean>
+    <bean id="messageUserUpTeamGrade" class="hry.mq.licqb.MessageUserUpTeamGrade"></bean>
+    <bean id="messageOutManageAward" class="hry.mq.licqb.MessageOutManageAward"></bean>
+    <bean id="messageOutSeeAward" class="hry.mq.licqb.MessageOutSeeAward"></bean>
+    <bean id="messageOutStaticAward" class="hry.mq.licqb.MessageOutStaticAward"></bean>
+    <bean id="messageTeamAwardRule" class="hry.mq.licqb.MessageTeamAwardRule"></bean>
+    <bean id="messageUpdateOutInfo" class="hry.mq.licqb.MessageUpdateOutInfo"></bean>
+
+    <bean id="messageSurplusUSDTAward" class="hry.mq.licqb.MessageSurplusUSDTAward"></bean>
+    <bean id="messageSurplusBBGOAward" class="hry.mq.licqb.MessageSurplusBBGOAward"></bean>
+
+    <bean id="messageSurplusUSDTAwardTwo" class="hry.mq.licqb.MessageSurplusUSDTAwardTwo"></bean>
+    <bean id="messageSurplusBBGOAwardTwo" class="hry.mq.licqb.MessageSurplusBBGOAwardTwo"></bean>
+
+    <!-- 手动确认-->
+    <rabbit:listener-container connection-factory="connectionFactory" requeue-rejected="false" acknowledge="manual">
+        <rabbit:listener queues="toGather" ref="messageMessageGather"/>
+        <rabbit:listener queues="toShakeSite" ref="messageMessageShakeSite"/>
+        <rabbit:listener queues="toSocialReward" ref="messageMessageOutReward"/>
+
+        <rabbit:listener queues="toUserUpGrade" ref="messageUserUpGrade"/>
+    </rabbit:listener-container>
+    <!--concurrency="2" 多消费者-->
+    <rabbit:listener-container connection-factory="connectionFactory" requeue-rejected="false">
+        <rabbit:listener queues="toUserDeal" ref="messageMessageUser"/>
+
+        <!--<rabbit:listener queues="toUserUpTeamGrade" ref="messageUserUpTeamGrade"/>-->
+<!--        <rabbit:listener queues="toOutManageAward" ref="messageOutManageAward"/>
+        <rabbit:listener queues="toOutSeeAward" ref="messageOutSeeAward"/>-->
+       <!-- <rabbit:listener queues="toOutStaticAward" ref="messageOutStaticAward"/>-->
+        <rabbit:listener queues="teamAwardRule" ref="messageTeamAwardRule"/>
+        <rabbit:listener queues="toUpdateOutInfo" ref="messageUpdateOutInfo"/>
+
+    </rabbit:listener-container>
+    <rabbit:listener-container connection-factory="connectionFactory" concurrency="10" prefetch="10" requeue-rejected="false">
+        <rabbit:listener queues="toOutStaticAward" ref="messageOutStaticAward"/>
+        <rabbit:listener queues="toOutManageAward" ref="messageOutManageAward"/>
+        <rabbit:listener queues="toOutSeeAward" ref="messageOutSeeAward"/>
+        <rabbit:listener queues="toUserUpTeamGrade" ref="messageUserUpTeamGrade"/>
+
+        <rabbit:listener queues="toSurplusUSDTAward" ref="messageSurplusUSDTAward"/>
+        <rabbit:listener queues="toSurplusBBGOAward" ref="messageSurplusBBGOAward"/>
+
+        <rabbit:listener queues="toSurplusUSDTAwardTwo" ref="messageSurplusUSDTAwardTwo"/>
+        <rabbit:listener queues="toSurplusBBGOAwardTwo" ref="messageSurplusBBGOAwardTwo"/>
+    </rabbit:listener-container>
+
+
+</beans>
+
+

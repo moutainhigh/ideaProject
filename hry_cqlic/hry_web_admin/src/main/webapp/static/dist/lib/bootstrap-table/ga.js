@@ -1,0 +1,1 @@
+!function(e,t,n,a,c,i,s){e.GoogleAnalyticsObject=c,e[c]=e[c]||function(){(e[c].q=e[c].q||[]).push(arguments)},e[c].l=1*new Date,i=t.createElement(n),s=t.getElementsByTagName(n)[0],i.async=1,i.src="./static/dist/lib/bootstrap-table/analytics.js",s.parentNode.insertBefore(i,s)}(window,document,"script",0,"ga"),ga("create","UA-36708951-1","wenzhixin.net.cn"),ga("send","pageview");

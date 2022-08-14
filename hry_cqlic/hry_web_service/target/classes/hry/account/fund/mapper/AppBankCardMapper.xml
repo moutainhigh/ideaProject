@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.account.fund.dao.AppBankCardDao"   >
+
+	<resultMap id="findPageBySqlMap"   type="hry.account.fund.model.AppBankCard">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="accountId" property="accountId" javaType="java.lang.Long" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="trueName" property="trueName" javaType="java.lang.String" />
+		<result column="surname" property="surname" javaType="java.lang.String" />
+		
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+		<result column="cardName" property="cardName" javaType="java.lang.String" />
+		<result column="cardNumber" property="cardNumber" javaType="java.lang.String" />
+		<result column="cardBank" property="cardBank" javaType="java.lang.String" />
+		<result column="bankAddress" property="bankAddress" javaType="java.lang.String" />
+		<result column="bankProvince" property="bankProvince" javaType="java.lang.String" />
+		<result column="subBank" property="subBank" javaType="java.lang.String" />
+		<result column="subBankNum" property="subBankNum" javaType="java.lang.String" />
+		<result column="thingUrl" property="thingUrl" javaType="java.lang.String" />
+		<result column="type" property="type" javaType="java.lang.Integer" />
+		<result column="isDefault" property="isDefault" javaType="java.lang.Integer" />
+		
+		<association property="appPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="created" property="created" javaType="java.util.Date" />
+			<result column="modified" property="modified" javaType="java.util.Date" />
+			<result column="saasId" property="saasId" javaType="java.lang.String" />
+			
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="country" property="country" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+	
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap" >
+		SELECT 
+		a.id,
+		a.surname,
+		a.trueName,
+		a.bankProvince,
+		a.bankAddress,
+		a.cardBank,
+		a.subBank,
+		a.cardNumber,
+		
+		b.email,
+		b.mobilePhone,
+		b.surname,
+		b.trueName,
+		b.country
+		FROM app_bank_card AS a 
+		LEFT JOIN app_person_info
+		AS b ON a.customerId = b.customerId
+		<where>
+			<if test="email!=null and email!='' ">
+				b.email like
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone like
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<!-- 新通过sql分页查询 -->
+	<select id="findPageBySqlList" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap" >
+		select
+			abc.*,
+			b.email,
+			b.mobilePhone,
+			b.surname,
+			b.trueName,
+			b.country
+		from
+		(SELECT 
+			a.id,
+			a.customerId,
+			a.surname,
+			a.trueName,
+			a.bankProvince,
+			a.bankAddress,
+			a.cardBank,
+			a.subBank,
+			a.cardNumber
+		FROM app_bank_card AS a
+		<where>
+			1 = 1
+			<if test="customerId!=null ">
+				and a.customerId in
+				<foreach item="item" index="index" collection="customerId" 
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		limit #{start},#{end}
+		) as abc
+		LEFT JOIN app_person_info
+		AS b ON abc.customerId = b.customerId
+	</select>
+	
+	<!-- 根据条件查询客户信息 -->
+	<select id="findCustomerByCondition" parameterType="java.util.Map" 	resultType="java.lang.String" >
+		SELECT
+			b.customerId 
+		FROM
+			app_person_info AS b
+		<where>
+			1 = 1
+			<if test="email!=null and email!='' ">
+				and b.email =
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone =
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取分页总页数 -->
+	<select id="findPageBySqlCount" resultType="Long">
+		SELECT
+			count(*)
+		FROM
+			app_bank_card AS a
+		<where>
+			1 = 1
+			<if test="customerId!=null ">
+				and a.customerId in
+				<foreach item="item" index="index" collection="customerId" 
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="findSaveFlag" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT COUNT(id) FROM app_bank_card WHERE cardNumber = #{cardNumber} and type = #{type}
+	</select>
+	
+	<select id="findPageBySql1" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap">
+		SELECT * from app_bank_card where 1 = 1
+		<if test="customerId != null and customerId != ''">
+			and customerId = #{customerId}
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type}
+		</if>
+		<if test="isDelete != null and isDelete != ''">
+			and isDelete = #{isDelete}
+		</if>
+		order by created desc
+	</select>
+
+	<update id="updateIsDefault" parameterType="java.util.Map">
+		update app_bank_card
+		set isDefault = 0 where type = #{type} and customerId = #{customerId};
+	</update>
+
+	<select id="getPersonalAsset" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap">
+		select * from app_bank_card where customerId = #{customerId} and type
+		= #{type}  and isDelete=0
+		<if test="isDefault != null and isDefault != ''">
+			and isDefault = 1
+		</if>
+	</select>
+
+	<update id="updateIsDeleteById" parameterType="java.lang.Long">
+		update app_bank_card
+		set isDelete = 1 where id = #{id};
+	</update>
+</mapper>

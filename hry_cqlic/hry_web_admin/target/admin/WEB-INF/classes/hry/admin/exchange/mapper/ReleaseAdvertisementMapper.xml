@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.exchange.dao.ReleaseAdvertisementDao">
+
+    <resultMap id="BaseResultMap" type="hry.admin.exchange.model.ReleaseAdvertisement"></resultMap>
+
+    <!--条件查询 走分页-->
+    <select id="findPageByAll" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT a.id,a.coinCode,a.transactionMode,a.nationality,a.premium,a.isFixed,a.tradeMoney,
+        a.initialCoinNumMax,a.coinNumMax,a.remark,a.status,a.created,a.paymentTerm,a.payType,a.legalCurrency,
+        b.mobilePhone as mobilePhone,b.email as email
+        FROM	release_advertisement as a
+        left join  app_person_info as b on b.customerId = a.customerId
+        <where>
+            <if test="status!=null and status!='' ">
+                and a.status=#{status}
+            </if>
+            <if test="mobilePhone != null and mobilePhone != ''">
+                and b.mobilePhone =#{ mobilePhone}
+            </if>
+            <if test="email != null and email != ''">
+                and b.email =#{ email}
+            </if>
+        </where>
+        order by a.created desc
+    </select>
+</mapper>

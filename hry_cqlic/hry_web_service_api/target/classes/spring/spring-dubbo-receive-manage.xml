@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+      <dubbo:reference id="remoteManageService" interface="hry.manage.remote.RemoteManageService"  check="false"></dubbo:reference>
+     
+      <dubbo:reference id="remoteOamessageService" interface="hry.manage.remote.RemoteOamessageService"  check="false"></dubbo:reference>
+      
+      <dubbo:reference id="remoteAppArticleService" interface="hry.manage.remote.RemoteAppArticleService"  check="false"></dubbo:reference>
+
+	  <dubbo:reference id="remoteAppTransactionManageService" interface="hry.manage.remote.RemoteAppTransactionManageService"  check="false"/>
+	  
+	  <dubbo:reference id="remoteBaseInfoService" interface="hry.manage.remote.RemoteBaseInfoService"  check="false"/>
+	  
+	  <dubbo:reference id="remoteSmsService" interface="hry.manage.remote.RemoteSmsService"  check="false"/>
+	   
+	  <dubbo:reference id="remoteLendService" interface="hry.manage.remote.RemoteLendService"  check="false"/>
+	 
+	  <dubbo:reference id="remoteChatService" interface="hry.manage.remote.RemoteChatService"  check="false"/>
+	  
+	  <dubbo:reference id="remoteWorkOrderService" interface="hry.manage.remote.RemoteWorkOrderService"  check="false"/>
+
+		<dubbo:reference id="remoteMailConfigService" interface="hry.manage.remote.RemoteMailConfigService"  check="false"/>
+		
+		<dubbo:reference id="remoteNewCheckService" interface="hry.manage.remote.RemoteNewCheckService"  check="false"/>
+</beans> 

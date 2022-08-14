@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.LoginAopDao">
+    <resultMap id="blacklistResultMap" type="hry.admin.web.model.LoginAop">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="userId" property="userId" javaType="java.lang.Long" />
+        <result column="userName" property="userName" javaType="java.lang.String" />
+        <result column="ip" property="ip" javaType="java.lang.String" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="loginCount" property="loginCount" javaType="java.lang.Integer" />
+        <association property="appCustomer" javaType="hry.admin.customer.model.AppCustomer">
+            <result column="isBlacklist" property="isBlacklist" javaType="java.lang.Integer"/>
+        </association>
+        <association property="appPersonInfo" javaType="hry.admin.customer.model.AppPersonInfo">
+            <result column="trueName" property="trueName" javaType="java.lang.String"/>
+        </association>
+    </resultMap>
+
+
+
+    <!-- 查询黑名单管理列表 -->
+    <select id="findPageBySql" parameterType="java.util.Map" resultMap="blacklistResultMap">
+        SELECT
+        a.id,
+        a.userId,
+        a.userName,
+        c.trueName,
+        a.ip,
+        b.isBlacklist,
+        a.loginCount,
+        a.modified
+        FROM
+        (SELECT id,userId,userName,ip,count(0) as loginCount,max(modified) as modified FROM login_aop GROUP BY userId) a
+        LEFT JOIN app_customer b on a.userId = b.id
+        LEFT JOIN app_person_info c on a.userId = c.customerId
+        <where>
+            <if test="userName!=null and userName !=''">
+                a.userName like #{userName}
+            </if>
+            <if test="trueName!=null and trueName !=''">
+                and c.trueName like #{trueName}
+            </if>
+            <if test="ip!=null and ip !=''">
+                and a.ip like #{ip}
+            </if>
+        </where>
+        ORDER BY a.loginCount DESC
+    </select>
+
+    <!-- 加入/移除黑名单 -->
+    <update id="updateBlackStatus">
+        UPDATE app_customer set
+        isBlacklist = #{blackStatus},
+        isDelete = #{blackStatus}
+        WHERE id = #{userId}
+    </update>
+
+</mapper>

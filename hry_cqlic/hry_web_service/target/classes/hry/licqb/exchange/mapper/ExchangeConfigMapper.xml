@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.licqb.exchange.dao.ExchangeConfigDao">
+    <resultMap id="baseResultMap" type="hry.licqb.exchange.model.ExchangeConfig"></resultMap>
+    <select id="findExchangeConfig" resultMap="baseResultMap" parameterType="java.util.Map">
+        select ic.id, ic.itemName, ic.payCoinCode, ic.gainCoinCode, ic.ratio,
+               ic.itemStartDate, ic.gainStartDate, ic.gainEndDate, ic.hasChangeRatio,
+               ic.singleMinNum, ic.sort
+        from lc_exchange_config ic
+        WHERE 1=1
+        and ic.`status` = 1
+        <if test="configId != null and configId != ''">
+            and ic.id = #{configId}
+        </if>
+        order by ic.sort DESC
+    </select>
+</mapper>

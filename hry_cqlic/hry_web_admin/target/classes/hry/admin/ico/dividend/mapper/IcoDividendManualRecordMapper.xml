@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.ico.dividend.dao.IcoDividendManualRecordDao">
+    <select id="findPageBySql" parameterType="java.util.Map" resultType="hry.admin.ico.dividend.model.IcoDividendManualRecord" >
+        select ir.id,
+        ir.customerId,
+        ap.email,
+        ap.mobilePhone mobilePhone,
+        ir.coinCode,
+        ir.reason,
+        ir.dividendNum,
+        ir.number,
+        ir.accountAtio,
+        ir.created
+        from ico_dividend_manual_record  ir
+        LEFT JOIN app_person_info ap on ir.customerId=ap.customerId
+        <where>
+            1 = 1
+            <if test="customer_email!=null and customer_email!='' " >
+                and ap.email like #{customer_email,jdbcType=VARCHAR}
+            </if>
+            <if test="customer_mobile!=null and customer_mobile!='' " >
+                and ap.mobilePhone like #{customer_mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="coinCode!=null and coinCode!='' " >
+                and ir.coinCode = #{coinCode,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and endTime!=null  ">
+                and ir.created BETWEEN  #{startTime,jdbcType=DATE}
+                and date_add(#{endTime,jdbcType=DATE},interval 1 day)
+            </if>
+        </where>
+        ORDER BY ir.created desc
+    </select>
+</mapper>

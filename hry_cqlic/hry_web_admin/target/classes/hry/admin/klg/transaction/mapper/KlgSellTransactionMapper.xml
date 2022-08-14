@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.klg.transaction.dao.KlgSellTransactionDao">
+	<resultMap id="BaseResultMap" type="hry.admin.klg.transaction.model.vo.KlgSellTransactionVo">
+    </resultMap>
+	<!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        select 
+	        kst.*,
+	        ap.trueName as trueName,
+	        ap.surname as surName,
+	        ap.mobilePhone as mobilePhone,
+	        ap.email as email,
+	        TIMESTAMPDIFF(SECOND,kst.created,kst.sellEndTime) as shij
+        from
+        klg_sell_transaction as kst 
+        INNER JOIN app_person_info as ap
+        	on kst.customerId = ap.customerId
+        <where>
+            1=1
+            <if test="sellDay != null and sellDay != '' ">
+                and kst.sellDay = #{sellDay,jdbcType=TINYINT}
+            </if>
+            <if test="status != null and status != '' ">
+                and kst.status = #{status,jdbcType=TINYINT}
+            </if>
+            <if test="endstatus != null and endstatus != '' ">
+                and kst.sellEndTime <![CDATA[ <= ]]> now() 
+            </if>
+            <if test="transactionNum != null and transactionNum != '' ">
+                and kst.transactionNum like #{transactionNum,jdbcType=VARCHAR}
+            </if>
+            <if test="trueName != null and trueName != '' ">
+                and ap.trueName like #{trueName,jdbcType=VARCHAR}
+            </if>
+            <if test="surName != null and surName != '' ">
+                and ap.surname like #{surName,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone != null and mobilePhone != '' ">
+                and ap.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="email != null and email != '' ">
+                and ap.email like #{email,jdbcType=VARCHAR}
+            </if>
+             <if test="modified_s!=null and modified_s!='' ">
+                and kst.created <![CDATA[ >= ]]> #{modified_s}
+            </if>
+            <if test="modified_e!=null and modified_e!='' ">
+                and kst.created   <![CDATA[ <= ]]> #{modified_e}
+            </if>
+             <if test="modified_sm!=null and modified_sm!='' ">
+                and kst.modified <![CDATA[ >= ]]> #{modified_sm}
+            </if>
+            <if test="modified_em!=null and modified_em!='' ">
+                and kst.modified   <![CDATA[ <= ]]> #{modified_em}
+            </if>
+             <if test="modified_sme!=null and modified_sme!='' ">
+                and kst.sellEndTime <![CDATA[ >= ]]> #{modified_sme}
+            </if>
+            <if test="modified_eme!=null and modified_eme!='' ">
+                and kst.sellEndTime   <![CDATA[ <= ]]> #{modified_eme}
+            </if>
+        </where>
+        order by kst.sellEndTime asc
+    </select>
+    
+    <!-- 根据订单状态查询usdt总和-->
+    <select id="getSmeMoneySumAndUsdtMoneyByStatus" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        select 
+	        sum((kst.smeMoney+kst.candySmeMoney)*smeusdtRate) as usdtMoneySum,
+	        sum(kst.smeMoney+kst.candySmeMoney) as smeMoneySum
+        from
+        klg_sell_transaction as kst 
+        <where>
+            1=1 and kst.status=#{status,jdbcType=TINYINT}
+        </where>
+        order by kst.id asc
+    </select>
+    
+    <!-- 更新订单状态为排队成功待收款 -->
+    <update id="updateStatus">
+    	update klg_sell_transaction set status=2 ,modified = now()  where status=1
+            and id in 
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+	            #{item,jdbcType=BIGINT }
+	        </foreach>
+    </update>
+    
+    <select id="findSellTransactionByIdINIds" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        select 
+	        kst.*,
+	        ap.trueName as trueName,
+	        ap.surname as surName,
+	        ap.mobilePhone as mobilePhone,
+	        ap.email as email,
+	        TIMESTAMPDIFF(SECOND,kst.created,kst.sellEndTime) as shij
+        from
+        klg_sell_transaction as kst 
+        INNER JOIN app_person_info as ap
+        	on kst.customerId = ap.customerId
+        <where>
+            1=1 and kst.status=2
+            and kst.id in 
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+	            #{item,jdbcType=BIGINT }
+	        </foreach>
+        </where>
+        order by kst.sellEndTime asc
+    </select>
+    
+    <!-- 更新订单状态-->
+    <update id="updateStatusByIds">
+    	update klg_sell_transaction set status= #{status,jdbcType=TINYINT },modified = now()  where status=1
+            and id in 
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+	            #{item,jdbcType=BIGINT }
+	        </foreach>
+    </update>
+    
+    <!-- 查询选中id中sme的总和 -->
+    <select id="getSellTransactionByIdINIds" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal">
+        select 
+	        sum(kst.smeMoney+kst.candySmeMoney)
+        from
+        klg_sell_transaction as kst 
+        <where>
+            1=1 and id in 
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+	            #{item,jdbcType=BIGINT }
+	        </foreach>
+        </where>
+    </select>
+    
+    <!-- 查询超过预约时间的订单 -->
+    <select id="findBeyondList" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        	kst.id,
+			kst.customerId,
+			kst.coinCode,
+			kst.smeMoney,
+			kst.created,
+			kst.sellDay,
+			kst.sellEndTime,
+			klc.sort,
+			klc.sellTime,
+			klc.addCandyNum,
+			kst.customerGrade
+		FROM
+			klg_sell_transaction kst
+		LEFT JOIN klg_level_config klc ON klc.id = kst.customerGrade
+		WHERE
+			kst.`status` = 1
+		AND NOW() >= kst.sellEndTime
+    </select>
+    
+    <!-- 更新糖果数量-->
+    <update id="updateCandySmeMoneyById">
+    	update klg_sell_transaction set candySmeMoney = candySmeMoney+#{candySmeMoney}  where status=1
+            and id = #{id,jdbcType=BIGINT }
+    </update>
+    
+    <!-- 按天分组求和 -->
+    <select id="findSellListGroupByDay" parameterType="java.util.Map"
+             resultMap="BaseResultMap">
+        SELECT
+			*, COUNT(id) as count,
+			SUM(smeMoney+candySmeMoney) as smeMoneySum
+		FROM
+			klg_sell_transaction
+		WHERE
+			1 = 1
+		AND `status` = 1
+		GROUP BY
+			DATE_FORMAT(created, '%Y%m%d')
+    </select>
+    
+</mapper>

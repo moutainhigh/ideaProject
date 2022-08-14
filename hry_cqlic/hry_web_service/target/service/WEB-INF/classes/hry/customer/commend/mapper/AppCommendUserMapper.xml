@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.customer.commend.dao.AppCommendUserDao">
+
+	<select id="countOneLevel" resultType="java.lang.Integer">
+		select count(*) from app_commend_user where pid=#{pid}
+	</select>
+
+     <select id="findLen" resultType="java.lang.Integer">
+		select count(*) from app_commend_user where sid like CONCAT('%',#{id},'%')
+	</select>
+	
+	<select id="countLen" resultType="java.lang.Integer">
+		select count(*) from app_commend_user where find_in_set(#{id},sid)
+	</select>
+	
+	  <select id="findLenall" resultType="java.lang.Integer">
+	select * from app_commend_user a LEFT JOIN (select ISNULL(sum(rewardmoney)) summoneyr, custromerName from app_commend_trade group by custromerName) b on a.username=b.custromerName
+	</select>
+
+	<select id="findLikeBySid" parameterType="java.util.Map" resultType="hry.customer.commend.model.AppCommendUser">
+		select * from app_commend_user where sid like '%${pid1}%' and uid!=#{pid2};
+	</select>
+	<select id="findByAloneMoneyIsNotZero" parameterType="java.util.Map" resultType="hry.customer.commend.model.AppCommendUser">
+		SELECT
+			id,
+			ifnull(aloneProportion, 0) AS al
+		FROM
+			app_commend_user
+		WHERE
+			(
+				SUBSTRING_INDEX(
+					SUBSTRING_INDEX(sid, ',' ,- 1),
+					',' ,- 1
+				) = #{sid}
+				OR uid = #{sid}
+			) and uid!= #{uid}
+		HAVING
+			al != 0
+	</select>
+	
+	
+	
+	
+	<resultMap id="findPageBySqlMap"   type="hry.customer.commend.model.AppCommendUser">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="receCode" property="receCode" javaType="java.lang.String" />
+		<result column="isFrozen" property="isFrozen" javaType="java.lang.Integer" />
+		<result column="aloneProportion" property="aloneProportion" javaType="java.math.BigDecimal" />
+		<result column="oneNumber" property="oneNumber" javaType="java.lang.Integer" />
+		<result column="twoNumber" property="twoNumber" javaType="java.lang.Integer" />
+		<result column="threeNumber" property="threeNumber" javaType="java.lang.Integer" />
+		<result column="laterNumber" property="laterNumber" javaType="java.lang.Integer" />
+		<association property="appPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="created" property="created" javaType="java.util.Date" />
+			<result column="modified" property="modified" javaType="java.util.Date" />
+			<result column="saasId" property="saasId" javaType="java.lang.String" />
+			
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="country" property="country" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+	
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap" >
+		SELECT a.id,a.receCode,a.isFrozen,a.aloneProportion,
+		a.oneNumber,a.twoNumber,a.threeNumber,a.laterNumber,
+		b.email,b.mobilePhone,b.country
+		 FROM app_commend_user AS a 
+		LEFT JOIN app_person_info
+		AS b ON a.uid = b.customerId
+		<where>
+			<if test="email!=null and email!='' ">
+				b.email like
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone like
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据isCulCommend查询所有的id -->
+	<select id="findByIsCulCommend" resultType="hry.customer.commend.model.AppCommendUser" >
+		select id,sid from app_commend_user where isCulCommend = #{isCulCommend} 
+	</select>
+	
+	<!-- 根据isCulCommend查询所有的id -->
+	<update id="updateIsCulCommendById">
+		update app_commend_user set isCulCommend = #{isCulCommend}
+		where id = #{id}
+	</update>
+	
+	<resultMap id="findConmmendPageBySqlMap"   type="hry.customer.commend.model.AppCommendUser">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="receCode" property="receCode" javaType="java.lang.String" />
+		<association property="appPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+	<!-- 根据sid查询该用户的推荐级用户的分页列表 -->
+	<select id="findConmmendPageBySql" resultMap="findConmmendPageBySqlMap" >
+		select a.id,a.created,a.receCode,b.email,b.mobilePhone from app_commend_user AS a 
+		LEFT JOIN app_person_info
+		AS b ON a.uid = b.customerId 
+		where a.sid like CONCAT('%', #{sid},'%')
+			limit #{start},#{lengthpage}
+	</select>
+	
+	<!-- 根据sid 查询数量 -->
+	<select id="findConmmendCountBySid" resultType="java.lang.Long" >
+		select count(1) from app_commend_user where sid like CONCAT('%', #{sid},'%')
+	</select>
+	
+		<!-- 根据sid查询该用户的推荐级用户的分页列表 -->
+	<resultMap id="frontMap"   type="hry.manage.remote.model.AppCommendUserManage">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="receCode" property="receCode" javaType="java.lang.String" />
+		<association property="appPersonInfo" javaType="hry.manage.remote.model.AppPersonInfoManage">
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+	<select id="findConmmendFrontPageBySql" resultMap="frontMap" >
+		select a.id,a.created,a.receCode,b.email,b.mobilePhone from app_commend_user AS a 
+		LEFT JOIN app_person_info
+		AS b ON a.uid = b.customerId 
+		where a.sid like CONCAT('%', #{sid},'%')
+			limit #{start},#{lengthpage}
+	</select>
+
+	<!-- 根据sid查询该用户的推荐 -->
+	<select id="findSid" resultType="string">
+		select sid from app_commend_user where sid like CONCAT('%', #{0},'%') ORDER BY sid desc
+	</select>
+
+	<!-- 根据sid查询三级后用户 -->
+	<select id="findConmmendPageByArray" resultMap="findConmmendPageBySqlMap" >
+		select a.id,a.created,a.receCode,
+		b.email,b.mobilePhone,b.country
+		FROM app_commend_user AS a
+		LEFT JOIN app_person_info
+		AS b ON a.uid = b.customerId
+		where
+		<foreach collection="array" open="(" separator="or" close=")" item="sid">
+			FIND_IN_SET(#{sid},a.sid)
+		</foreach>
+	</select>
+</mapper>

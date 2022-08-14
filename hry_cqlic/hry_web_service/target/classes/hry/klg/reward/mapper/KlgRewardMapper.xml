@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.klg.reward.dao.KlgRewardDao">
+	<resultMap id="BaseResultMap"   type="hry.klg.reward.model.KlgReward">
+    </resultMap>
+    
+    <!-- 获取用户获取的奖励总和-->
+    <select id="getRewardSumByTypeAndCustomerId" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal" >
+            SELECT
+				sum(rewardMoney)
+			FROM
+				klg_reward
+			WHERE
+				customerId = #{customerId,jdbcType=BIGINT}
+			AND rewardType = #{rewardType,jdbcType=TINYINT}
+			AND coinCode = #{coinCode,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

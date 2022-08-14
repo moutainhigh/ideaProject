@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.AppMessageDao">
+    <!-- 根据状态查询所有消息  并找到对应的所有用户出来   -->
+
+    <resultMap type="hry.admin.web.model.MessageListVo" id="AppMessageListVo">
+        <id column="id" property="id" />
+        <result column="categoryName" property="categoryName" />
+        <result column="title" property="messageTitle" />
+        <!-- 发送时间 -->
+        <result column="sendDate" property="sendDate" />
+
+        <result column="isSend" property="isSend" />
+        <!-- 发送人姓名 -->
+        <result column="sendUserName" property="sendUserName" />
+        <!-- 操作人 -->
+        <result column="operator" property="operator" />
+        <!-- 保存时间 -->
+        <result column="created" property="created" />
+        <association property="appPersonInfo"
+                     javaType="hry.admin.customer.model.AppPersonInfo">
+            <id column="personId" property="id" javaType="java.lang.Long" />
+            <result column="created" property="created" javaType="java.util.Date" />
+            <result column="modified" property="modified" javaType="java.util.Date" />
+            <result column="saasId" property="saasId" javaType="java.lang.String" />
+            <result column="customerId" property="customerId" javaType="java.lang.Long" />
+            <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+            <result column="email" property="email" javaType="java.lang.String" />
+            <result column="trueName" property="trueName" javaType="java.lang.String" />
+            <result column="sex" property="sex" javaType="java.lang.Integer" />
+            <result column="birthday" property="birthday" javaType="java.lang.String" />
+            <result column="country" property="country" javaType="java.lang.String" />
+            <result column="personCard" property="personCard" javaType="java.lang.String" />
+            <result column="frontpersonCard" property="frontpersonCard"
+                    javaType="java.lang.String" />
+            <result column="personBank" property="personBank" javaType="java.lang.String" />
+            <result column="surname" property="surname" javaType="java.lang.String" />
+            <result column="cardType" property="cardType" javaType="java.lang.Integer" />
+            <result column="cardId" property="cardId" javaType="java.lang.String" />
+            <result column="customerSource" property="customerSource"
+                    javaType="java.lang.Integer" />
+            <result column="customerType" property="customerType"
+                    javaType="java.lang.Integer" />
+            <result column="withdrawCheckMoney" property="withdrawCheckMoney"
+                    javaType="java.math.BigDecimal" />
+
+        </association>
+        <collection property="list" ofType="hry.admin.web.model.MessageAsCustomer">
+            <id column="mid" property="id" />
+            <result column="userName" property="userName" />
+            <result column="customerName" property="customerName" />
+        </collection>
+    </resultMap>
+
+    <select id="findMessageListVoList"  resultMap="AppMessageListVo" >
+        SELECT am.id,am.categoryName,am.sendUserName,am.operator,am.isSend,am.title,am.created,am.sendDate,mac.id as mid ,mac.customerName
+        FROM `message_as_customer` mac, `app_message` am
+        WHERE mac.messageId = am.id
+        <if test="state != null ">
+            AND am.isSend = #{state}
+        </if>
+    </select>
+
+    <!-- 根据一条消息的id  以及状态查询所有的用户 -->
+
+    <resultMap type="hry.admin.web.model.MessageListVo" id="AppMessageListVo2">
+        <id column="id" property="id" />
+        <result column="categoryName" property="categoryName" />
+        <result column="title" property="messageTitle" />
+        <!-- 发送时间 -->
+        <result column="sendDate" property="sendDate" />
+        <!-- 发送人姓名 -->
+        <result column="sendUserName" property="sendUserName" />
+        <!-- 操作人 -->
+        <result column="operator" property="operator" />
+        <!-- 保存时间 -->
+        <result column="created" property="created" />
+
+        <collection property="list" ofType="hry.admin.web.model.MessageAsCustomer">
+            <id column="mid" property="id" />
+            <result column="userName" property="userName" />
+            <result column="customerName" property="customerName" />
+            <result column="state" property="state" />
+        </collection>
+    </resultMap>
+
+    <select id="findMessageListVo"  resultMap="AppMessageListVo2" >
+        <![CDATA[
+
+		SELECT am.id,am.categoryName,am.sendUserName,am.operator,am.title,am.created,am.sendDate,mac.id AS MID ,mac.customerName
+			FROM `message_as_customer` mac, `app_message` am
+			WHERE mac.messageId = am.id AND am.isSend =#{0} And am.id = #{1}
+
+		 ]]>
+    </select>
+
+    <!-- 根据用户的id查询所有的未读消息  查询对应的用户的消息的条数 以及消息的详情
+            第一个参数 是判断消息是否发送了   第二个参数是用户的id  第三个参数是判读消息是否已读
+       -->
+    <select id="findCustumerById"  resultType="hry.admin.web.model.MessageAndCustromerVo" >
+        SELECT msg.id, msg.content, msg.title, msg.sortTitle, msg.sendDate,msgCust.id AS cid,msgCust.state
+        FROM app_message AS msg
+        INNER JOIN message_as_customer AS msgCust  ON
+        msg.id=msgCust.messageId AND msgCust.customerId=#{customerId}
+        AND msg.isSend=#{isSend}
+        <if test="state == 1">
+            AND msgCust.state=#{state}
+        </if>
+        ORDER BY  msgCust.state DESC ,msg.sendDate DESC
+    </select>
+
+    <select id="selectMessageVo" resultType="hry.admin.web.model.MessageListVo">
+        SELECT id,operator,categoryName,title messageTitle,isSend,sendUserName,sendDate,readDate,deleteDate,created,receiver,messageCategory,status FROM app_message
+        <where>
+            isSend = 1
+            <if test="messageCategory != null and messageCategory != ''">
+                and messageCategory = #{messageCategory}
+            </if>
+            <if test="isAuto != null and isAuto != ''">
+                and isAuto = #{isAuto}
+            </if>
+            <if test="title != null and title != ''">
+                and title like CONCAT('%',#{title},'%')
+            </if>
+            <if test="content_like != null and content_like != ''">
+                and content like CONCAT('%',#{content_like},'%')
+            </if>
+            <if test="isSend != null and isSend != ''">
+                and isSend = CONCAT(#{isSend})
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                and categoryName like CONCAT('%',#{categoryName},'%')
+            </if>
+            <if test="sendDate_GT != null and sendDate_GT != ''">
+                <![CDATA[ and sendDate >= #{sendDate_GT} ]]>
+            </if>
+            <if test="sendDate_LT != null and sendDate_LT != ''">
+                <![CDATA[ and sendDate <= #{sendDate_LT} ]]>
+            </if>
+        </where>
+        ORDER BY sendDate DESC
+    </select>
+
+    <select id="selectMessageAsCustromer" resultType="hry.admin.web.model.MessageAsCustomer">
+        SELECT a.*,b.email,b.mobilePhone FROM message_as_customer a, app_person_info b
+        WHERE a.customerId = b.customerId and messageId = #{messageId}
+    </select>
+</mapper>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.customer.commend.dao.AppCommendTradeDao">
+
+
+
+
+	<select id="findOne" resultType="java.math.BigDecimal">
+		select IFNULL(sum(rewardmoney),0) rewardmoney from app_commend_trade where custromerid=#{0} and hierarchy=1   and  fixPriceCoinCode=#{1}
+
+	</select>
+
+
+	<select id="findTwo" resultType="java.math.BigDecimal">
+		select IFNULL(sum(rewardmoney),0) rewardmoney from app_commend_trade where custromerid=#{0} and hierarchy=2 and  fixPriceCoinCode=#{1}  
+
+	</select>
+
+
+	<select id="findThree" resultType="java.math.BigDecimal">
+		select IFNULL(sum(rewardmoney),0) rewardmoney from app_commend_trade where custromerid=#{0} and hierarchy=3  and  fixPriceCoinCode=#{1} 
+
+	</select>
+
+	<select id="findLater" resultType="java.math.BigDecimal">
+		select IFNULL(sum(rewardmoney),0) rewardmoney from app_commend_trade where custromerid=#{0} and hierarchy not in(1,2,3) and  fixPriceCoinCode=#{1} 
+
+	</select>
+
+
+	<select id="selectCommendTrade" resultType="hry.customer.commend.model.AppCommendTrade">
+		select fixPriceCoinCode,coinCode, sum(rewardmoney) rewardmoney from app_commend_trade where  custromerName=#{custromerName} GROUP BY fixPriceCoinCode
+
+	</select>
+
+	<select id="findByUids" parameterType="java.util.List" resultType="hry.customer.commend.model.AppCommendTrade">
+		select * from app_commend_trade where custromerId in
+		<foreach collection="list" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+
+	<select id="findByUsername" parameterType="java.lang.String" resultType="hry.customer.commend.model.AppCommendTrade">
+		SELECT
+			*, (
+				changeMoney + userMoney
+			) AS feemoney
+		FROM
+			app_commend_trade
+		WHERE
+			custromerName = #{username}
+	</select>
+
+
+	<resultMap id="findPageBySqlMap"   type="hry.customer.commend.model.AppCommendTrade">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="ordertNum" property="ordertNum" javaType="java.lang.String" />
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+		<result column="feeamout" property="feeamout" javaType="java.math.BigDecimal" />
+		<result column="basemoney" property="basemoney" javaType="java.math.BigDecimal" />
+		<result column="rewardmoney" property="rewardmoney" javaType="java.math.BigDecimal" />
+		<result column="hierarchy" property="hierarchy" javaType="java.lang.Integer" />
+		<result column="rewardmoney" property="rewardmoney" javaType="java.math.BigDecimal" />
+		<result column="rewardmoney" property="rewardmoney" javaType="java.math.BigDecimal" />
+		<result column="userMoney" property="userMoney" javaType="java.math.BigDecimal" />
+		<result column="transactionTime" property="transactionTime" javaType="java.util.Date" />
+		<result column="deliveryEmail" property="deliveryEmail" javaType="java.lang.String" />
+		<result column="deliveryMobilePhone" property="deliveryMobilePhone" javaType="java.lang.String" />
+		<result column="personType" property="personType" javaType="java.lang.Integer" />
+		<association property="appPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="surname" property="surname" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+
+		</association>
+	</resultMap>
+
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySqlList" parameterType="java.util.Map"
+			resultMap="findPageBySqlMap" >
+		select 	c.*,
+		b.email,
+		b.mobilePhone,
+		b.surname,
+		b.trueName,
+		d.email as deliveryEmail,
+		d.mobilePhone as deliveryMobilePhone from (SELECT
+		a.custromerName,
+		a.ordertNum,
+		a.coinCode,
+		a.feeamout,
+		a.basemoney,
+		a.rewardmoney,
+		a.hierarchy,
+		a.custromerId,
+		a.transactionTime,
+		a.deliveryId,
+		a.userMoney,
+		a.personType
+		FROM
+		app_commend_trade AS a
+		<where>
+			<if test="cusomerId!=null and cusomerId!='' ">
+				a.custromerId =
+				#{cusomerId}
+			</if>
+			<if test="deliveryId!=null and deliveryId!='' ">
+				and a.deliveryId =
+				#{deliveryId}
+			</if>
+		</where>
+		order by a.transactionTime desc
+		limit #{start},#{end}
+		) as c
+		LEFT JOIN app_person_info AS b ON c.custromerId = b.customerId
+		left join app_person_info as d on c.deliveryId=d.customerId
+	</select>
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySqlCount" resultType="Long">
+		SELECT
+		count(*)
+		FROM
+		app_commend_trade AS a
+		<where>
+			<if test="cusomerId!=null and cusomerId!='' ">
+				a.custromerId =
+				#{cusomerId}
+			</if>
+			<if test="deliveryId!=null and deliveryId!='' ">
+				and a.deliveryId =
+				#{deliveryId}
+			</if>
+		</where>
+
+	</select>
+
+
+	<resultMap id="getAppPersonInfo"   type="hry.customer.person.model.AppPersonInfo">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+
+	</resultMap>
+	<!-- 通过sql分页查询 -->
+	<select id="findCustomerIdByemailAndphone" parameterType="java.util.Map" 	resultMap="getAppPersonInfo" >
+
+		SELECT
+		b.customerId
+		FROM
+		app_person_info AS b
+		<where>
+			<if test="email!=null and email!='' ">
+				b.email =
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone =
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+		</where>
+
+	</select>
+
+	<update id="updateIsCulStatus">
+      update ex_order_info set isCulAtferMoney=1 where transactionBuyFee=0 and transactionSellFee=0 and isCulAtferMoney=0
+      and transactionSellFeePlat=0 and transactionBuyFeePlat=0
+    </update>
+
+	<select id="findPageBySql" resultMap="findPageBySqlMap" parameterType="java.util.Map">
+		select
+		c.*,
+		b.email,
+		b.mobilePhone,
+		b.surname,
+		b.trueName,
+		d.email as deliveryEmail,
+		d.mobilePhone as deliveryMobilePhone from
+		(SELECT
+		a.custromerName,
+		a.ordertNum,
+		a.coinCode,
+		a.feeamout,
+		a.basemoney,
+		a.rewardmoney,
+		a.hierarchy,
+		a.custromerId,
+		a.transactionTime,
+		a.deliveryId,
+		a.userMoney,
+		a.personType
+		FROM
+		app_commend_trade AS a
+		<where>
+			<if test="cusomerId!=null and cusomerId!='' ">
+				a.custromerId =
+				#{cusomerId}
+			</if>
+			<if test="deliveryId!=null and deliveryId!='' ">
+				and a.deliveryId =
+				#{deliveryId}
+			</if>
+		</where>  order by a.transactionTime desc ) as c
+		LEFT JOIN app_person_info AS b ON c.custromerId = b.customerId
+		left join app_person_info as d on c.deliveryId=d.customerId
+		<where>
+			1=1
+			<if test="email != null and email != ''">
+				and b.email like #{email}
+			</if>
+			<if test="mobilePhone != null and mobilePhone != ''">
+				and b.mobilePhone like #{mobilePhone}
+			</if>
+			<if test="deliveryEmail != null and deliveryEmail != ''">
+				and d.email like #{deliveryEmail}
+			</if>
+			<if test="deliveryMobilePhone != null and deliveryMobilePhone != ''">
+				and d.mobilePhone like #{deliveryMobilePhone}
+			</if>
+		</where>
+	</select>
+	<select id="countCommendMoney" resultType="java.util.HashMap" parameterType="java.util.Map">
+		select SUM(rewardmoney) as sumRewardmoney,coinCode,custromerId from app_commend_trade
+		<where>
+			1=1
+			<if test="beginTime != null and beginTime != ''">
+				<![CDATA[ and created >= #{beginTime} ]]>
+			</if>
+			<if test="endTime != null and endTime != ''">
+				<![CDATA[ and created < #{endTime} ]]>
+			</if>
+			<if test="custromerId != null and custromerId != ''">
+				and custromerId = #{custromerId}
+			</if>
+			<if test="coinCode != null and coinCode !=''">
+				and coinCode = #{coinCode}
+			</if>
+			and status=0
+		</where>
+		GROUP BY coinCode,custromerId;
+	</select>
+	
+	<select id="findByCustromerIdList" parameterType="java.util.Map" resultType="hry.customer.commend.model.AppCommendTrade">
+		select * from app_commend_trade
+		<where>
+			1=1
+			<if test="beginTime != null and beginTime != ''">
+				<![CDATA[ and created >= #{beginTime} ]]>
+			</if>
+			<if test="endTime != null and endTime != ''">
+				<![CDATA[ and created < #{endTime} ]]>
+			</if>
+			<if test="custromerId != null and custromerId != ''">
+				and custromerId = #{custromerId}
+			</if>
+			<if test="coinCode != null and coinCode !=''">
+				and coinCode = #{coinCode}
+			</if>
+			and status=0
+		</where>
+	</select>
+	
+</mapper>

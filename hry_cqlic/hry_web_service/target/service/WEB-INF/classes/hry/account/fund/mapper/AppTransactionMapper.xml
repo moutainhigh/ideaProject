@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.account.fund.dao.AppTransactionDao">
+	<resultMap id="BaseResultMap" type="hry.account.fund.model.AppTransaction">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="accountId" property="accountId" javaType="java.lang.Long" />
+		<result column="transactionType" property="transactionType"
+			javaType="java.lang.Integer" />
+		<result column="transactionMoney" property="transactionMoney"
+			javaType="java.math.BigDecimal" />
+		<result column="status" property="status" javaType="java.lang.Integer" />
+		<result column="userId" property="userId" javaType="java.lang.Long" />
+		<result column="bankNum" property="bankNum" javaType="java.lang.String" />
+		<result column="style" property="style" javaType="java.lang.Integer" />
+		<result column="remark" property="remark" javaType="java.lang.String" />
+		<result column="custromerAccountNumber" property="custromerAccountNumber"
+			javaType="java.lang.String" />
+		<result column="ourAccountNumber" property="ourAccountNumber"
+			javaType="java.lang.String" />
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+		<result column="cardHolder" property="cardHolder" javaType="java.lang.String" />
+
+		<result column="website" property="website" javaType="java.lang.String" />
+		<result column="fee" property="fee" javaType="java.math.BigDecimal" />
+		<result column="rejectionReason" property="rejectionReason"
+			javaType="java.lang.String" />
+
+	</resultMap>
+	
+	
+	<resultMap id="findPageBySqlMap" type="hry.account.fund.model.AppTransaction">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="accountId" property="accountId" javaType="java.lang.Long" />
+		<result column="transactionType" property="transactionType"
+			javaType="java.lang.Integer" />
+		<result column="transactionMoney" property="transactionMoney"
+			javaType="java.math.BigDecimal" />
+		<result column="status" property="status" javaType="java.lang.Integer" />
+		<result column="userId" property="userId" javaType="java.lang.Long" />
+		<result column="bankNum" property="bankNum" javaType="java.lang.String" />
+		<result column="style" property="style" javaType="java.lang.Integer" />
+		<result column="remark" property="remark" javaType="java.lang.String" />
+		<result column="custromerAccountNumber" property="custromerAccountNumber"
+			javaType="java.lang.String" />
+		<result column="ourAccountNumber" property="ourAccountNumber"
+			javaType="java.lang.String" />
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+		<result column="cardHolder" property="cardHolder" javaType="java.lang.String" />
+
+		<result column="website" property="website" javaType="java.lang.String" />
+		<result column="fee" property="fee" javaType="java.math.BigDecimal" />
+		<result column="rejectionReason" property="rejectionReason" javaType="java.lang.String" />
+		<result column="bankName" property="bankName" javaType="java.lang.String" />
+		<result column="trueName" property="trueName" javaType="java.lang.String" />
+	</resultMap>
+	
+	<!-- list充值提现 -->
+	<resultMap id="listPageBySqlMap" type="hry.account.fund.model.AppTransaction">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="accountId" property="accountId" javaType="java.lang.Long" />
+		<result column="transactionType" property="transactionType"
+			javaType="java.lang.Integer" />
+		<result column="transactionMoney" property="transactionMoney"
+			javaType="java.math.BigDecimal" />
+		<result column="status" property="status" javaType="java.lang.Integer" />
+		<result column="userId" property="userId" javaType="java.lang.Long" />
+		<result column="bankNum" property="bankNum" javaType="java.lang.String" />
+		<result column="style" property="style" javaType="java.lang.Integer" />
+		<result column="remark" property="remark" javaType="java.lang.String" />
+		<result column="custromerAccountNumber" property="custromerAccountNumber"
+			javaType="java.lang.String" />
+		<result column="ourAccountNumber" property="ourAccountNumber"
+			javaType="java.lang.String" />
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+		<result column="cardHolder" property="cardHolder" javaType="java.lang.String" />
+
+		<result column="website" property="website" javaType="java.lang.String" />
+		<result column="fee" property="fee" javaType="java.math.BigDecimal" />
+		<result column="rejectionReason" property="rejectionReason" javaType="java.lang.String" />
+		<result column="bankName" property="bankName" javaType="java.lang.String" />
+		<result column="trueName" property="trueName" javaType="java.lang.String" />
+		
+		<result column="bankAddress" property="bankProvince" javaType="java.lang.String" />
+		<result column="bankProvince" property="bankProvince" javaType="java.lang.String" />
+		<result column="subBank" property="subBank" javaType="java.lang.String" />
+	</resultMap>
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap">
+		SELECT
+		atr.*,
+		ac.trueName
+
+		FROM
+		app_transaction AS atr LEFT JOIN app_person_info AS ac ON
+		atr.customerId = ac.customerId
+		
+
+		<where>
+		
+			<if test="status!=null and status!='' ">
+				atr.status = #{status}
+			</if>
+			<if test="transactionNum!=null and transactionNum!='' ">
+				and atr.transactionNum like #{transactionNum}
+			</if>
+			<if test="modified_s!=null and modified_s!='' ">
+				and atr.modified <![CDATA[ >= ]]> #{modified_s}
+			</if>
+			<if test="modified_e!=null and modified_e!='' ">
+				and
+				atr.modified   <![CDATA[ <= ]]> #{modified_e}
+			</if>
+			<if test="userName!=null and userName!='' ">
+				and
+				atr.userName like #{userName}
+			</if>
+			<if test="email!=null and email!='' ">
+				and
+				ac.email like #{email}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and
+				ac.mobilePhone like #{mobilePhone}
+			</if>
+			<if test="currencyType!=null and currencyType!='' ">
+				and
+				atr.currencyType = #{currencyType}
+			</if>
+			<if test="ourAccountNumber!=null and ourAccountNumber!='' ">
+				and
+				atr.ourAccountNumber like #{ourAccountNumber}
+			</if>
+			
+			<if test="transactionType!=null and transactionType!='' ">
+				and
+				atr.transactionType in
+				<foreach item="item" index="index" collection="transactionType" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+				
+			</if>
+			
+			
+		</where>
+		
+		<if test="orderby!=null and orderby!='' " >
+			    ORDER BY  #{orderby}
+			    
+			</if>
+	</select>
+
+
+	<!-- 通过sql分页查询充值提现记录 -->
+	<select id="listPageBySql" parameterType="java.util.Map" resultMap="listPageBySqlMap">
+		select atr.*,b.bankAddress bankAddress,b.bankProvince bankProvince,b.subBank subBank  from app_transaction atr 
+		
+		LEFT JOIN app_bank_card  b
+
+		on  
+		
+		atr.custromerAccountNumber =b.cardNumber 
+		<where>
+		 	1=1
+			<if test="status!=null and status!='' ">
+				and atr.status = #{status}
+			</if>
+			<if test="transactionNum!=null and transactionNum!='' ">
+				and atr.transactionNum like #{transactionNum}
+			</if>
+			<if test="modified_s!=null and modified_s!='' ">
+				and atr.modified <![CDATA[ >= ]]> #{modified_s}
+			</if>
+			<if test="modified_e!=null and modified_e!='' ">
+				and
+				atr.modified   <![CDATA[ <= ]]> #{modified_e}
+			</if>
+			<if test="userName!=null and userName!='' ">
+				and
+				atr.userName like #{userName}
+			</if>
+			
+			<if test="currencyType!=null and currencyType!='' ">
+				and
+				atr.currencyType = #{currencyType}
+			</if>
+			<if test="ourAccountNumber!=null and ourAccountNumber!='' ">
+				and
+				atr.ourAccountNumber like #{ourAccountNumber}
+			</if>
+			
+			<if test="transactionType!=null and transactionType!='' ">
+				and
+				atr.transactionType in
+				<foreach item="item" index="index" collection="transactionType" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+				
+			</if>
+			
+			
+		</where>
+		
+		<if test="orderby!=null and orderby!='' " >
+			    ORDER BY  #{orderby}
+			    
+			</if>
+	</select>
+
+	<select id="countByDate" parameterType="java.util.Map"
+			resultType="java.math.BigDecimal">
+			SELECT
+				SUM(app.transactionMoney)
+			
+			FROM
+				app_transaction AS app
+		
+			<where>
+			
+			<if test="transactionType!=null and transactionType!='' " >
+				and app.transactionType  in
+				     <foreach item="item" index="index" collection="transactionType"   
+                        open="(" separator="," close=")">  
+                       #{item}  
+               </foreach>  
+			</if>
+		
+			
+			<if test="createdG!=null and createdG!='' " >
+			    and app.created &gt;= #{createdG,jdbcType=DATE} 
+			</if> 
+			<if test="createdL!=null and createdL!=''" >
+			    and app.created &lt;  #{createdL,jdbcType=DATE}
+			</if> 
+			
+			<if test="userName!=null and userName!='' " >
+			    and app.userName  like #{userName,jdbcType=VARCHAR}
+			</if>
+		
+			
+			<if test="status!=null and status!='' " >
+			    and app.`status`  in
+			      <foreach item="item" index="index" collection="status"   
+                        open="(" separator="," close=")">  
+                       #{item}  
+               </foreach>  
+			</if>
+				
+				
+			</where>
+			
+		</select>
+		
+	    <!-- 前台分页查询 -->
+	    <resultMap id="FrontMap" type="hry.manage.remote.model.AppTransactionManage">
+		</resultMap>
+		<select id="findTransaction" parameterType="java.util.Map" resultMap="FrontMap">
+			select transactionType,transactionMoney,fee,transactionNum,created,status,rejectionReason,remark from app_transaction 
+			where customerId = #{customerId} 
+			
+		 	<if test="transactionType!=null and transactionType=='chongzhi'">
+				and transactionType in(1,3,5)
+			</if>
+			<if test="transactionType!=null and transactionType=='tixian'">
+				and transactionType in(2,4)
+			</if>
+			<if test="status!=null and status!='' ">
+				and status = #{status}
+			</if> 
+			ORDER BY created desc
+		</select>
+
+</mapper>

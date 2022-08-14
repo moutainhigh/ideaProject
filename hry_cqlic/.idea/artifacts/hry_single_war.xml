@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="hry_single:war">
+    <output-path>$PROJECT_DIR$/hry_single/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>hry_single</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="single.war">
+      <element id="artifact" artifact-name="hry_single:war exploded" />
+    </root>
+  </artifact>
+</component>

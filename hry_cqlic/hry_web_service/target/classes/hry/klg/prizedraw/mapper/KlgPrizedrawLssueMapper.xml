@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.klg.prizedraw.dao.KlgPrizedrawLssueDao">
+	<resultMap id="BaseResultMap" type="hry.klg.prizedraw.model.KlgPrizedrawLssue">
+    </resultMap>
+    
+    <select id="getIssue" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+    	select 
+			 kpl.issueNumber,
+			 kpl.primeNumber,
+			 kpl.lotteryNumber,
+			 kpl.startDate,
+			 kpl.endDate,
+			 kpl.mondayDate,
+			 kpl.tuesdayDate,
+			 kpl.wednesdayDate,
+			 kpl.thursdayDate,
+			 kpl.fridayDate,
+			 kpl.saturdayDate,
+			 kpl.sundayDate,
+			 (CASE
+				WHEN kpl.mondayDate <![CDATA[ >= ]]> now() THEN kpl.mondayNumber=null
+				ELSE
+					kpl.mondayNumber
+				END ) as mondayNumber,
+			 (CASE
+				WHEN kpl.tuesdayDate <![CDATA[ >= ]]> now() THEN kpl.tuesdayNumber=null
+				ELSE
+					kpl.tuesdayNumber
+				END ) as tuesdayNumber,
+			 (CASE
+				WHEN kpl.wednesdayDate <![CDATA[ >= ]]> now() THEN kpl.wednesdayNumber=null
+				ELSE
+					kpl.wednesdayNumber
+				END ) as wednesdayNumber,
+			 (CASE
+				WHEN kpl.thursdayDate <![CDATA[ >= ]]> now() THEN kpl.thursdayNumber=null
+				ELSE
+					kpl.thursdayNumber
+				END ) as thursdayNumber,
+			 (CASE
+				WHEN kpl.fridayDate <![CDATA[ >= ]]> now() THEN kpl.fridayNumber=null
+				ELSE
+					kpl.fridayNumber
+				END ) as fridayNumber,
+			 (CASE
+				WHEN kpl.saturdayDate <![CDATA[ >= ]]> now() THEN kpl.saturdayNumber=null
+				ELSE
+					kpl.saturdayNumber
+				END ) as saturdayNumber,
+			 (CASE
+				WHEN kpl.sundayDate <![CDATA[ >= ]]> now() THEN kpl.sundayNumber=null
+				ELSE
+					kpl.sundayNumber
+				END ) as sundayNumber
+    	
+    	
+    	from klg_prizedraw_lssue kpl where kpl.status=2 
+    	
+    	
+            
+    </select>
+
+</mapper>

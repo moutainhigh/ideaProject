@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.AppCategoryDao">
+
+    <resultMap type="hry.admin.web.model.AppCategory" id="BaseResultMap">
+        <id column="id" property="id"/>
+        <result column="preateId" property="preateId" javaType="java.lang.Long"/>
+        <result column="preateName" property="preateName" javaType="java.lang.String"/>
+        <result column="name" property="name" javaType="java.lang.String"/>
+        <result column="type" property="type" javaType="java.lang.String"/>
+        <result column="seoFication" property="seoFication" javaType="java.lang.String"/>
+        <result column="footerUrl" property="footerUrl" javaType="java.lang.String"/>
+        <result column="state" property="state" javaType="java.lang.Integer"/>
+        <result column="isShow" property="isShow" javaType="java.lang.Integer"/>
+        <result column="sort" property="sort" javaType="java.lang.Integer"/>
+        <result column="describes" property="describes" javaType="java.lang.String"/>
+        <result column="website" property="website" javaType="java.lang.String"/>
+        <result column="isPage" property="isPage" javaType="java.lang.Integer"/>
+        <result column="created" property="created" javaType="java.util.Date"/>
+        <result column="modified" property="modified" javaType="java.util.Date"/>
+    </resultMap>
+
+    <!--文章分类列表查询-->
+    <select id="findPageBySql" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            aac.id,
+            aac.preateId,
+            aac.preateName,
+            aac.name,
+            aac.type,
+            aac.seoFication,
+            aac.footerUrl,
+            aac.state,
+            aac.isShow,
+            aac.sort,
+            aac.website,
+            aac.isPage,
+            aac.created,
+            aac.modified
+        FROM
+        app_artic_category as aac
+        <where>
+            1 = 1
+            and aac.state = 0
+            <if test="categoryId!=null and categoryId!='' ">
+                and (aac.id = #{categoryId} or aac.preateId = #{categoryId})
+            </if>
+            <if test="name!=null and name!='' ">
+                and aac.name LIKE #{name}
+            </if>
+        </where>
+        ORDER BY aac.preateId, aac.sort
+    </select>
+
+    <!--根据条件查询文章分类对应的各语种名称-->
+    <select id="getCategoryByCondition" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            aac.id as categoryId,
+            aac.preateId,
+            aac.name as categoryName,
+            aac.isPage,
+            aacl.langName,
+            aacl.dicKey,
+            aacl.dicId
+        FROM
+            app_artic_category aac
+        LEFT JOIN app_article_category_langname aacl on aac.id = aacl.categoryId
+        <where>
+            1 = 1
+            <if test="preateId!=null and preateId!='' ">
+                and aac.preateId = #{preateId}
+            </if>
+            <if test="categoryId!=null and categoryId!='' ">
+                and aac.id = #{categoryId}
+            </if>
+            <if test="lang!=null and lang!='' ">
+                and aacl.dicKey = #{lang}
+            </if>
+            <if test="state!=null and state!='' ">
+                and aac.state = #{state}
+            </if>
+            <if test="isPage_eq!=null and isPage_eq!='' ">
+                and aac.isPage = #{isPage_eq}
+            </if>
+            <if test="isPage_neq!=null and isPage_neq!='' ">
+                and aac.isPage != #{isPage_neq}
+            </if>
+        </where>
+        ORDER BY aac.sort
+    </select>
+
+    <select id="getCategoryById" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        aac.id,
+        aac.preateId,
+        aac.preateName,
+        aac.name,
+        aac.type,
+        aac.seoFication,
+        aac.footerUrl,
+        aac.state,
+        aac.isShow,
+        aac.sort,
+        IFNULL(aac.describes,'') as describes,
+        aac.website,
+        aac.isPage,
+        aac.created,
+        aac.modified
+        FROM
+        app_artic_category as aac
+        <where>
+            1 = 1
+            and aac.state = 0
+            <if test="id!=null and id!='' ">
+                and aac.id = #{id}
+            </if>
+        </where>
+    </select>
+
+</mapper>

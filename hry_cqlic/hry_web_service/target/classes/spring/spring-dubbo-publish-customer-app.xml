@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- 具体的实现bean -->
+    <bean id="remoteAppCustomerServiceImpl" class="hry.customer.remote.RemoteAppCustomerServiceImpl" />   
+    <!-- 声明需要暴露的服务接口 -->  
+    <dubbo:service ref="remoteAppCustomerServiceImpl"  interface="hry.customer.remote.RemoteAppCustomerService"   /> 
+    
+    <bean id="remoteAppPersonInfoServiceImpl" class="hry.customer.remote.RemoteAppPersonInfoServiceImpl"></bean>
+    <dubbo:service ref="remoteAppPersonInfoServiceImpl"  interface="hry.customer.remote.RemoteAppPersonInfoService"   /> 
+    
+    
+    <bean id="remoteAppAgentsServiceImpl" class="hry.customer.remote.RemoteAppAgentsServiceImpl"></bean>
+    <dubbo:service ref="remoteAppAgentsServiceImpl"  interface="hry.customer.remote.RemoteAppAgentsService"   /> 
+    
+    <bean id="remoteAppTradeFactorageServiceImpl" class="hry.customer.remote.RemoteAppTradeFactorageServiceImpl"></bean>
+    <dubbo:service ref="remoteAppTradeFactorageServiceImpl"  interface="hry.customer.remote.RemoteAppTradeFactorageService"   /> 
+    
+     <bean id="remoteChatServiceImpl" class="hry.chat.chat.remote.RemoteChatServiceImpl"></bean>
+    <dubbo:service ref="remoteChatServiceImpl"  interface="hry.manage.remote.RemoteChatService"   />                                                          
+</beans>  

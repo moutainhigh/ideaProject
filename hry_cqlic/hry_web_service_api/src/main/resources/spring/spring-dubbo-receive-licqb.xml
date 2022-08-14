@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+    <dubbo:reference id="remoteAwardService" interface="hry.licqb.remote.RemoteAwardService" check="false"></dubbo:reference>
+    <dubbo:reference id="remoteLevelService" interface="hry.licqb.remote.RemoteLevelService" check="false"></dubbo:reference>
+    <dubbo:reference id="remoteRecordService" interface="hry.licqb.remote.RemoteRecordService" check="false"></dubbo:reference>
+    <dubbo:reference id="remoteAssetService" interface="hry.licqb.remote.RemoteAssetService" check="false"></dubbo:reference>
+    <dubbo:reference id="remoteEcologyService" interface="hry.licqb.remote.RemoteEcologyService" check="false"></dubbo:reference>
+    <dubbo:reference id="remoteExchangeService" interface="hry.licqb.remote.RemoteExchangeService" check="false"></dubbo:reference>
+</beans>

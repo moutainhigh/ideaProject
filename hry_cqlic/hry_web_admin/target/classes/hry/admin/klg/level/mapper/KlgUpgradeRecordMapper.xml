@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.klg.level.dao.KlgUpgradeRecordDao">
+
+    <select id="findPageBySql" parameterType="java.util.Map" resultType="hry.admin.klg.level.model.KlgUpgradeRecord">
+        select ir.id ,
+        ap.email  ,
+        ap.mobilePhone ,
+        ir.oldLevel ,
+        ir.newLevel ,
+        ir.upgradeNote ,
+        ir.created
+        from klg_upgrade_record  ir
+        LEFT JOIN app_person_info ap on ir.customerId=ap.customerId
+        <where>
+            1 = 1
+            <if test="email!=null and email!='' " >
+                and ap.email like #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' " >
+                and ap.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="oldLevelId!=null and oldLevelId!='' " >
+                and ir.oldLevelId = #{oldLevelId,jdbcType=VARCHAR}
+            </if>
+            <if test="newLevelId!=null and newLevelId!='' " >
+                and ir.newLevelId = #{newLevelId,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and startTime!='' " >
+                and ir.created <![CDATA[ >= ]]> #{startTime,jdbcType=DATE}
+            </if>
+            <if test="endTime!=null and endTime!='' " >
+                and ir.created <![CDATA[ <= ]]> date_add(#{endTime,jdbcType=DATE},interval 1 day)
+            </if>
+
+        </where>
+        ORDER BY ir.created desc
+    </select>
+</mapper>

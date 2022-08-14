@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.mail.dao.MailTemplateDao">
+  <resultMap type="hry.web.mail.model.MailTemplate" id="MailTemplateResultMap">
+    <id column="id" property="id" />
+    <result column="tempName" property="tempName" />
+    <result column="tempKey" property="tempKey" />
+    <result column="tempContent" property="tempContent" />
+    <result column="tempStatus" property="tempStatus" />
+    <result column="mailConfigId" property="mailConfigId" />
+    <result column="language" property="language" />
+    <result column="languageDic" property="languageDic" />
+    <result column="emailUser" property="emailUser" />
+    <result column="customName" property="customName" />
+    <result column="itemName" property="itemName" />
+
+  </resultMap>
+
+  <sql id="BaseResult">
+  mt.id,mt.tempName,mt.tempKey,mt.tempContent,mt.tempStatus,mt.mailConfigId,mt.`language`,mt.languageDic,mc.`port`,
+        mc.`host`,mc.protocol,mc.auth,mc.emailUser,mc.agreedPwd,mc.customName,mc.sslflag,mc.starttls,mc.prefix,mc.`status`,ad.itemName
+  </sql>
+  <select id="queryByPage" parameterType="Object" resultMap="MailTemplateResultMap" >
+    select <include refid="BaseResult"/>
+    from  mail_template mt left join mail_config mc on mt.mailConfigId=mc.id left join app_dic_onelevel ad on ad.dicKey=mt.languageDic
+    where  1=1
+    <if test="tempStatus !=null">
+      and mt.tempStatus=#{tempStatus}
+    </if>
+    <if test="tempKey !=null and tempKey !=''">
+      and mt.tempKey=#{tempKey}
+    </if>
+    <if test="languageDic !=null and languageDic !=''">
+      and mt.languageDic=#{languageDic}
+    </if>
+  </select>
+
+
+
+<update id="updateTemplateStauts" parameterType="Object">
+  update mail_template set tempStatus="0" where tempKey=#{tempKey} and `languageDic`=#{languageDic}
+</update>
+</mapper>

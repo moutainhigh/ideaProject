@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.c2c.dao.C2cTransactionDao">
+    <resultMap id="findPageBySqlMap"   type="hry.admin.c2c.model.C2cTransaction">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+        <result column="businessmanId" property="businessmanId" javaType="java.lang.Long" />
+        <result column="businessmanBankId" property="businessmanBankId" javaType="java.lang.Long" />
+        <result column="randomNum" property="randomNum" javaType="java.lang.String" />
+        <result column="transactionNum" property="transactionNum" javaType="java.lang.String" />
+        <result column="businessmanTrueName" property="businessmanTrueName" javaType="java.lang.String" />
+
+        <result column="userName" property="userName" javaType="java.lang.String" />
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+
+        <result column="customerBankId" property="customerBankId" javaType="java.lang.Long" />
+        <result column="accountId" property="accountId" javaType="java.lang.Long" />
+        <result column="transactionType" property="transactionType" javaType="java.lang.Integer" />
+
+        <result column="transactionMoney" property="transactionMoney" javaType="java.math.BigDecimal" />
+        <result column="transactionCount" property="transactionCount" javaType="java.math.BigDecimal" />
+        <result column="transactionPrice" property="transactionPrice" javaType="java.math.BigDecimal" />
+        <result column="fee" property="fee" javaType="java.math.BigDecimal" />
+
+        <result column="status" property="status" javaType="java.lang.Integer" />
+        <result column="status2" property="status2" javaType="java.lang.Integer" />
+        <result column="remark" property="remark" javaType="java.lang.String" />
+        <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+
+        <result column="transactionId" property="transactionId" javaType="java.lang.Long" />
+        <result column="businessman" property="businessman" javaType="java.lang.String" />
+
+        <result column="checkUser" property="checkUser" javaType="java.lang.String" />
+        <result column="bankcard" property="bankcard" javaType="java.lang.String" />
+        <result column="bankname" property="bankname" javaType="java.lang.String" />
+        <result column="surname" property="surname" javaType="java.lang.String" />
+        <result column="trueName" property="trueName" javaType="java.lang.String" />
+
+        <association property="appPersonInfo" javaType="hry.admin.customer.model.AppPersonInfo">
+            <result column="created" property="created" javaType="java.util.Date" />
+            <result column="modified" property="modified" javaType="java.util.Date" />
+            <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+            <result column="email" property="email" javaType="java.lang.String" />
+            <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+            <result column="country" property="country" javaType="java.lang.String" />
+        </association>
+    </resultMap>
+
+    <select id="getC2cList" parameterType="java.util.Map" resultType="hry.admin.c2c.model.C2cTransaction">
+        select
+        *
+        from c2c_transaction
+        <where>
+            <if test="type ==1 || type =='1'">
+                businessmanId =  #{id}
+            </if>
+            <if test="type ==2 || type =='2'">
+                businessmanBankId =  #{id}
+            </if>
+        </where>
+    </select>
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        SELECT
+        a.*,
+        c.trueName as businessmanTrueName,
+        b.email,
+        b.mobilePhone,
+        b.surname,
+        b.trueName,
+        b.country,
+        d.bankcard,
+        d.bankname
+        FROM c2c_transaction AS a
+        LEFT JOIN app_person_info
+        AS b ON a.customerId = b.customerId
+        left join app_businessman as c
+        on a.businessmanId = c.id
+        left join app_businessman_bank as d
+        on a.businessmanBankId = d.id
+        <where>
+            <if test="status!=null and status!='' ">
+                a.status =
+                #{status}
+            </if>
+            <if test="transactionType!=null and transactionType!='' ">
+                and a.transactionType =
+                #{transactionType}
+            </if>
+            <if test="businessmanId!=null and businessmanId!='' ">
+                and a.businessmanId =
+                #{businessmanId}
+            </if>
+            <if test="randomNum!=null and randomNum!='' ">
+                and a.randomNum like
+                #{randomNum,jdbcType=VARCHAR}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                and a.coinCode like
+                #{coinCode,jdbcType=VARCHAR}
+            </if>
+            <if test="email!=null and email!='' ">
+                and b.email like
+                #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                and b.mobilePhone like
+                #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by a.created desc
+    </select>
+
+
+</mapper>

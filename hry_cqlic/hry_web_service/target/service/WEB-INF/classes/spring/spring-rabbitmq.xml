@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+						http://www.springframework.org/schema/rabbit/spring-rabbit-1.4.xsd
+						http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+						http://www.springframework.org/schema/context
+       					http://www.springframework.org/schema/context/spring-context.xsd ">
+
+
+	<rabbit:connection-factory id="connectionFactory"
+		host="${rabbitmq.url}" port="${rabbitmq.port}" username="${rabbitmq.username}" password="${rabbitmq.password}"
+		virtual-host="${rabbitmq.virtual-host}" />
+
+		<!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+		<rabbit:admin id="connectAdmin" connection-factory="connectionFactory" />
+
+		<!-- 定义生产者 -->
+		<!--定义queue -->
+		<rabbit:queue name="toAccount" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toTrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+		<!--发奖励（经验） -->
+		<rabbit:queue name="toAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<!--释放锁仓的队列-->
+		<rabbit:queue name="toReleaseOrder" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<!--推荐奖励发送 -->
+	    <rabbit:queue name="toRecommendReward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	    <!--平台币 -->
+	    <rabbit:queue name="toPlatformCurrency" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	    <!-- 消息提醒-->
+		<rabbit:queue name="toMessageWarn" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<!-- 自动锁仓-->
+		<rabbit:queue name="toLockStorage" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+		<!--licqb-->
+		<!-- 用户等级升级 -->
+		<rabbit:queue name="toUserUpGrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	    <rabbit:queue name="toUserUpTeamGrade" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	    <rabbit:queue name="toOutManageAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	    <rabbit:queue name="toOutSeeAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toOutStaticAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="teamAwardRule" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	    <rabbit:queue name="toUpdateOutInfo" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+		<rabbit:queue name="toSurplusUSDTAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toSurplusBBGOAward" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+		<rabbit:queue name="toSurplusUSDTAwardTwo" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+		<rabbit:queue name="toSurplusBBGOAwardTwo" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	    <!-- 定义direct exchange，绑定queueTest -->
+		<rabbit:direct-exchange name="exchangeToTrade" durable="true" auto-delete="false" declared-by="connectAdmin">
+			<rabbit:bindings>
+				<rabbit:binding queue="toTrade" key="toTradeKey"></rabbit:binding>
+				<rabbit:binding queue="toAccount" key="toAccountKey"></rabbit:binding>
+				<rabbit:binding queue="toAward" key="toAwardKey"></rabbit:binding>
+				<rabbit:binding queue="toReleaseOrder" key="toReleaseOrderKey"></rabbit:binding>
+				<rabbit:binding queue="toRecommendReward" key="toRecommendRewardKey"></rabbit:binding>
+				<rabbit:binding queue="toPlatformCurrency" key="toPlatformCurrencyKey"></rabbit:binding>
+				<rabbit:binding queue="toMessageWarn" key="toMessageWarnKey"></rabbit:binding>
+				<rabbit:binding queue="toLockStorage" key="toLockStorageKey"></rabbit:binding>
+				<!--licqb-->
+				<rabbit:binding queue="toUserUpGrade" key="toUserUpGradeKey"></rabbit:binding>
+				<rabbit:binding queue="toUserUpTeamGrade" key="toUserUpTeamGradeKey"></rabbit:binding>
+				<rabbit:binding queue="toOutManageAward" key="toOutManageAwardKey"></rabbit:binding>
+				<rabbit:binding queue="toOutSeeAward" key="toOutSeeAwardKey"></rabbit:binding>
+				<rabbit:binding queue="toOutStaticAward" key="toOutStaticAwardKey"></rabbit:binding>
+				<rabbit:binding queue="teamAwardRule" key="teamAwardRuleKey"></rabbit:binding>
+				<rabbit:binding queue="toUpdateOutInfo" key="toUpdateOutInfoKey"></rabbit:binding>
+
+				<rabbit:binding queue="toSurplusUSDTAward" key="toSurplusUSDTAwardKey"></rabbit:binding>
+				<rabbit:binding queue="toSurplusBBGOAward" key="toSurplusBBGOAwardKey"></rabbit:binding>
+
+				<rabbit:binding queue="toSurplusUSDTAwardTwo" key="toSurplusUSDTAwardTwoKey"></rabbit:binding>
+				<rabbit:binding queue="toSurplusBBGOAwardTwo" key="toSurplusBBGOAwardTwoKey"></rabbit:binding>
+			</rabbit:bindings>
+		</rabbit:direct-exchange>
+
+		<!--定义rabbit template用于数据的接收和发送 -->
+		<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" exchange="exchangeToTrade" />
+		<rabbit:listener-container connection-factory="connectionFactory" requeue-rejected="false">
+
+		</rabbit:listener-container>
+
+	    <!--mq手动确认-->
+		<rabbit:listener-container connection-factory="connectionFactory" requeue-rejected="false" acknowledge="manual">
+
+		</rabbit:listener-container>
+</beans>
+
+

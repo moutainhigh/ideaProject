@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.lock.dao.ExDmLockDao">
+    <resultMap id="BaseResultMap" type="hry.admin.lock.model.ExDmLock">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+        <result column="lockStartLimit" property="lockStartLimit" javaType="java.math.BigDecimal" />
+        <result column="lockMethod" property="lockMethod" javaType="java.lang.Integer" />
+        <result column="lockRatio" property="lockRatio" javaType="java.math.BigDecimal" />
+        <result column="lockStartTime" property="lockStartTime" javaType="java.util.Date" />
+        <result column="lockDuration" property="lockDuration" javaType="java.math.BigDecimal" />
+        <result column="lockCycle" property="lockCycle" javaType="java.math.BigDecimal" />
+        <result column="releaseMethod" property="releaseMethod" javaType="java.lang.Integer" />
+        <result column="releaseMethodVal" property="releaseMethodVal" javaType="java.lang.String" />
+        <result column="isCirculation" property="isCirculation" javaType="java.lang.Integer" />
+        <result column="dailyReleaseOfUserRatio" property="dailyReleaseOfUserRatio" javaType="java.math.BigDecimal" />
+        <result column="releaseSortMethod" property="releaseSortMethod" javaType="java.lang.Integer" />
+        <result column="isLock" property="isLock" javaType="java.lang.Integer" />
+        <result column="optUser" property="optUser" javaType="java.lang.String" />
+        <result column="isValid" property="isValid" javaType="java.lang.Integer" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+    </resultMap>
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        lk.id,
+        lk.coinCode,
+        lk.lockStartLimit,
+        lk.lockMethod,
+        lk.lockRatio,
+        lk.lockStartTime,
+        lk.lockDuration,
+        lk.lockCycle,
+        lk.releaseMethod,
+        lk.releaseMethodVal,
+        lk.isCirculation,
+        lk.dailyReleaseOfUserRatio,
+        lk.releaseSortMethod,
+        lk.isLock,
+        lk.optUser,
+        lk.created,
+        lk.modified
+        FROM
+        ex_dm_lock as lk
+        <where>
+            1 = 1
+            <if test="coinCode!=null and coinCode!='' " >
+                and lk.coinCode = #{coinCode}
+            </if>
+            <if test="releaseMethod!=null and releaseMethod!='' " >
+                and lk.releaseMethod = #{releaseMethod}
+            </if>
+            <if test="isLock!=null and isLock!='' " >
+                and lk.isLock = #{isLock}
+            </if>
+            and lk.isValid = '0'
+        </where>
+        ORDER BY lk.created desc
+    </select>
+</mapper>

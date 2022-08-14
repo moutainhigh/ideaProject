@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.calculate.mvc.dao.AppFinanceDao" >
+
+	<select id="createMemberNum" resultType="Integer">
+		SELECT 
+		  COUNT(*) 
+		FROM
+		  app_customer a,
+		  app_person_info b 
+		WHERE a.id = b.customerId 
+		  AND a.created BETWEEN #{beginDate} 
+		  AND #{endDate} 
+		  <if test="type != null">
+				AND b.customerType = #{type} 
+			</if>
+	</select>
+
+
+	<select id="activityMemberNum" resultType="Integer">
+		SELECT 
+		  COUNT(*) 
+		FROM
+			  (SELECT DISTINCT 
+			    a.customerId 
+			  FROM
+			    app_person_info a,
+			    app_hot_account_record b 
+			  WHERE a.customerId = b.customerId 
+			    <if test="type != null">
+					AND a.customerType = #{type} 
+				</if>
+			    AND b.created BETWEEN #{beginDate} 
+			    AND #{endDate}) s 
+	</select>
+
+	<select id="transactionMemberNum" resultType="Integer">
+		SELECT 
+		  COUNT(customerId) 
+		FROM
+			  (SELECT DISTINCT 
+			    (a.customerId) 
+			  FROM
+			    ex_order_info a,
+			    app_person_info b 
+			  WHERE a.customerId = b.customerId 
+			    <if test="type != null">
+					AND b.customerType = #{type} 
+				</if>
+			    AND a.created BETWEEN #{beginDate} 
+			    AND #{endDate}) s 
+	</select>
+
+	<select id="memberNum" resultType="Integer">
+		 SELECT 
+		  COUNT(customerId) 
+		FROM
+			  (SELECT DISTINCT 
+			    a.customerId 
+			  FROM 
+			    app_hot_account_record a,
+			    app_person_info b 
+			  WHERE a.customerId = b.customerId 
+			    <if test="type != null">
+					AND b.customerType = #{type} 
+				</if>
+			    AND DATE_FORMAT(a.created, '%Y-%m-%d') = #{date}) s 
+	</select>
+
+	<select id="memberRechargeNum" resultType="java.math.BigDecimal">
+		SELECT 
+		  SUM(transactionMoney) 
+		FROM
+			  app_transaction a,
+			  app_person_info b 
+			WHERE a.transactionType IN (1, 3) 
+			  AND a.customerId = b.customerId
+			  <if test="type != null">
+				AND b.customerType = #{type} 
+				</if>
+			  AND a.status in (#{states})  
+			  AND a.created BETWEEN #{beginDate} 
+			  AND #{endDate} 
+	</select>
+
+	<select id="memberWithdrawNum" resultType="java.math.BigDecimal">
+		SELECT 
+		  SUM(transactionMoney) 
+		FROM
+			  app_transaction a,
+			  app_person_info b 
+			WHERE a.transactionType IN (2, 4) 
+			  AND a.customerId = b.customerId
+			  <if test="type != null">
+				AND b.customerType = #{type} 
+				</if>
+			  AND a.status in (#{states})  
+			  AND a.created BETWEEN #{beginDate} 
+			  AND #{endDate} 
+	</select>
+
+	<select id="memberWithdrawFeeNum" resultType="java.math.BigDecimal">
+		SELECT 
+		  SUM(a.fee) 
+		FROM
+			  app_transaction a,
+			  app_person_info b 
+			WHERE a.customerId = b.customerId 
+			  AND a.transactionType IN (2, 4) 
+			<if test="type != null">
+				AND b.customerType = #{type} 
+			</if>
+			  AND a.status IN (#{states}) 
+			  AND a.created BETWEEN #{beginDate} 
+			  AND #{endDate}  
+	</select>
+
+	<select id="memberTransactionFeeNum" resultType="java.math.BigDecimal">
+		SELECT 
+		  SUM(transactionFee) 
+		FROM
+			  ex_order_info a,
+			  app_person_info b 
+			WHERE a.customerId = b.customerId 
+			  <if test="type != null">
+				AND b.customerType = #{type} 
+			</if>
+			  AND a.type in (#{states}) 
+			  AND a.created BETWEEN #{beginDate} 
+			  AND #{endDate} 
+	</select>
+
+	<select id="memberOutFinanceNum" resultType="java.math.BigDecimal">
+		
+		SELECT SUM(outMoney) FROM 
+			(SELECT 
+			  (transactionMoney - fee) outMoney 
+			FROM
+			  app_transaction a,
+			  app_person_info b 
+				WHERE a.customerId = b.customerId 
+				  <if test="type != null">
+					AND b.customerType = #{type} 
+				</if>
+				  AND a.status in (#{states})
+				  AND a.created BETWEEN #{beginDate} 
+				  AND #{endDate} ) s
+	</select>
+
+	<select id="memberBeginFund" resultType="java.math.BigDecimal">
+		
+		SELECT SUM(totalMoney) FROM 
+		(SELECT 
+		  a.hotMoney - a.lendMoney AS totalMoney 
+		FROM
+		  app_account a,
+		  app_person_info b 
+		WHERE a.customerId = b.customerId 
+		  <if test="type != null">
+				AND b.customerType = #{type} 
+			</if>
+		  AND a.status = #{states}
+		  ) s
+	</select>
+	
+	<select id="memberCoinTransaferToNum" resultType="java.math.BigDecimal">
+		SELECT 
+			  SUM(transactionMoney) 
+			FROM
+			  ex_dm_transaction  
+			WHERE  created BETWEEN #{beginDate} 
+			  AND #{endDate} 
+			  <if test="coinCode != null">
+			 	 AND coinCode = #{coinCode}
+			  </if>
+			<if test="type != null">
+			  AND transactionType = #{type} 
+			</if>
+			
+	</select>
+	
+	<select id="memberBeginPositions" resultType="java.math.BigDecimal">
+		SELECT 
+		  SUM(totalNum) 
+		FROM
+		  (SELECT 
+		    (a.hotMoney - a.lendMoney) totalNum 
+		  FROM
+		    ex_digitalmoney_account a,
+		    app_person_info b 
+		  WHERE a.customerId = b.customerId 
+		    <if test="type != null">
+				AND b.customerType = #{type} 
+			</if>
+			<if test="coinCode != null">
+		  		AND a.coinCode = #{coinCode} 
+		    </if>
+		    AND a.created BETWEEN #{beginDate} 
+		    AND #{endDate}) s
+	</select>
+	
+	<select id="memberTurnover" resultType="java.math.BigDecimal">
+		SELECT 
+			  SUM(a.transactionSum) 
+			FROM
+			  ex_order_info a,
+			  app_person_info b 
+			WHERE a.customerId = b.customerId 
+			  <if test="type != null">
+				AND b.customerType = #{type} 
+			</if>
+			<if test="coinCode != null">
+				AND a.coinCode = #{coinCode}    
+			</if>
+			  AND a.type = #{orderType} 
+			  AND a.created BETWEEN #{beginDate} 
+			  AND #{endDate} 
+	</select>
+	
+	<select id="memberTransactionNum" resultType="java.math.BigDecimal">
+		SELECT 
+			  SUM(a.transactionCount) sumCount 
+			FROM 
+			  ex_order_info a, 
+			  app_person_info b 
+			WHERE a.customerId = b.customerId 
+			  <if test="type != null">
+				AND b.customerType = #{type} 
+			</if>
+			<if test="coinCode != null">
+			 	AND a.coinCode = #{coinCode} 
+			</if>
+			  AND a.type = #{orderType} 
+			  AND a.created BETWEEN #{beginDate} 
+			  AND #{endDate} 
+	</select> 
+	
+	<select id="memberBeginFinance" resultType="java.math.BigDecimal">
+		SELECT 
+		  SUM(totalNum) sumNum 
+		FROM 
+		  (SELECT 
+		    (a.hotMoney - a.lendMoney) totalNum 
+		  FROM  
+		    ex_digitalmoney_account a,
+		    app_person_info b 
+		  WHERE a.customerId = b.customerId 
+		    <if test="type != null">
+				AND b.customerType = #{type} 
+			</if>
+			<if test="coinCode != null">
+				AND a.coinCode = #{coinCode}
+			</if>
+			) s
+	</select>
+
+
+
+</mapper>
+
+
+
+
+
+
+
+
+

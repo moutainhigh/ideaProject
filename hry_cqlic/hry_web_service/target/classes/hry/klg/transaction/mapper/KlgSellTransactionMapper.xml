@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.klg.transaction.dao.KlgSellTransactionDao">
+
+	<resultMap id="BaseResultMap" type="hry.klg.transaction.model.KlgSellTransaction">
+        <result column="email" property="email" javaType="java.lang.String" />
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+    </resultMap>
+    
+    <!-- 更新订单状态-->
+    <update id="updateStatusByIds">
+    	update klg_sell_transaction set status= #{status,jdbcType=TINYINT }  where status=1
+            and id in 
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+	            #{item,jdbcType=BIGINT }
+	        </foreach>
+    </update>
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="BaseResultMap" >
+        SELECT
+			kst.id,
+			kst.customerId,
+			kst.customerGrade,
+			kst.transactionNum,
+			kst.accountId,
+			kst.coinCode,
+			kst.usdtMoney,
+			kst.smeMoney,
+			kst.candySmeMoney,
+			kst.smeusdtRate,
+			kst. STATUS,
+			kst.userId,
+			kst.created,
+			kst.modified,
+			kst.remark,
+			kst.oneselfRate,
+			kst.platformRate,
+			kst.seePointRate,
+			kst.gradationRate,
+			kst.prizeRate,
+			concat_ws(
+				'****',
+				substring(api.mobilePhone, 1, 4),
+				substring(api.mobilePhone, 9, 3)
+			) AS mobilePhone,
+			api.email,
+			(
+				CASE
+				WHEN kst. STATUS = 4 THEN
+					datediff(kst.modified, kst.created)
+				WHEN kst. STATUS = 5 THEN
+					datediff(kst.modified, kst.created)
+				ELSE
+					datediff(now(), kst.created)
+				END
+			) AS saasId
+        FROM
+        klg_sell_transaction AS kst,
+        app_person_info AS api
+        <where>
+            api.customerId = kst.customerId
+            <if test="status!=null and status!='' ">
+                and kst.status = #{status}
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                and kst.customerId = #{customerId}
+            </if>
+        </where>
+        order by kst.created desc
+    </select>
+    
+    <!-- 获取用户所有卖出成功订单利润总和-->
+    <select id="getSellProfitSum" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal" >
+            SELECT
+				sum(candySmeMoney*smeusdtRate*oneselfRate*0.01)
+			FROM
+				klg_sell_transaction
+			WHERE
+				customerId = #{customerId,jdbcType=BIGINT}
+			AND status = 4
+    </select>
+
+</mapper>

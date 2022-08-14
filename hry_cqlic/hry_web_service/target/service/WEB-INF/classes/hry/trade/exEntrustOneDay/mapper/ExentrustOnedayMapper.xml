@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.trade.exEntrustOneDay.dao.ExentrustOnedayDao">
+	<select id="getMaxOrMinEntrustPrice" parameterType="java.util.Map"   resultType="java.math.BigDecimal">
+		select 
+		
+		<if test="flag!=null and flag!='' and flag=='max'" >
+			IFNULL(MAX(entrustPrice),0)
+		</if>
+		<if test="flag!=null and flag!='' and flag=='min'" >
+			IFNULL(MIN(entrustPrice),0)
+		</if>
+		
+		from ex_entrust_oneday ap
+		
+		<where>
+			1=1
+		
+			<if test="coinCode!=null and coinCode!='' " >
+				and ap.coinCode = #{coinCode,jdbcType=VARCHAR}
+			</if>
+			<if test="fixPriceCoinCode!=null and fixPriceCoinCode!='' " >
+				and ap.fixPriceCoinCode = #{fixPriceCoinCode,jdbcType=VARCHAR}
+			</if>
+	
+			<if test="type!=null and type!='' " >
+				and ap.type = #{type,jdbcType=VARCHAR}
+			</if>
+			<if test="entrustWay!=null and entrustWay!='' " >
+				and ap.entrustWay = #{entrustWay,jdbcType=INTEGER}
+			</if>
+		
+			<if test="status_lt!=null and status_lt!='' " >
+				and ap.status  &lt;  #{status_lt,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+	
+	<resultMap id="getExEntrustSellDephMap" type="hry.trade.entrust.model.ExEntrust">
+		<result column="startPrice" property="entrustPrice" javaType="java.math.BigDecimal" />
+		<result column="surplusEntrustCount" property="surplusEntrustCount" javaType="java.math.BigDecimal" />
+	</resultMap>
+	
+	
+      <select id="getExEntrustSellDeph"  parameterType="java.util.Map"  resultMap="getExEntrustSellDephMap" >  
+		SELECT 
+		 #{startPrice} as startPrice,
+		  #{minPrice} as endPrice,
+			(	SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE
+			  coinCode=#{coinCode,jdbcType=VARCHAR}  
+				<![CDATA[  and	entrustPrice >= endPrice
+				AND entrustPrice <=  startPrice ]]>  and type = 2 and entrustWay =1 and status in (0,1)
+			) AS surplusEntrustCount
+		union all
+		select
+		  #{startPrice}+1*#{depthjg} as startPrice,
+		   #{startPrice} as endPrice,
+			(
+				SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE 
+			  coinCode=#{coinCode,jdbcType=VARCHAR}  
+				<![CDATA[  and	entrustPrice > endPrice
+				AND entrustPrice <=  startPrice ]]>  and type = 2 and entrustWay =1 and status in (0,1)
+				
+			) AS surplusEntrustCount
+       union all
+		select
+		  #{startPrice}+2*#{depthjg} as startPrice,
+		   #{startPrice}+1*#{depthjg} as endPrice,
+			(
+				SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE
+				 coinCode=#{coinCode,jdbcType=VARCHAR}  
+				<![CDATA[  and	entrustPrice > endPrice
+				AND entrustPrice <=  startPrice ]]>  and type = 2 and entrustWay =1 and status in (0,1)
+				
+			) AS surplusEntrustCount
+
+         union all
+		select
+		  #{startPrice}+3*#{depthjg} as startPrice,
+		   #{startPrice}+2*#{depthjg} as endPrice,
+			(
+				SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE
+			  coinCode=#{coinCode,jdbcType=VARCHAR}  
+				 <![CDATA[  and	entrustPrice > endPrice
+				AND entrustPrice <= startPrice ]]>  and type = 2 and entrustWay =1 and status in (0,1)
+				
+			) AS surplusEntrustCount
+               union all
+		select
+		  #{startPrice}+4*#{depthjg} as startPrice,
+		   #{startPrice}+3*#{depthjg} as endPrice,
+			(
+				SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE
+				  coinCode=#{coinCode,jdbcType=VARCHAR}  
+				<![CDATA[  and	entrustPrice > endPrice
+				AND entrustPrice <= startPrice ]]>  and type = 2 and entrustWay =1 and status in (0,1)
+			
+			) AS surplusEntrustCount
+        
+        
+    </select> 
+     <resultMap id="getExEntrustBuyDephMap" type="hry.trade.entrust.model.ExEntrust">
+		<result column="startPrice" property="entrustPrice" javaType="java.math.BigDecimal" />
+		<result column="surplusEntrustCount" property="surplusEntrustCount" javaType="java.math.BigDecimal" />
+	</resultMap>  
+         <select id="getExEntrustBuyDeph"  parameterType="java.util.Map"  resultMap="getExEntrustBuyDephMap" >  
+       
+		SELECT 
+		 #{startPrice} as startPrice,
+		  #{maxPrice} as endPrice,
+			(	SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE
+				
+					 coinCode=#{coinCode,jdbcType=VARCHAR}  and fixPriceCoinCode=#{fixPriceCoinCode,jdbcType=VARCHAR}  
+				<![CDATA[  
+				and	entrustPrice >= startPrice
+				AND entrustPrice <=  endPrice
+				]]> 
+				and type = 1 and entrustWay =1 and status in (0,1) 
+				 and   customerType in 
+                 <foreach item="item" index="index" collection="customerType" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+			) AS surplusEntrustCount
+		union all
+		select
+		  #{startPrice}-1*#{depthjg} as startPrice,
+		   #{startPrice} as endPrice,
+			(
+				SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE
+				 coinCode=#{coinCode,jdbcType=VARCHAR}  
+				<![CDATA[   and	entrustPrice >= startPrice
+				AND entrustPrice < endPrice  ]]> and type = 1 and entrustWay =1 and status in (0,1)
+				 and   customerType in 
+                 <foreach item="item" index="index" collection="customerType" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+			) AS surplusEntrustCount
+       union all
+		select
+		  #{startPrice}-2*#{depthjg} as startPrice,
+		   #{startPrice}-1*#{depthjg} as endPrice,
+			(
+				SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE
+				 coinCode=#{coinCode,jdbcType=VARCHAR}  
+				<![CDATA[   and	entrustPrice >= startPrice
+				AND entrustPrice < endPrice  ]]>  and type = 1 and entrustWay =1 and status in (0,1)
+				 and   customerType in 
+                 <foreach item="item" index="index" collection="customerType" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+			) AS surplusEntrustCount
+
+         union all
+		select
+		  #{startPrice}-3*#{depthjg} as startPrice,
+		   #{startPrice}-2*#{depthjg} as endPrice,
+			(
+				SELECT
+					sum(surplusEntrustCount)
+				FROM
+					ex_entrust_oneday
+				WHERE
+                 coinCode=#{coinCode,jdbcType=VARCHAR}  
+				<![CDATA[   and	entrustPrice >= startPrice
+				AND entrustPrice < endPrice   ]]>and type = 1 and entrustWay =1 and status in (0,1)
+				 and   customerType in 
+                 <foreach item="item" index="index" collection="customerType" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+	) AS surplusEntrustCount
+	union all
+	select
+	#{startPrice}-4*#{depthjg} as startPrice,
+	#{startPrice}-3*#{depthjg} as endPrice,
+	(
+	SELECT
+	sum(surplusEntrustCount)
+	FROM
+	ex_entrust_oneday
+	WHERE
+
+	coinCode=#{coinCode,jdbcType=VARCHAR}  
+				<![CDATA[
+				   and	entrustPrice >= startPrice
+					AND entrustPrice < endPrice  
+				]]>
+				and type = 1 and entrustWay =1 and status in (0,1)
+				and customerType in
+				<foreach item="item" index="index" collection="customerType"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+	) AS surplusEntrustCount
+       
+    </select> 
+    <resultMap id="exEntrustMarketMap" type="hry.trade.entrust.ExEntrustSimple">
+		<result column="entrustPrice" property="entrustPrice" javaType="java.math.BigDecimal" />
+		<result column="entrustCount" property="surplusEntrustCount" javaType="java.math.BigDecimal" />
+	</resultMap>
+	<select id="getExEntrustBuyChangeMarket" parameterType="java.util.Map"   resultMap="exEntrustMarketMap">
+		
+	select * from (	select entrustPrice,surplusEntrustCount from
+		(SELECT a.entrustPrice as entrustPrice, SUM(a.surplusEntrustCount)as surplusEntrustCount FROM ex_entrust_oneday a 
+		<where>
+	          a.type=1 and a.entrustWay=1
+		
+		
+			<if test="coinCode!=null and coinCode!='' " >
+				and a.coinCode = #{coinCode,jdbcType=VARCHAR}
+			</if>
+			<if test="fixPriceCoinCode!=null and fixPriceCoinCode!='' " >
+				and a.fixPriceCoinCode = #{fixPriceCoinCode,jdbcType=VARCHAR}
+			</if>
+		
+			
+		</where>
+		 GROUP BY a.entrustPrice)
+		as b ORDER BY b.entrustPrice desc ) as c limit 0,18
+	</select> 
+		<select id="getExEntrustSellChangeMarket" parameterType="java.util.Map"   resultMap="exEntrustMarketMap">
+		
+		select * from (select entrustPrice,surplusEntrustCount from
+		(SELECT a.entrustPrice as entrustPrice, SUM(a.surplusEntrustCount) as surplusEntrustCount FROM ex_entrust_oneday a 
+		<where>
+	        a.type=2  and a.entrustWay=1
+
+		
+			<if test="coinCode!=null and coinCode!='' " >
+				and a.coinCode = #{coinCode,jdbcType=VARCHAR}
+			</if>
+			<if test="fixPriceCoinCode!=null and fixPriceCoinCode!='' " >
+				and a.fixPriceCoinCode = #{fixPriceCoinCode,jdbcType=VARCHAR}
+			</if>
+	
+		
+		</where>
+		 GROUP BY a.entrustPrice)
+		as b ORDER BY b.entrustPrice asc ) as c limit 0,18
+	</select> 
+	
+	
+      <resultMap id="allcolumn" type="hry.trade.exEntrustOneDay.model.ExentrustOneday">
+		<result column="id" property="id" javaType="java.lang.Long" />
+	
+	</resultMap> 
+
+    
+     <select id="listMatchByBuyLimitedPrice"  parameterType="java.util.Map"  resultMap="allcolumn" >  
+        
+          select id from ex_entrust_oneday a 
+            <where>
+               <![CDATA[  a.type=2  and a.id<#{id,jdbcType=INTEGER}
+                 and  a.coinCode=#{coinCode,jdbcType=VARCHAR}     and a.fixPriceCoinCode = #{fixPriceCoinCode,jdbcType=VARCHAR}   
+                and (a.entrustWay=2 or a.entrustWay=3 or(a.entrustWay=1 and entrustPrice<=#{lentrustPrice,jdbcType=VARCHAR} and entrustPrice>=#{gentrustPrice,jdbcType=DECIMAL}))
+	            ]]>
+	          
+			</where>
+             order by a.entrustPrice asc,a.entrustTime asc limit 0,100
+       
+    </select>
+         <select id="listMatchByBuyMarketPrice"  parameterType="java.util.Map"  resultMap="allcolumn" >  
+        
+          select id from ex_entrust_oneday a  
+          <where>
+               a.coinCode=#{coinCode,jdbcType=VARCHAR}  
+                and a.fixPriceCoinCode = #{fixPriceCoinCode,jdbcType=VARCHAR}
+		        and    a.type=2 and a.entrustWay=1 <![CDATA[ and a.id<#{id,jdbcType=INTEGER} ]]>
+		</where>
+             order by a.entrustPrice asc,a.entrustTime asc limit 0,100
+    </select>
+        <select id="listMatchBySellLimitedPrice"  parameterType="java.util.Map"  resultMap="allcolumn" >  
+          select id from ex_entrust_oneday a  
+          <where>
+               a.coinCode=#{coinCode,jdbcType=VARCHAR}  
+              and a.fixPriceCoinCode = #{fixPriceCoinCode,jdbcType=VARCHAR}
+		     <![CDATA[  and    a.type=1  and a.id<#{id,jdbcType=INTEGER}
+              and (a.entrustWay=2 or a.entrustWay=3 or(a.entrustWay=1 and entrustPrice<=#{lentrustPrice,jdbcType=VARCHAR} and entrustPrice>=#{gentrustPrice,jdbcType=DECIMAL}))
+            ]]>
+		
+		</where>
+         
+             order by a.entrustPrice desc,a.entrustTime asc limit 0,100
+        
+    </select> 
+        <select id="listMatchBySellMarketPrice"  parameterType="java.util.Map"  resultMap="allcolumn" >  
+          select id from ex_entrust_oneday a  
+          <where>
+                a.coinCode=#{coinCode,jdbcType=VARCHAR}  
+                and a.fixPriceCoinCode = #{fixPriceCoinCode,jdbcType=VARCHAR}
+		       and    a.type=1  and a.entrustWay=1  <![CDATA[ and a.id<#{id,jdbcType=INTEGER} ]]>
+		</where>
+             order by a.entrustPrice desc,a.entrustTime asc limit 0,100
+        
+    </select> 
+</mapper>

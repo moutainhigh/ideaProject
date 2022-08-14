@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.calculate.mvc.dao.AppReportDao" >
+
+	<select id="findTotalCustomer" resultType="hry.calculate.mvc.po.TotalCustomerForReport">
+		SELECT 
+		  * 
+		FROM
+		  (SELECT 
+		    COUNT(*) totalCustomer 
+		  FROM
+		    app_person_info 
+		  WHERE created BETWEEN #{beginTime} 
+		    AND #{endTime}) a,
+		  (SELECT 
+		    COUNT(*) totalCustomerForType 
+		  FROM
+		    app_person_info 
+		  WHERE customerType = 1 
+		    AND created BETWEEN #{beginTime} 
+		    AND #{endTime}) b,
+		  (SELECT
+			count(*) totalCustomerForHot
+			FROM
+			(
+				SELECT
+					customerId
+				FROM
+					app_hot_account_record WHERE created BETWEEN #{beginTime} AND #{endTime}
+				GROUP BY
+					customerId
+			) a
+		  ) c 
+	</select>
+	
+	<select id="findTotalMoney" resultType="hry.calculate.mvc.po.TotalEarningsForReport">
+		SELECT 
+		  *,
+		  IFNULL(getFee, 0) + IFNULL(postFee, 0) + IFNULL(transactionFee, 0) + IFNULL(interestCount, 0) - IFNULL(drawalMoney, 0) totalMoney 
+		FROM
+		  (SELECT 
+		    SUM(fee) postFee 
+		  FROM
+		    app_transaction 
+		  WHERE transactionType IN (1, 3,5) 
+		    AND STATUS = 2 
+		    AND modified BETWEEN #{beginTime} 
+		    AND #{endTime}) a,
+		  (SELECT 
+		    SUM(fee) getFee 
+		  FROM
+		    app_transaction 
+		  WHERE transactionType IN (2, 4) 
+		    AND STATUS = 2 
+		    AND modified BETWEEN #{beginTime} 
+		    AND #{endTime}) b,
+		  (SELECT 
+		    SUM(transactionFee) transactionFee 
+		  FROM
+		    ex_order_info 
+		  WHERE transactionFee 
+		    AND modified BETWEEN #{beginTime} 
+		    AND #{endTime}) c,
+		  (SELECT 
+		    SUM(repayInterestCount) interestCount 
+		  FROM
+		    ex_dm_lend 
+		  WHERE modified BETWEEN #{beginTime} 
+		    AND #{endTime} 
+		    AND lendCoinType = 'money') d,
+		  (SELECT 
+		    SUM(drawalMoney) drawalMoney 
+		  FROM
+		    angest_as_money 
+		  WHERE state = 1 
+		    AND modified BETWEEN #{beginTime} 
+		    AND #{endTime}) e 
+	</select>
+	
+	<select id="findTotalCurrency" resultType="hry.calculate.mvc.po.TotalCurrencyForReport">
+		SELECT 
+  fff.*,
+  IFNULL(ggg.sumOrderCount, 0) / 2 sumOrderCount,
+  IFNULL(ggg.sumOrderCount, 0) / 4 buyOrderCount,
+  IFNULL(ggg.sumOrderCount, 0) / 4 sellOrderCount ,
+ 	IFNULL(hhh.availableCoinCount, 0) availableCoinCount,
+	IFNULL(hhh.frozenCoinCount, 0)  frozenCoinCount
+FROM
+  (SELECT 
+    ccc.*,
+    IFNULL(ddd.totalCount, 0) totalCount 
+  FROM
+    (SELECT 
+      aaa.*,
+      IFNULL(bbb.getCount, 0) getCount 
+    FROM
+      (SELECT 
+        cc.*,
+        IFNULL(dd.postCount, 0) postCount 
+      FROM
+        (SELECT 
+          aa.*,
+          IFNULL(bb.dmFee, 0) dmFee 
+        FROM
+          (SELECT 
+            a.coinCode,
+            IFNULL(interestCount, 0) leverageCount 
+          FROM
+            (SELECT 
+              coinCode 
+            FROM
+              ex_product 
+            WHERE issueState = 1) a 
+            LEFT JOIN 
+              (SELECT 
+                IFNULL(SUM(repayCount), 0) interestCount,
+                lendCoin coinCode 
+              FROM
+                ex_dm_lend_intent 
+              WHERE lendCoinType = 'virtualCoin' 
+                AND intentType = 'interest' 
+                AND modified BETWEEN #{beginTime} 
+      AND #{endTime}  
+              GROUP BY lendCoin) b 
+              ON a.coinCode = b.coinCode) aa 
+          LEFT JOIN 
+            (SELECT 
+              IFNULL(SUM(fee), 0) dmFee,
+              coinCode 
+            FROM
+              ex_dm_transaction 
+            WHERE transactionType = 2 
+              AND STATUS IN (1, 2) 
+              AND modified BETWEEN #{beginTime} 
+      AND #{endTime}  
+            GROUP BY coinCode) bb 
+            ON aa.coinCode = bb.coinCode) cc 
+        LEFT JOIN 
+          (SELECT 
+            IFNULL(SUM(transactionMoney), 0) postCount,
+            coinCode 
+          FROM
+            ex_dm_transaction 
+          WHERE transactionType = 1 
+            AND STATUS = 2 
+            AND modified BETWEEN #{beginTime} 
+      AND #{endTime}  
+          GROUP BY coinCode) dd 
+          ON cc.coinCode = dd.coinCode) aaa 
+      LEFT JOIN 
+        (SELECT 
+          IFNULL(SUM(transactionMoney), 0) getCount,
+          coinCode 
+        FROM
+          ex_dm_transaction 
+        WHERE transactionType = 2 
+          AND STATUS = 2 
+          AND modified BETWEEN #{beginTime} 
+      AND #{endTime}  
+        GROUP BY coinCode) bbb 
+        ON aaa.coinCode = bbb.coinCode) ccc 
+    LEFT JOIN 
+      (SELECT 
+        SUM(accountMoney) totalCount,
+        currencyType coinCode 
+      FROM
+        app_our_account 
+      WHERE currencyType NOT IN ('cny', 'eny') 
+      GROUP BY currencyType) ddd 
+      ON ccc.coinCode = ddd.coinCode) fff 
+  LEFT JOIN 
+    (SELECT 
+      coinCode,
+      SUM(transactionCount) sumOrderCount 
+    FROM
+      ex_order_info 
+    WHERE modified BETWEEN #{beginTime} 
+      AND #{endTime} 
+    GROUP BY coinCode) ggg 
+    ON fff.coinCode = ggg.coinCode 
+    LEFT JOIN (
+	SELECT
+coinCode,
+		SUM(hotMoney) availableCoinCount,
+		SUM(coldMoney) frozenCoinCount
+	FROM
+		ex_digitalmoney_account
+	where  modified BETWEEN #{beginTime} AND #{endTime}
+	GROUP BY
+		coinCode
+) hhh ON fff.coinCode = hhh.coinCode
+    
+	</select>
+	
+	<select id="findTotalAccount" resultType="hry.calculate.mvc.po.TotalAccountForReport">
+		SELECT 
+		  * 
+		FROM
+		   <!-- 充值成功总金额，充值总手续费 -->
+		  (SELECT 
+		    IFNULL(SUM(transactionMoney),0) postTotalMoney,
+		    IFNULL(SUM(fee),0) postFee 
+		  FROM
+		    app_transaction aaa
+		  WHERE aaa.transactionType IN (1, 3,5) 
+		    AND aaa.STATUS = 2 
+		    AND aaa.modified BETWEEN #{beginTime} AND #{endTime}
+		  ) a,
+		  
+		  <!-- 提现成功总金额，提现总手续费 -->
+		  (SELECT 
+		    IFNULL(SUM(transactionMoney),0) getTotalMoney,
+		    IFNULL(SUM(fee),0) getFee 
+		  FROM
+		    app_transaction bbb
+		  	WHERE bbb.transactionType IN (2, 4) 
+		    AND bbb.STATUS = 2 
+		    AND bbb.modified BETWEEN #{beginTime} AND #{endTime}
+		  ) b,
+		  
+		   <!-- 交易的总钱数,买交易的总钱数,卖交易的总钱数,交易的总手续费  -->
+		  (SELECT 
+		    IFNULL(SUM(transactionSum),0) orderSumMoney,
+		    IFNULL(SUM(transactionSum),0)/2 buySumMoney,
+		    IFNULL(SUM(transactionSum),0)/2 sellSumMoney,
+		    IFNULL(SUM(transactionFee),0) orderSumFee 
+		  FROM
+		    ex_order_info ccc
+		  WHERE 
+		  ccc.modified BETWEEN #{beginTime} AND #{endTime}
+		  ) c,
+		  
+		  
+		  <!-- 平台已借出的钱,平台锁收的杠杆手续费  -->
+		  (SELECT 
+			    IFNULL(SUM(lendCount), 0) leverageMoney,
+			    IFNULL(SUM(repayInterestCount),0) leverageFee 
+			  FROM
+			    ex_dm_lend ddd
+			  WHERE lendCoinType = 'money'
+			  AND ddd.modified BETWEEN #{beginTime} AND #{endTime}
+		     ) d,
+		     
+		     
+		    <!-- 金科新加的统计数据 -->  
+		    <!-- 充值处理中总金额 -->  
+		   (SELECT 
+			    IFNULL(SUM(transactionMoney),0) rechargeDoingTotalMoney
+			  FROM
+			    app_transaction eee
+			  WHERE eee.transactionType IN (1, 3,5) 
+			    AND eee.STATUS = 1
+			    AND eee.modified BETWEEN #{beginTime} AND #{endTime}
+			  ) e,
+		    <!-- 可用资金总额-->  
+		   (select 
+		   		IFNULL(SUM(hotMoney),0) availableTotalMoney,
+		   		IFNULL(SUM(coldMoney),0) frozenTotalMoney 
+		   		from app_account) f  
+	</select>
+	
+	<select id="findTotalCustomerProfitForReport" resultType="hry.calculate.settlement.model.AppReportSettlement">
+		SELECT 
+		  userName,
+		  trueName,
+		  beginMoney,
+		  endMoney,
+		  beginNetAsset,
+		  endNetAsset,
+		  customerType,
+		  modified,
+		  profitAndLossMoney totalMoney 
+		FROM
+		  app_report_settlement 
+		WHERE modified LIKE #{date} 
+		<if test="customerType != null">
+			AND customerType = #{customerType}
+		</if>
+		;	
+	</select>
+	
+	
+	<select id="getTotalCoinNum" resultType="java.math.BigDecimal">
+		SELECT
+			sum(IFNULL(hotMoney, 0)) + sum(IFNULL(coldMoney, 0))
+		FROM
+			ex_digitalmoney_account
+		WHERE
+			coinCode = #{0}
+	</select>
+			
+		
+</mapper>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.klg.prizedraw.dao.KlPrizedrawSelectionDao">
+
+	<resultMap id="BaseResultMap" type="hry.admin.klg.prizedraw.model.KlPrizedrawSelection">
+    </resultMap>
+    
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        select 
+	        kbt.*,
+	        ap.trueName as trueName,
+	        ap.surname as surName,
+	        ap.mobilePhone as mobilePhone,
+	        ap.email as email
+        from
+        klg_prizedraw_selection as kbt 
+        INNER JOIN app_person_info as ap
+        	on kbt.customerId = ap.customerId
+        <where>
+            1=1
+            <if test="status != null and status != '' ">
+                and kbt.status = #{status,jdbcType=TINYINT}
+            </if>
+            <if test="issueNumber != null and issueNumber != '' ">
+                and kbt.issueNumber = #{issueNumber,jdbcType=INTEGER}
+            </if>
+            <if test="prizedrawGrade != null and prizedrawGrade != '' ">
+                and kbt.prizedrawGrade = #{prizedrawGrade,jdbcType=INTEGER}
+            </if>
+            <if test="trueName != null and trueName != '' ">
+                and ap.trueName like #{trueName,jdbcType=VARCHAR}
+            </if>
+            <if test="surName != null and surName != '' ">
+                and ap.surname like #{surName,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone != null and mobilePhone != '' ">
+                and ap.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="email != null and email != '' ">
+                and ap.email like #{email,jdbcType=VARCHAR}
+            </if>
+             <if test="modified_s!=null and modified_s!='' ">
+                and kbt.created <![CDATA[ >= ]]> #{modified_s}
+            </if>
+            <if test="modified_e!=null and modified_e!='' ">
+                and kbt.created   <![CDATA[ <= ]]> #{modified_e}
+            </if>
+             <if test="modified_sm!=null and modified_sm!='' ">
+                and kbt.startDate <![CDATA[ >= ]]> #{modified_sm}
+            </if>
+            <if test="modified_em!=null and modified_em!='' ">
+                and kbt.startDate   <![CDATA[ <= ]]> #{modified_em}
+            </if>
+        </where>
+        order by kbt.startDate desc
+    </select>
+
+</mapper>

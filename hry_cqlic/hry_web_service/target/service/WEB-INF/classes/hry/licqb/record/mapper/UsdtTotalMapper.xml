@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.licqb.record.dao.UsdtTotalDao">
+    <select id="getYesterdayTotal" resultType="hry.licqb.record.model.UsdtTotal">
+        select
+        IFNULL(sum(case when transactionType = 1 and `status` = 2 THEN transactionMoney END), 0)  payMoney,
+        IFNULL(sum(case when transactionType = 2 and `status` = 2 THEN transactionMoney-fee END), 0)  extractMoney,
+        IFNULL(sum(case when transactionType = 1 and `status` = 2 THEN transactionMoney END), 0) - IFNULL(sum(case when transactionType = 2 and `status` = 2 THEN transactionMoney-fee END),0) as money
+        FROM
+        ex_dm_transaction
+        WHERE 1=1 and coinCode='USDT'
+        and optType in (1,2)
+        and DATEDIFF(modified, NOW()) = -1
+    </select>
+
+    <resultMap id="resultMap" type="hry.licqb.record.model.UserAccount"></resultMap>
+    <select id="coldBusinessPingZhang" resultMap="resultMap">
+        select da.customerId, da.coinCode, da.hotMoney, da.coldMoney, cf.freezeMoney, oi.baseMoney
+        from ex_digitalmoney_account da
+        LEFT JOIN lc_customer_freeze cf
+        ON da.customerId = cf.customerId
+        LEFT JOIN lc_out_info oi
+        ON cf.customerId = oi.customerId
+        WHERE 1=1
+        and da.coinCode = 'USDT'
+        and oi.`status` = 0
+        and cf.freezeMoney > da.coldMoney;
+    </select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.ico.award.dao.IcoAwardRecordDao">
+    <select id="findPageBySql" parameterType="java.util.Map" resultType="hry.admin.ico.award.model.IcoAwardRecord">
+        select ia.id id,
+        ia.customer_id customer_id,
+        ap.email customer_email ,
+        ap.mobilePhone customer_mobile,
+        ia.award_type award_type,
+        ia.coinCode coinCode,
+        ap2.email referrals_email,
+        ap2.mobilePhone referrals_mobile,
+        ia.award_radix award_radix,
+        ia.award_quantity award_quantity,
+        ia.award_num award_num,
+        ia.created  created
+        from ico_award_record  ia
+        LEFT JOIN app_person_info ap on ia.customer_id=ap.customerId
+        LEFT JOIN app_person_info ap2 on ia.referrals_id=ap2.customerId
+        <where>
+            1 = 1
+            <if test="award_type!=null and award_type!='' " >
+                and ia.award_type = #{award_type,jdbcType=VARCHAR}
+            </if>
+            <if test="customer_email!=null and customer_email!='' " >
+                and ap.email like #{customer_email,jdbcType=VARCHAR}
+            </if>
+            <if test="customer_mobile!=null and customer_mobile!='' " >
+                and ap.mobilePhone like #{customer_mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="referrals_email!=null and referrals_email!='' " >
+                and ap2.email like #{referrals_email,jdbcType=VARCHAR}
+            </if>
+            <if test="referrals_mobile!=null and referrals_mobile!='' " >
+                and ap2.mobilePhone like #{referrals_mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and startTime!='' " >
+                and ia.created <![CDATA[ >= ]]> #{startTime,jdbcType=DATE}
+            </if>
+            <if test="endTime!=null and endTime!='' " >
+                and ia.created <![CDATA[ <= ]]> #{endTime,jdbcType=DATE}
+            </if>
+
+        </where>
+        ORDER BY ia.created desc
+    </select>
+</mapper>

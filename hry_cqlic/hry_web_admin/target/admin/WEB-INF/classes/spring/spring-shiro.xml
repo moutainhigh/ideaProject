@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 缓存管理器 <bean id="cacheManager" class="hry.core.shiro.SpringCacheManagerWrapper"> 
+		<property name="cacheManager" ref="springCacheManager"/> </bean> -->
+
+	<!-- 会话DAO <bean id="sessionDAO" class="hry.oauth.session.dao.MySqlSessionDAO"> 
+		<property name="activeSessionsCacheName" value="shiro-activeSessionCache"/> 
+		<property name="sessionIdGenerator" ref="sessionIdGenerator"/> </bean> -->
+
+
+
+	<!-- 会话ID生成器 -->
+	<bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+
+	<!-- redis管理器 -->
+	<bean id="redisManager" class="org.crazycake.shiro.RedisManager">
+		<property name="host" value="${redis.url}" />
+		<property name="port" value="${redis.port}" />
+		<property name="expire" value="86400" />
+		<property name="timeout" value="10000" />
+		<property name="password" value="${redis.password}" />
+	</bean>
+	
+	<!-- redisDao -->
+	<bean id="redisSessionDAO" class="org.crazycake.shiro.RedisSessionDAO">
+		<property name="redisManager" ref="redisManager" />
+		<property name="expire" value="86400" />
+	</bean>
+	<!-- cacheManager -->
+	<bean id="cacheManager" class="org.crazycake.shiro.RedisCacheManager">
+		<property name="redisManager" ref="redisManager" />
+	</bean>
+
+
+	<!-- 凭证匹配器 -->
+	<bean id="credentialsMatcher" class="hry.core.shiro.RetryLimitHashedCredentialsMatcher">
+		<constructor-arg ref="cacheManager" />
+		<property name="hashAlgorithmName" value="md5" />
+		<property name="hashIterations" value="2" />
+		<property name="storedCredentialsHexEncoded" value="true" />
+	</bean>
+	<!-- 自定义域 -->
+	<bean id="MyRealm" class="hry.oauth.shiro.MyRealm">
+		<property name="credentialsMatcher" ref="credentialsMatcher"></property>
+		<property name="cachingEnabled" value="false"></property>
+		<!-- <property name="cacheManager" ref="cacheManager"></property> -->
+
+		<!-- 开启认证缓存 <property name="authenticationCachingEnabled" value="true"></property> 
+			<property name="authenticationCacheName" value="authenticationCache"></property> -->
+		<!-- 开启授权缓存 -->
+		<!-- <property name="authorizationCachingEnabled" value="true"></property> 
+			<property name="authorizationCacheName" value="authorizationCache"></property> -->
+	</bean>
+
+
+	<!-- 会话验证调度器 -->
+	<!-- <bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler"> -->
+	<bean id="sessionValidationScheduler" class="hry.oauth.shiro.MySqlSessionValidationScheduler">
+		<property name="sessionManager" ref="sessionManager" />
+		<property name="interval" value="86400000"></property>
+	</bean>
+
+	<!-- 会话Cookie模板 -->
+	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg value="adminsid" />
+		<property name="httpOnly" value="true" />
+		<property name="maxAge" value="-1" />
+		<property name="domain" value="" />
+		<property name="path" value="/" />
+		<property name="name" value="adminsid"></property>
+	</bean>
+
+	<!-- 会话管理器 -->
+	<bean id="sessionManager"
+		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="globalSessionTimeout" value="86400000" />
+		<property name="deleteInvalidSessions" value="true" />
+		<property name="sessionDAO" ref="redisSessionDAO"></property>
+		<!-- <property name="sessionValidationSchedulerEnabled" value="true"/> 
+			<property name="sessionValidationScheduler" ref="sessionValidationScheduler"/> -->
+		<property name="sessionIdCookieEnabled" value="true" />
+		<property name="sessionIdCookie" ref="sessionIdCookie" />
+		<property name="sessionListeners">
+			<set>
+				<bean class="hry.core.shiro.MySessionListener" />
+			</set>
+		</property>
+	</bean>
+	<!-- shiro安全管理器 -->
+	<bean id="securitManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="MyRealm"></property>
+		<!-- <property name="cacheManager" ref="cacheManager"></property> -->
+		<property name="sessionManager" ref="sessionManager"></property>
+	</bean>
+
+
+
+	<!-- 退出会话过滤器 -->
+	<bean id="logout" class="hry.core.shiro.MyLogoutFilter">
+		<property name="redirectUrl" value="/index"></property>
+	</bean>
+
+
+
+	<!-- 一个用户同时只能存在一个会话 过滤器 -->
+	<bean id="kickoutSessionControlFilter" class="hry.core.shiro.KickoutSessionControlFilter">
+		<property name="cacheManager" ref="cacheManager" />
+		<property name="sessionManager" ref="sessionManager" />
+		<property name="kickoutAfter" value="false" />
+		<property name="maxSession" value="50" />
+		<property name="kickoutUrl" value="/login" />
+	</bean>
+	<!-- 自定义验证拦截器 -->
+	<!-- <bean id="myAuthenFilter" class="hry.core.shiro.CaptchaFormAuthenticationFilter" /> -->
+	<!-- 核心配置 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securitManager"></property>
+		<property name="loginUrl" value="/login"></property>
+		<property name="filters">
+			<util:map>
+				<!-- <entry key="authc" value-ref="myAuthenFilter" /> -->
+				<entry key="kickout" value-ref="kickoutSessionControlFilter" />
+			</util:map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				/static/**/ueditor/**=authc
+				/static/**=anon
+				/**.html=anon
+				/login=anon
+				/checklogin=anon
+				/registcode=anon
+				/getras=anon
+				/logout=logout
+				/**=kickout,authc
+			</value>
+		</property>
+	</bean>
+
+	<!-- Shiro生命周期处理器 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!-- 开通注解权限功能 -->
+	<!-- <aop:config proxy-target-class="true"></aop:config> -->
+	<aop:config></aop:config>
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securitManager" />
+	</bean>
+
+
+
+
+
+</beans>

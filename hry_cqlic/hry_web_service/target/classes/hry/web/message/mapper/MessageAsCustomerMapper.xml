@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.message.dao.MessageAsCustomerDao"   >
+
+		<!-- 前台分页查询 用户所有站内信-->
+	   <resultMap id="FrontMap" type="hry.manage.remote.model.Oamessage">
+		</resultMap>
+		<select id="findFrontPageBySql" parameterType="java.util.Map" resultMap="FrontMap">
+			select
+				i.id,
+				i.state,
+				a.content,
+				a.sendDate,
+				a.title,
+				a.sortTitle
+			from message_as_customer as i
+			left join app_message as a
+				on i.messageId = a.id
+			where
+				a.isSend = 1
+				<if test="customerName!=null and customerName!='' " >
+					and i.customerName = #{customerName}
+				</if>
+				<if test="langCode!=null and langCode!='' " >
+					and a.messageCategory = #{langCode}
+				</if>
+			order by
+				a.sendDate desc
+		</select>
+
+
+</mapper>

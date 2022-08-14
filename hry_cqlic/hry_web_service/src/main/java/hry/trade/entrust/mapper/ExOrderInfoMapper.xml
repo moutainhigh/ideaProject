@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.trade.entrust.dao.ExOrderInfoDao"   >
+	<!-- 查询一个人的买币总额 -->
+	<select id="getTotalBuyMoney"  parameterType="java.lang.Long" resultType="java.math.BigDecimal">
+        	select sum(transactionSum)
+        		from ex_order_info
+        		where buyCustomId=#{0} and type = 1
+    </select>
+	<!-- 获取今天的最后一笔成交价 -->
+	<select id="exAveragePrice"  parameterType="java.lang.String" resultType="hry.trade.entrust.model.ExOrderInfo">
+        	select *
+        		from ex_order_info
+        		where type = 1 and coinCode=#{0} and fixPriceCoinCode=#{1}
+        		and to_days(created) = to_days(now())
+        		order by id desc LIMIT 1
+    </select>
+	<!-- 获取昨天的最后一笔成交价 -->
+	<select id="getAveragePriceYesterday"  parameterType="java.lang.String" resultType="hry.trade.entrust.model.ExOrderInfo">
+        	select *
+        		from ex_order_info
+        		where type = 1 and coinCode=#{0}
+        		and to_days(created) = to_days(now()) -1
+        		order by id desc LIMIT 1
+    </select>
+
+
+    <!-- 前台分页查询 -->
+    <resultMap id="FrontMap" type="hry.manage.remote.model.Order">
+	</resultMap>
+	<select id="findFrontPageBySql" parameterType="java.util.Map" resultMap="FrontMap">
+		select
+		orderNum,
+		productName,
+		coinCode,
+		transactionPrice,
+		transactionCount,
+		transactionSum,
+		transactionTime,
+		transactionFee,
+		type
+		from ex_order_info
+		<where>
+			<if test="type!=null and type!='' ">
+				and type = #{type}
+			</if>
+			<if test="userName!=null and userName!='' ">
+				and userName = #{userName}
+			</if>
+		</where>
+		order by transactionTime desc
+	</select>
+
+    <!-- 查询后台交易手续费问题 -->
+    <select id="selectFee" parameterType="java.util.Map" resultType="hry.trade.entrust.model.ExOrderInfo">
+    	SELECT
+			*
+		FROM
+			(
+				(
+					SELECT
+						a.buyCustomId AS customerId,
+						a.buyUserName AS userName,
+						a.transactionBuyFeeRate AS transactionFeeRate,
+						a.transactionBuyFee AS transactionFee,
+						a.transactionCount AS transactionCount,
+						a.transactionPrice AS transactionPrice,
+						a.transactionSum AS transactionSum,
+						a.transactionTime AS transactionTime,
+						a.fixPriceCoinCode AS fixPriceCoinCode,
+						a.coinCode AS coinCode,
+						IFNULL(a.type, 1) as type
+					FROM
+						ex_order_info a
+				)
+				UNION ALL
+					(
+						SELECT
+							b.sellCustomId AS customerId,
+							b.sellUserName AS userName,
+							b.transactionSellFeeRate AS transactionFeeRate,
+							b.transactionSellFee AS transactionFee,
+							b.transactionCount AS transactionCount,
+							b.transactionPrice AS transactionPrice,
+							b.transactionSum AS transactionSum,
+							b.transactionTime AS transactionTime,
+							b.fixPriceCoinCode AS fixPriceCoinCode,
+							b.coinCode AS coinCode,
+							IFNULL(b.type, 2) as type
+						FROM
+							ex_order_info b
+					)
+			)AS c
+			<where>
+				<if test="type!=null and type!='' ">
+					c.type=#{type}
+				</if>
+			</where>
+			ORDER BY transactionTime desc
+    </select>
+
+	<!-- 查询前台交易记录问题  之所以是要分两个，是因为前台调用app的时候，实体类找不到,会报classNotFound的错，虽然不影响，但是看着很不舒服 -->
+    <select id="frontselectFee" parameterType="java.util.Map" resultType="hry.manage.remote.model.Order">
+    	SELECT
+			*
+		FROM
+			(
+				(
+					SELECT
+						a.buyCustomId AS customerId,
+						a.buyUserName AS userName,
+						a.transactionBuyFeeRate AS transactionFeeRate,
+						a.transactionBuyFee AS transactionFee,
+						a.transactionCount AS transactionCount,
+						a.transactionPrice AS transactionPrice,
+						a.transactionSum AS transactionSum,
+						a.transactionTime AS transactionTime,
+						a.fixPriceCoinCode AS fixPriceCoinCode,
+						a.coinCode AS coinCode,
+						a.buyEntrustNum as entrustNum,
+						1 as type
+					FROM
+						ex_order_info a
+					<where>
+						<if test="customerId!=null and customerId!='' ">
+							a.buyCustomId = #{customerId}
+						</if>
+					</where>
+				)
+				UNION ALL
+					(
+						SELECT
+							b.sellCustomId AS customerId,
+							b.sellUserName AS userName,
+							b.transactionSellFeeRate AS transactionFeeRate,
+							b.transactionSellFee AS transactionFee,
+							b.transactionCount AS transactionCount,
+							b.transactionPrice AS transactionPrice,
+							b.transactionSum AS transactionSum,
+							b.transactionTime AS transactionTime,
+							b.fixPriceCoinCode AS fixPriceCoinCode,
+							b.coinCode AS coinCode,
+							b.sellEntrustNum as entrustNum,
+							2 as type
+						FROM
+							ex_order_info b
+						<where>
+							<if test="customerId!=null and customerId!='' ">
+								b.sellCustomId = #{customerId}
+							</if>
+						</where>
+
+					)
+			)AS c
+			<where>
+				<if test="type!=null and type!='' ">
+					c.type = #{type}
+				</if>
+				<if test="entrustNum!=null and entrustNum!='' ">
+					c.entrustNum = #{entrustNum}
+				</if>
+			</where>
+			ORDER BY transactionTime desc
+    </select>
+
+	<!-- 取昨日最后一笔成交价 -->
+	<select id="yesterdayPrice" resultType="java.math.BigDecimal">
+		select transactionPrice from ex_order_info where DATE_FORMAT(transactionTime,'%Y-%m-%d') = date_sub(curdate(),interval 1 day) ORDER BY transactionTime desc
+	</select>
+
+
+
+	 <select id="selectTransactionCount" resultType="java.lang.Integer">
+			select count(*) from ex_order_info where buyUserName=#{0}
+	 </select>
+
+
+	<select id="selectTransaction" resultType="hry.trade.entrust.model.ExOrderInfo">
+			select coinCode,fixPriceCoinCode,sum(transactionCount) transactionSum from ex_order_info where  buyUserName=#{0} GROUP BY coinCode
+	</select>
+
+
+	<resultMap id="findPageBySqlMap"   type="hry.trade.entrust.model.ExOrderInfo">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="orderNum" property="orderNum" javaType="java.lang.String" />
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+		<result column="fixPriceCoinCode" property="fixPriceCoinCode" javaType="java.lang.String" />
+		<result column="transactionPrice" property="transactionPrice" javaType="java.math.BigDecimal" />
+		<result column="transactionCount" property="transactionCount" javaType="java.math.BigDecimal" />
+		<result column="transactionSum" property="transactionSum" javaType="java.math.BigDecimal" />
+		<result column="transactionBuyFee" property="transactionBuyFee" javaType="java.math.BigDecimal" />
+		<result column="transactionSellFee" property="transactionSellFee" javaType="java.math.BigDecimal" />
+		<result column="buyEntrustNum" property="buyEntrustNum" javaType="java.lang.String" />
+		<result column="buyUserName" property="buyUserName" javaType="java.lang.String" />
+		<result column="sellEntrustNum" property="sellEntrustNum" javaType="java.lang.String" />
+		<result column="sellUserName" property="sellUserName" javaType="java.lang.String" />
+		<result column="transactionTime" property="transactionTime" javaType="java.util.Date" />
+
+
+		<association property="buyPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="buyEmail" property="email" javaType="java.lang.String" />
+			<result column="buyMobilePhone" property="mobilePhone" javaType="java.lang.String" />
+		</association>
+
+		<association property="sellPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="sellEmail" property="email" javaType="java.lang.String" />
+			<result column="sellMobilePhone" property="mobilePhone" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap">
+		select
+		a.orderNum,
+		a.coinCode,
+		a.fixPriceCoinCode,
+		a.transactionPrice,
+		a.transactionCount,
+		a.transactionSum,
+		a.transactionBuyFee,
+		a.transactionSellFee,
+		a.buyEntrustNum,
+		a.buyUserName,
+		a.sellEntrustNum,
+		a.sellUserName,
+		a.transactionTime,
+
+		b.email as buyEmail,
+		b.mobilePhone as buyMobilePhone,
+		c.email as sellEmail,
+		c.mobilePhone as sellMobilePhone
+		FROM
+			ex_order_info AS a
+		LEFT JOIN app_person_info AS b ON a.buyCustomId = b.customerId
+		LEFT JOIN app_person_info AS c ON a.sellCustomId = c.customerId
+
+
+		<where>
+			<if test="coinCode!=null and coinCode!='' ">
+				a.coinCode like #{coinCode}
+			</if>
+			<if test="fixPriceCoinCode!=null and fixPriceCoinCode!='' ">
+				and a.fixPriceCoinCode like #{fixPriceCoinCode}
+			</if>
+			<if test="orderNum!=null and orderNum!='' ">
+				and a.orderNum like #{orderNum}
+			</if>
+			<if test="source!=null and source!='' ">
+				and a.source = #{source}
+			</if>
+			<if test="transactionCount_LT!=null and transactionCount_LT!='' ">
+				<![CDATA[  and a.transactionCount_LT <= #{transactionCount_LT}  ]]>
+			</if>
+			<if test="transactionCount_GT!=null and transactionCount_GT!='' ">
+				 <![CDATA[ and a.transactionCount_GT >= #{transactionCount_GT}  ]]>
+			</if>
+
+			<if test="buyEmail!=null and buyEmail!='' ">
+				and b.email like #{buyEmail}
+			</if>
+			<if test="buyMobilePhone!=null and buyMobilePhone!='' ">
+				and b.mobilePhone like #{buyMobilePhone}
+			</if>
+			<if test="buyEntrustNum!=null and buyEntrustNum!='' ">
+				and a.buyEntrustNum like #{buyEntrustNum}
+			</if>
+
+			<if test="sellEmail!=null and sellEmail!='' ">
+				and c.email like #{sellEmail}
+			</if>
+			<if test="sellMobilePhone!=null and sellMobilePhone!='' ">
+				and c.mobilePhone like #{sellMobilePhone}
+			</if>
+			<if test="sellEntrustNum!=null and sellEntrustNum!='' ">
+				and a.sellEntrustNum like #{sellEntrustNum}
+			</if>
+
+			<if test="transactionPrice_LT!=null and transactionPrice_LT!='' ">
+				 <![CDATA[ and a.transactionPrice_LT <= #{transactionPrice_LT}  ]]>
+			</if>
+			<if test="transactionSum_LT!=null and transactionSum_LT!='' ">
+				 <![CDATA[ and a.transactionSum_LT <= #{transactionSum_LT}  ]]>
+			</if>
+			<if test="transactionTime_LT!=null and transactionTime_LT!='' ">
+				  <![CDATA[ and a.transactionTime_LT <= #{transactionTime_LT}  ]]>
+			</if>
+
+			<if test="transactionPrice_GT!=null and transactionPrice_GT!='' ">
+				 <![CDATA[  and a.transactionPrice_GT >= #{transactionPrice_GT}  ]]>
+			</if>
+			<if test="transactionSum_GT!=null and transactionSum_GT!='' ">
+				 <![CDATA[  and a.transactionSum_GT >= #{transactionSum_GT} ]]>
+			</if>
+			<if test="transactionTime_GT!=null and transactionTime_GT!='' ">
+				  <![CDATA[ and a.transactionTime_GT >= #{transactionTime_GT} ]]>
+			</if>
+
+
+		</where>
+
+
+		order by a.created desc
+	</select>
+
+	<!-- 新sql分页 -->
+	<select id="findPageBySqlList" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap">
+		SELECT
+			orderInfo.*,
+			b.email as buyEmail,
+			b.mobilePhone as buyMobilePhone,
+			c.email as sellEmail,
+			c.mobilePhone as sellMobilePhone
+		FROM
+			(SELECT
+			a.orderNum,
+			a.coinCode,
+			a.buyCustomId,
+			a.sellCustomId,
+			a.fixPriceCoinCode,
+			a.transactionPrice,
+			a.transactionCount,
+			a.transactionSum,
+			a.transactionBuyFee,
+			a.transactionSellFee,
+			a.buyEntrustNum,
+			a.buyUserName,
+			a.sellEntrustNum,
+			a.sellUserName,
+			a.transactionTime
+			FROM
+				ex_order_info AS a
+			<where>
+				1 = 1
+				<if test="coinCode!=null and coinCode!='' ">
+					and a.coinCode like #{coinCode}
+				</if>
+				<if test="fixPriceCoinCode!=null and fixPriceCoinCode!='' ">
+					and a.fixPriceCoinCode like #{fixPriceCoinCode}
+				</if>
+				<if test="orderNum!=null and orderNum!='' ">
+					and a.orderNum like #{orderNum}
+				</if>
+<!-- 				<if test="source!=null and source!='' ">
+					and a.source = #{source}
+				</if>
+ -->				<if test="transactionCount_LT!=null and transactionCount_LT!='' ">
+					<![CDATA[  and a.transactionCount <= #{transactionCount_LT}  ]]>
+				</if>
+				<if test="transactionCount_GT!=null and transactionCount_GT!='' ">
+					 <![CDATA[ and a.transactionCount >= #{transactionCount_GT}  ]]>
+				</if>
+				<if test="buyEntrustNum!=null and buyEntrustNum!='' ">
+					and a.buyEntrustNum like #{buyEntrustNum}
+				</if>
+				<if test="sellEntrustNum!=null and sellEntrustNum!='' ">
+					and a.sellEntrustNum like #{sellEntrustNum}
+				</if>
+				<if test="buycustomerId!=null ">
+					and a.buyCustomId in
+					<foreach item="item" index="index" collection="buycustomerId"
+						open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				<if test="sellcustomerId!=null ">
+					and a.sellCustomId in
+					<foreach item="item" index="index" collection="sellcustomerId"
+						open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+
+				<if test="transactionPrice_LT!=null and transactionPrice_LT!='' ">
+					 <![CDATA[ and a.transactionPrice <= #{transactionPrice_LT}  ]]>
+				</if>
+				<if test="transactionSum_LT!=null and transactionSum_LT!='' ">
+					 <![CDATA[ and a.transactionSum <= #{transactionSum_LT}  ]]>
+				</if>
+				<if test="transactionTime_LT!=null and transactionTime_LT!='' ">
+					  <![CDATA[ and a.transactionTime <= #{transactionTime_LT}  ]]>
+				</if>
+				<if test="transactionPrice_GT!=null and transactionPrice_GT!='' ">
+					 <![CDATA[  and a.transactionPrice >= #{transactionPrice_GT}  ]]>
+				</if>
+				<if test="transactionSum_GT!=null and transactionSum_GT!='' ">
+					 <![CDATA[  and a.transactionSum >= #{transactionSum_GT} ]]>
+				</if>
+				<if test="transactionTime_GT!=null and transactionTime_GT!='' ">
+					  <![CDATA[ and a.transactionTime >= #{transactionTime_GT} ]]>
+				</if>
+			</where>
+			order by a.created desc
+			limit #{start},#{end}
+		) as orderInfo
+		LEFT JOIN app_person_info AS b ON orderInfo.buyCustomId = b.customerId
+		LEFT JOIN app_person_info AS c ON orderInfo.sellCustomId = c.customerId
+	</select>
+
+	<!-- 获取分页总页数 -->
+	<select id="findPageBySqlCount" resultType="Long">
+		SELECT
+			count(*)
+		FROM
+			ex_order_info AS a
+		<where>
+			1 = 1
+			<if test="coinCode!=null and coinCode!='' ">
+				and a.coinCode like #{coinCode}
+			</if>
+			<if test="fixPriceCoinCode!=null and fixPriceCoinCode!='' ">
+				and a.fixPriceCoinCode like #{fixPriceCoinCode}
+			</if>
+			<if test="orderNum!=null and orderNum!='' ">
+				and a.orderNum like #{orderNum}
+			</if>
+			<!-- <if test="source!=null and source!='' ">
+				and a.source = #{source}
+			</if> -->
+			<if test="transactionCount_LT!=null and transactionCount_LT!='' ">
+				<![CDATA[  and a.transactionCount <= #{transactionCount_LT}  ]]>
+			</if>
+			<if test="transactionCount_GT!=null and transactionCount_GT!='' ">
+				 <![CDATA[ and a.transactionCount >= #{transactionCount_GT}  ]]>
+			</if>
+			<if test="buyEntrustNum!=null and buyEntrustNum!='' ">
+				and a.buyEntrustNum like #{buyEntrustNum}
+			</if>
+			<if test="sellEntrustNum!=null and sellEntrustNum!='' ">
+				and a.sellEntrustNum like #{buyEntrustNum}
+			</if>
+			<if test="buycustomerId!=null ">
+				and a.buyCustomId in
+				<foreach item="item" index="index" collection="buycustomerId"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="sellcustomerId!=null ">
+				and a.sellCustomId in
+				<foreach item="item" index="index" collection="sellcustomerId"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="transactionPrice_LT!=null and transactionPrice_LT!='' ">
+				 <![CDATA[ and a.transactionPrice <= #{transactionPrice_LT}  ]]>
+			</if>
+			<if test="transactionSum_LT!=null and transactionSum_LT!='' ">
+				 <![CDATA[ and a.transactionSum <= #{transactionSum_LT}  ]]>
+			</if>
+			<if test="transactionTime_LT!=null and transactionTime_LT!='' ">
+				  <![CDATA[ and a.transactionTime <= #{transactionTime_LT}  ]]>
+			</if>
+			<if test="transactionPrice_GT!=null and transactionPrice_GT!='' ">
+				 <![CDATA[  and a.transactionPrice >= #{transactionPrice_GT}  ]]>
+			</if>
+			<if test="transactionSum_GT!=null and transactionSum_GT!='' ">
+				 <![CDATA[  and a.transactionSum >= #{transactionSum_GT} ]]>
+			</if>
+			<if test="transactionTime_GT!=null and transactionTime_GT!='' ">
+				  <![CDATA[ and a.transactionTime >= #{transactionTime_GT} ]]>
+			</if>
+		</where>
+	</select>
+
+	<!-- 通过条件sql分页查询 -->
+	<select id="findPersonInfoByCondition" parameterType="java.util.Map" resultType="java.lang.String" >
+		SELECT
+			b.customerId
+		FROM
+			app_person_info AS b
+		<where>
+			<if test="email!=null and email!='' ">
+				and b.email = #{email}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone = #{mobilePhone}
+			</if>
+		</where>
+	</select>
+	
+	<select id="transactionAmount" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		SELECT SUM(transactionCount) FROM ex_order_info
+		<where>
+			1=1 
+			<if test="beginTime != null and beginTime !=''">
+				<![CDATA[ and transactionTime >= #{beginTime} ]]>
+			</if>
+			<if test="endTime != null and endTime !=''">
+				<![CDATA[ and transactionTime < #{endTime} ]]>
+			</if>
+
+			<if test="fixPriceCoinCode != null and fixPriceCoinCode != ''">
+				and fixPriceCoinCode = #{fixPriceCoinCode}
+			</if>
+			<if test="custromerId != null and custromerId != ''">
+				and (sellCustomId=#{custromerId} or buyCustomId=#{custromerId})
+			</if>
+		</where>
+	</select>
+
+</mapper>

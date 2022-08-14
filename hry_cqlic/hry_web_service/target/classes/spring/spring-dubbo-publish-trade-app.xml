@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+ 
+
+
+   <bean id="remoteExEntrustServiceImpl" class="hry.trade.remote.exEntrust.RemoteExEntrustServiceImpl" />   
+   <dubbo:service ref="remoteExEntrustServiceImpl"  interface="hry.change.remote.exEntrust.RemoteExEntrustService"   /> 
+   
+   <bean id="remoteExOrderServiceImpl" class="hry.trade.remote.exEntrust.RemoteExOrderServiceImpl" />   
+   <dubbo:service ref="remoteExOrderServiceImpl"  interface="hry.change.remote.exEntrust.RemoteExOrderService"   /> 
+
+  <bean id="remoteExOrderInfoServiceNoTrImpl" class="hry.trade.entrust.RemoteExOrderInfoServiceNoTrImpl" />   
+   <dubbo:service ref="remoteExOrderInfoServiceNoTrImpl"  interface="hry.change.remote.exEntrust.RemoteExOrderInfoServiceNoTr"   /> 
+
+     
+</beans>  

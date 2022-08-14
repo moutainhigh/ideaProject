@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.account.fund.dao.AppAccountDao">
+	<update id="updateByVersion" parameterType="hry.account.fund.model.AppAccount"
+		flushCache="true">
+		update app_account
+		<set>
+			coldMoney= #{0},
+			hotMoney= #{1},
+			lendMoney= #{2},
+			version= #{3}
+		</set>
+		where customerId = #{4} and currencyType = #{5} and version= #{6}
+	</update>
+
+	<resultMap id="findPageBySqlMap" type="hry.account.fund.model.AppAccount">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="hotMoney" property="hotMoney" javaType="java.math.BigDecimal" />
+		<result column="coldMoney" property="coldMoney" javaType="java.math.BigDecimal" />
+		<result column="rewardMoney" property="rewardMoney" javaType="java.math.BigDecimal" />
+		<result column="hasRewardMoney" property="hasRewardMoney"
+			javaType="java.math.BigDecimal" />
+		<result column="lendMoney" property="lendMoney" javaType="java.math.BigDecimal" />
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+		<result column="accountNum" property="accountNum" javaType="java.lang.String" />
+
+		<association property="appPersonInfo"
+			javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="created" property="created" javaType="java.util.Date" />
+			<result column="modified" property="modified" javaType="java.util.Date" />
+			<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="country" property="country" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+			<result column="surname" property="surname" javaType="java.lang.String" />
+
+		</association>
+	</resultMap>
+
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap">
+
+		SELECT 
+		a.id,
+		a.accountNum,
+		a.hotMoney,
+		a.coldMoney,
+		
+		b.email,
+		b.mobilePhone,
+		b.surname,
+		b.trueName,
+		b.country
+		
+		FROM app_account AS a
+		LEFT JOIN app_person_info
+		AS b ON a.customerId = b.customerId
+		<where>
+			<if test="email!=null and email!='' ">
+				b.email like
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone like
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName!=null and trueName!=''">
+				and b.trueName like #{trueName,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+
+
+	<!-- 通过sql分页查询 -->
+	<select id="findAgentPageBySql" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap">
+		SELECT
+		*
+		FROM
+		app_account AS aa
+		LEFT JOIN app_person_info AS ap ON
+		aa.customerId = ap.customerId
+		<where>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				ap.mobilePhone like
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName!=null and trueName!='' ">
+				ap.trueName like
+				#{trueName,jdbcType=VARCHAR}
+			</if>
+			<!-- 1,2,3是代理 0不是 -->
+			and ap.jkAgentType in (1,2,3)
+		</where>
+	</select>
+
+
+	<select id="findListAccount" parameterType="String"
+		resultType="hry.account.fund.model.AppAccount">
+		SELECT * FROM app_account WHERE STATUS = 1
+		<if test="userName != null and userName !='' ">
+			AND userName=#{userName}
+		</if>
+		<if test="website != null and website !='' ">
+			AND website=#{website}
+		</if>
+	</select>
+
+	<select id="findDigitalmoneyAccount" parameterType="String"
+		resultType="hry.account.fund.model.AppAccount">
+		SELECT * FROM ex_digitalmoney_account WHERE status = 1
+		<if test="userName !=null and userName !='' ">
+			AND userName=#{userName}
+		</if>
+		<if test="website != null and website !='' ">
+			AND website=#{website}
+		</if>
+	</select>
+
+	<!-- 新通过sql分页查询 -->
+	<select id="findPageBySqlList" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap">
+		select 
+			aat.*,
+			b.email,
+			b.mobilePhone,
+			b.surname,
+			b.trueName,
+			b.country
+		from
+		(SELECT 
+			a.id,
+			a.accountNum,
+			a.customerId,
+			a.hotMoney,
+			a.coldMoney
+		FROM app_account AS a 
+		<where>
+			1 = 1
+			<if test="customerId!=null ">
+				and a.customerId in
+				<foreach item="item" index="index" collection="customerId"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		limit #{start},#{end}
+		) as aat
+		LEFT JOIN app_person_info AS b ON aat.customerId = b.customerId
+	</select>
+	
+	<!-- 根据条件查询客户信息 -->
+	<select id="findCustomerByCondition" parameterType="java.util.Map" 	resultType="java.lang.String" >
+		SELECT
+			b.customerId 
+		FROM
+			app_person_info AS b
+		<where>
+			1 = 1
+			<if test="email!=null and email!='' ">
+				and b.email = #{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone = #{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName!=null and trueName!=''">
+				and b.trueName = #{trueName,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取分页总页数 -->
+	<select id="findPageBySqlCount" resultType="Long">
+		SELECT
+			count(*)
+		FROM
+			app_account AS a
+		<where>
+			1 = 1
+			<if test="customerId!=null ">
+				and a.customerId in
+				<foreach item="item" index="index" collection="customerId"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+</mapper>

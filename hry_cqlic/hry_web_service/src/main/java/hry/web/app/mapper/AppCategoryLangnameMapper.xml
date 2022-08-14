@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.app.dao.AppCategoryLangnameDao">
+
+    <!--根据系统语种加载资讯中心子级菜单-->
+    <select id="loadNewsChildsMenu" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            aacl.categoryId,
+            aacl.langName,
+            aacl.dicId,
+            aac.preateId,
+            aac.isPage,
+            aacl.id as langNameId
+        FROM
+            app_artic_category aac
+        LEFT JOIN app_article_category_langname aacl ON aac.id = aacl.categoryId
+        <where>
+            1 = 1
+            <if test="preateId!=null and preateId!='' " >
+                and aac.preateId = #{preateId}
+            </if>
+            <if test="lang!=null and lang!='' " >
+                and aacl.dicKey = #{lang}
+            </if>
+        </where>
+        ORDER BY sort
+    </select>
+
+    <!--获取公告动态信息-->
+    <select id="getNoticeInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          aa.id,
+          aac.preateId,
+          aa.categoryId,
+          aa.title,
+          aa.modified
+        FROM app_article aa
+        LEFT JOIN app_artic_category aac on aa.categoryId = aac.id
+        <where>
+            1 = 1
+            <if test="langId!=null and langId!='' " >
+                and aa.langId = #{langId}
+            </if>
+            <if test="langName!=null and langName!='' " >
+                and aa.langName = #{langName}
+            </if>
+        </where>
+        ORDER BY aa.modified desc
+    </select>
+
+    <!--首页-资讯中心-左侧菜单数据-->
+    <select id="findArticCategoryListById" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            aac.id,
+            aac.preateId,
+            aac.isPage,
+            aacl.langName,
+            aacl.dicKey,
+            aacl.dicId,
+            aacl.id as langNameId
+        FROM
+            app_artic_category aac LEFT JOIN
+            app_article_category_langname aacl on aac.id = aacl.categoryId
+        <where>
+            1 = 1
+            <if test="categoryId!=null and categoryId!='' " >
+                and aac.preateId = #{categoryId}
+            </if>
+            <if test="id!=null and id!='' " >
+                and aac.id = #{id}
+            </if>
+            <if test="lang!=null and lang!='' " >
+                and aacl.dicKey = #{lang}
+            </if>
+            ORDER by aac.preateId,aac.sort
+        </where>
+    </select>
+
+</mapper>

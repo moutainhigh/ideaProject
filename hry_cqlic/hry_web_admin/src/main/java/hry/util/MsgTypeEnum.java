@@ -1,0 +1,6 @@
+package hry.util;
+
+public enum MsgTypeEnum {
+    REGIST,MODIFYPWD,REALNAME,POSTMONEY,GETMONEY,C2C,OTC,WORKORDER
+
+}

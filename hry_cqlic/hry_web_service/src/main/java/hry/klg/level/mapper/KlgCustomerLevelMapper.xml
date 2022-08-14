@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.klg.level.dao.KlgCustomerLevelDao">
+
+    <update id="customerRewardAdd">
+        update
+        klg_customer_level
+        set
+        <if test="gradation!=null and gradation!='' ">
+            gradation =  #{gradation},
+        </if>
+        <if test="pointAlgebra!=null and pointAlgebra!='' ">
+            pointAlgebra =  #{pointAlgebra},
+        </if>
+        <if test="rewardNum!=null and rewardNum!='' ">
+            rewardNum  = rewardNum + #{rewardNum},
+        </if>
+        modified= now()
+        where
+        customerId = #{customerId}
+    </update>
+
+
+    <select id="resetRewardQuota" resultType="java.lang.Long">
+        SELECT
+        kcl.customerId
+        FROM
+        klg_customer_level kcl,
+        (
+        SELECT
+        (
+        CASE
+        WHEN max(created)  &lt; DATE_SUB(CURDATE(), INTERVAL 2 DAY) THEN
+        customerId
+        END
+        ) customerId
+        FROM
+        klg_buy_transaction
+        GROUP BY
+        customerId
+        ) kbt
+        WHERE
+        kbt.customerId = kcl.customerId and kcl.nowSort>0
+    </select>
+
+    <update id="updateResetRewardQuota" >
+        update  klg_customer_level kcl
+        INNER JOIN   (SELECT
+        (  case WHEN
+        max(created) &lt; DATE_SUB(CURDATE(),INTERVAL #{day} day)
+        THEN customerId
+        end
+        ) customerId
+        FROM
+        klg_buy_transaction
+        GROUP BY
+        customerId)  ubs on kcl.customerId=ubs.customerId
+        set kcl.nowSort=0 , kcl.rewardNum=0
+    </update>
+    <select id="sumStarCount" resultType="hry.klg.level.model.KlgCustomerLevel">
+	select kt.*,
+	 kcl.sort,
+			  kcl.gradation,
+			  kcl.pointAlgebra,
+			  kcl.rewardNum,
+			  kcl.nowSort,
+			  kcl.fixedGradation
+	 FROM (
+	select id,customerId,parentId,`level`,created,modified from klg_teamlevel where parentId=  #{customerId}
+	and level &lt;= #{level}
+	) kt INNER JOIN
+	 klg_customer_level kcl ON kcl.customerId=kt.customerId
+	  where kcl.nowSort>0
+	  ORDER BY `level` asc
+    </select>
+
+</mapper>

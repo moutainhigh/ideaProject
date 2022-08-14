@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.klg.transaction.dao.KlgBuyTransactionDao">
+    <resultMap id="findPageBySqlMap"   type="hry.klg.transaction.model.KlgBuyTransaction">
+        <result column="email" property="email" javaType="java.lang.String" />
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+    </resultMap>
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        SELECT
+			kbt.id,
+			kbt.customerId,
+			kbt.transactionNum,
+			kbt.accountId,
+			kbt.coinCode,
+			kbt.smeMoney,
+			kbt.usdtMoney,
+			kbt.firstMoney,
+			kbt.lastMoney,
+			kbt.interestMoney,
+			kbt.trusteeshipStatus,
+			kbt.rushOrders,
+			kbt.eatStatus,
+			kbt. STATUS,
+			kbt.userId,
+			kbt.created,
+			kbt.modified,
+			kbt.remark,
+			concat_ws(
+				'****',
+				substring(api.mobilePhone, 1, 4),
+				substring(api.mobilePhone, 9, 3)
+			) AS mobilePhone,
+			api.email,
+			(
+				CASE
+				WHEN kbt. STATUS = 4 THEN
+					datediff(kbt.modified, kbt.created)
+				WHEN kbt. STATUS = 5 THEN
+					datediff(kbt.modified, kbt.created)
+				ELSE
+					datediff(now(), kbt.created)
+				END
+			) AS saasId
+		FROM
+			klg_buy_transaction AS kbt,
+			app_person_info AS api
+        <where>
+             api.customerId=kbt.customerId
+            <if test="status!=null and status!='' ">
+	            <if test="status==3">
+	                and (kbt.status = #{status} or kbt.status = 6)
+	            </if>
+	            <if test="status!=3">
+	               and kbt.status = #{status}
+	            </if>
+            </if>
+            <if test="customerId!=null and customerId!='' ">
+                and kbt.customerId = #{customerId}
+            </if>
+        </where>
+        order by kbt.created desc
+    </select>
+    
+    <!-- 获取用户所有买单成功订单利息总和-->
+    <select id="getBuyInterestSum" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal" >
+            SELECT
+				sum(interestMoney)
+			FROM
+				klg_buy_transaction
+			WHERE
+				customerId = #{customerId,jdbcType=BIGINT}
+			AND status = 4
+    </select>
+    <!-- 获取用户买单冻结保证金总和-->
+    <select id="getBuyFirstMoneySum" parameterType="java.util.Map"
+            resultType="java.math.BigDecimal" >
+            SELECT
+				sum(firstMoney)
+			FROM
+				klg_buy_transaction
+			WHERE
+				customerId = #{customerId,jdbcType=BIGINT}
+			AND (status = 1 or status = 2)
+    </select>
+</mapper>

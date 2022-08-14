@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.subscription.dao.ExSubscriptionRecordDao">
+
+  <resultMap id="currenNumIng" type="hry.exchange.subscription.model.ExSubscriptionRecord">
+		<result column="currenNum" property="currenNum" javaType="java.math.BigDecimal" />
+	</resultMap>
+	
+	<select id="sumCurrenNum" resultMap="currenNumIng">
+        select IFNULL(SUM(amount)-SUM(backAmount),0) as currenNum from ex_subscription_record where planId=#{planId};
+	</select>
+	
+	<resultMap id="subtotalNumIng" type="hry.exchange.subscription.model.ExSubscriptionRecord">
+		<result column="maxNum" property="maxNum" javaType="java.math.BigDecimal" />
+	</resultMap>
+	
+	<select id="subTotalNum" resultMap="subtotalNumIng">
+       select IFNULL(SUM(totalMoney),0) maxNum  from ex_subscription_record where planId=#{0} and customerId=#{1};
+	</select>
+	
+	
+	<resultMap id="remotePlanNumIng" type="hry.exchange.subscription.model.ExSubscriptionRecord">
+		<result column="circulation" property="circulation" javaType="java.math.BigDecimal" />
+	</resultMap>
+	
+	<select id="remotePlanNum" resultMap="remotePlanNumIng">
+       SELECT SUM(amount) circulation from ex_subscription_record UNION(select SUM(openNumber) soldNum from ex_subscription_plan);
+	</select>
+	
+</mapper>

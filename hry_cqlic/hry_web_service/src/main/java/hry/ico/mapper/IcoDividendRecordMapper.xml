@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.ico.dao.IcoDividendRecordDao">
+    <select id="queryDividendRecord" resultType="hry.ico.model.IcoDividendRecord" parameterType="java.util.Map">
+        select id,coinCode,dividend_radix,created from ico_dividend_record
+        <where>
+            1=1
+            <if test="customerId!=null and customerId!='' ">
+                and customer_id = #{customerId,jdbcType=VARCHAR}
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                and coinCode like #{coinCode,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and endTime!='' ">
+                and created  BETWEEN
+                #{startTime,jdbcType=VARCHAR}
+                and
+                date_add(#{endTime ,jdbcType=VARCHAR},interval 1 day)
+            </if>
+
+        </where>
+        order by created desc
+    </select>
+
+
+</mapper>

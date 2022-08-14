@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.app.dao.AppConfigDao">
+    <resultMap type="hry.core.mvc.model.AppConfig" id="keyList">
+        <result column="typekey" property="typekey" javaType="java.lang.String"/>
+        <result column="typename" property="typename" javaType="java.lang.String"/>
+    </resultMap>
+    <select id="findKey" resultMap="keyList">
+        SELECT
+        typekey,typename
+        FROM
+        app_config AS app
+        /*where app.typekey!='financeLendConfig' and app.typekey!='financeProtocol'*/
+        <where>
+            <if test="typekeylist!=null and typekeylist!='' ">
+                app.typekey in
+                <foreach item="item" index="index" collection="typekeylist" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            AND app.typekey!='financeLendConfig'
+        </where>
+        GROUP BY
+        app.typekey
+    </select>
+
+    <resultMap type="hry.core.mvc.model.AppConfig" id="configList">
+        <result column="configkey" property="configkey" javaType="java.lang.String"/>
+        <result column="value" property="value" javaType="java.lang.String"/>
+    </resultMap>
+    <select id="getConfig" resultMap="keyList">
+        SELECT
+        configkey,value
+        FROM
+        app_config as config
+        <where>
+            <if test="typekey!=null and typekey!='' ">
+                and config.typekey = #{typekey,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

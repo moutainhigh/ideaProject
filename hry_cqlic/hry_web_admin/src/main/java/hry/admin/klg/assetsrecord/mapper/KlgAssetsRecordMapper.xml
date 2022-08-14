@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.klg.assetsrecord.dao.KlgAssetsRecordDao">
+	<resultMap id="BaseResultMap" type="hry.admin.klg.assetsrecord.model.vo.KlgAssetsRecordVo">
+    </resultMap>
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        select 
+	        ksr.*,
+	        ap.trueName as trueName,
+	        ap.surname as surName,
+	        ap.mobilePhone as mobilePhone,
+	        ap.email as email
+        from
+        klg_assets_record as ksr 
+        INNER JOIN app_person_info as ap
+        	on ksr.customerId = ap.customerId
+        <where>
+            1=1
+            <if test="serialNumber != null and serialNumber != '' ">
+                and ksr.serialNumber like #{serialNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="coinCode != null and coinCode != '' ">
+                and ksr.coinCode like #{coinCode,jdbcType=VARCHAR}
+            </if>
+            <if test="customerId != null and customerId != '' ">
+                and ksr.customerId like #{customerId,jdbcType=BIGINT}
+            </if>
+            <if test="trueName != null and trueName != '' ">
+                and ap.trueName like #{trueName,jdbcType=VARCHAR}
+            </if>
+            <if test="surName != null and surName != '' ">
+                and ap.surname like #{surName,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone != null and mobilePhone != '' ">
+                and ap.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="email != null and email != '' ">
+                and ap.email like #{email,jdbcType=VARCHAR}
+            </if>
+             <if test="modified_s!=null and modified_s!='' ">
+                and ksr.created <![CDATA[ >= ]]> #{modified_s}
+            </if>
+            <if test="modified_e!=null and modified_e!='' ">
+                and ksr.created   <![CDATA[ <= ]]> #{modified_e}
+            </if>
+        </where>
+        order by ksr.id desc
+    </select>
+
+</mapper>

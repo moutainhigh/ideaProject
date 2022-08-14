@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.AppMessageTemplateDao">
+    <resultMap type="hry.admin.web.model.AppMessageCateTemp" id="keyList">
+        <result column="name" property="name" javaType="java.lang.String" />
+    </resultMap>
+    <select id="findKey" resultMap="keyList">
+        SELECT a.id,a.`name`,b.title,b.content FROM app_message_category a left JOIN app_message_template b on a.id=b.templateId where a.state="2"
+    </select>
+
+    <select id="selectId" resultType="hry.admin.web.model.AppMessageTemplate">
+        SELECT * from app_message_template WHERE templateId=#{templateId}
+    </select>
+
+    <update id="updateId">
+        update app_message_template set title=#{title},content=#{content} where templateId = #{templateId}
+    </update>
+
+    <insert id="insertTemplate">
+        INSERT INTO app_message_template(templateId,title,content) VALUES(#{templateId},#{title},#{content})
+    </insert>
+</mapper>

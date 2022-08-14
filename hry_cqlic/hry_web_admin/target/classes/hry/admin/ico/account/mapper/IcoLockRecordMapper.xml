@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.ico.account.dao.IcoLockRecordDao">
+    <resultMap id="BaseResultMap" type="hry.admin.ico.account.model.IcoLockRecord">
+    </resultMap>
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="BaseResultMap" >
+        select api.mobilePhone,api.email,
+        ilr.coinCode,ilr.type,ilr.number,
+        ilr.lockDay,ilr.state,ilr.lockDeduct,
+        ilr.lockDeductType,ilr.releaseDeduct,
+        ilr.releaseDeductType,ilr.releaseDate,ilr.created
+        from app_person_info api,ico_lock_record ilr
+        <where>
+            api.customerId=ilr.customerId
+            <if test="email!=null and email!='' ">
+                and api.email like
+                #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                and api.mobilePhone like
+                #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="lockDeductType!=null and lockDeductType!='' ">
+                and ilr.lockDeductType = #{lockDeductType,jdbcType=INTEGER}
+            </if>
+            <if test="startTime!=null and endTime!=null  ">
+                and ilr.created BETWEEN  #{startTime,jdbcType=DATE}
+                and date_add(#{endTime,jdbcType=DATE},interval 1 day)
+            </if>
+            <if test="coinCode!=null and coinCode!='' ">
+                and ilr.coinCode = #{coinCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by ilr.created desc
+    </select>
+</mapper>

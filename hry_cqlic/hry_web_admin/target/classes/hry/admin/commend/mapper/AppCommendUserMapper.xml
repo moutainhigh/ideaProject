@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.commend.dao.AppCommendUserDao">
+
+    <resultMap id="findPageBySqlMap"   type="hry.admin.commend.model.AppCommendUser">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+        <result column="receCode" property="receCode" javaType="java.lang.String" />
+        <result column="isFrozen" property="isFrozen" javaType="java.lang.Integer" />
+        <result column="aloneProportion" property="aloneProportion" javaType="java.math.BigDecimal" />
+        <result column="oneNumber" property="oneNumber" javaType="java.lang.Integer" />
+        <result column="twoNumber" property="twoNumber" javaType="java.lang.Integer" />
+        <result column="threeNumber" property="threeNumber" javaType="java.lang.Integer" />
+        <result column="laterNumber" property="laterNumber" javaType="java.lang.Integer" />
+        
+        
+        <result column="levelName" property="levelName" javaType="java.lang.String" />
+        <result column="gradation" property="gradation" javaType="java.math.BigDecimal" />
+        <result column="rewardNum" property="rewardNum" javaType="java.math.BigDecimal" />
+        <result column="pointAlgebra" property="pointAlgebra" javaType="java.lang.Integer" />
+        <result column="commendCode" property="commendCode" javaType="java.lang.String" />
+        
+        <association property="appPersonInfo" javaType="hry.admin.customer.model.AppPersonInfo">
+            <result column="email" property="email" javaType="java.lang.String" />
+            <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+            <result column="country" property="country" javaType="java.lang.String" />
+        </association>
+    </resultMap>
+
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        SELECT a.id,a.receCode,a.isFrozen,a.aloneProportion,
+        a.oneNumber,a.twoNumber,a.threeNumber,a.laterNumber,
+        b.email,b.mobilePhone,b.country,
+        kcl.levelName,kcl.gradation,kcl.rewardNum,kcl.pointAlgebra,ac.commendCode
+        FROM app_commend_user AS a
+        LEFT JOIN app_person_info
+        AS b ON a.uid = b.customerId 
+        left join klg_customer_level kcl on a.uid = kcl.customerId 
+        left join app_customer ac on a.uid = ac.id 
+        <where>
+            <if test="email!=null and email!='' ">
+                b.email like
+                #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="mobilePhone!=null and mobilePhone!='' ">
+                and b.mobilePhone like
+                #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="receCode!=null and receCode!='' ">
+                and a.receCode like
+                #{receCode,jdbcType=VARCHAR}
+            </if>
+            <if test="commendCode!=null and commendCode!='' ">
+                and ac.commendCode like
+                #{commendCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <resultMap id="findConmmendPageBySqlMap"   type="hry.admin.commend.model.AppCommendUser">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+        <result column="receCode" property="receCode" javaType="java.lang.String" />
+        <result column="isFrozen" property="isFrozen" javaType="java.lang.Integer" />
+        <result column="aloneProportion" property="aloneProportion" javaType="java.math.BigDecimal" />
+        <result column="oneNumber" property="oneNumber" javaType="java.lang.Integer" />
+        <result column="twoNumber" property="twoNumber" javaType="java.lang.Integer" />
+        <result column="threeNumber" property="threeNumber" javaType="java.lang.Integer" />
+        <result column="laterNumber" property="laterNumber" javaType="java.lang.Integer" />
+        <association property="appPersonInfo" javaType="hry.admin.customer.model.AppPersonInfo">
+            <result column="email" property="email" javaType="java.lang.String" />
+            <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+            <result column="country" property="country" javaType="java.lang.String" />
+        </association>
+    </resultMap>
+    <!-- 根据sid查询该用户的推荐级用户的分页列表 -->
+    <select id="findConmmendPageBySql" parameterType="java.util.Map" resultMap="findConmmendPageBySqlMap" >
+        select a.id,a.created,a.receCode,
+
+         b.email,b.mobilePhone,b.country
+        FROM app_commend_user AS a
+        LEFT JOIN app_person_info
+        AS b ON a.uid = b.customerId
+        where a.sid like CONCAT('%', #{sid},'%')
+    </select>
+
+
+    <!-- 根据sid查询该用户的推荐 -->
+    <select id="findSid" resultType="string">
+        select sid from app_commend_user where sid like CONCAT('%', #{str},'%') ORDER BY sid desc
+    </select>
+
+    <!-- 根据sid查询三级后用户 -->
+    <select id="findConmmendPageByArray" resultMap="findConmmendPageBySqlMap" >
+        select a.id,a.created,a.receCode,
+        b.email,b.mobilePhone,b.country
+        FROM app_commend_user AS a
+        LEFT JOIN app_person_info
+        AS b ON a.uid = b.customerId
+        where
+        <foreach collection="array" open="(" separator="or" close=")" item="sid">
+            FIND_IN_SET(#{sid},a.sid)
+        </foreach>
+    </select>
+
+
+
+    <select id="icoFindPageBySql" resultType="java.util.HashMap" parameterType="java.util.Map">
+       select id,email,mobilePhone,level,asset,recommended,allAsset,buyNumber,created
+       from ( select
+        ac.id,ap.email,ap.mobilePhone,al.gradeName level,
+        IFNULL((ia.storageMoney+ia.coldMoney+ia.hotMoney),0.0000000000) asset,
+        (select count(*) from app_commend_user au where ac.id=au.pid) recommended,
+        (select IFNULL(sum(ia2.storageMoney+ia2.coldMoney+ia2.hotMoney),0.0000000000) from ico_account ia2 where ia2.customerId in (select uid from app_commend_user au2 where ac.id=au2.pid ) ) allAsset,
+        (select IFNULL(sum(buyNumber),0.0000000000) buyNumber from ico_buy_order io where io.created BETWEEN date_sub(curdate(),interval 1 day) and date_sub(curdate(),interval 0 day) and  io.customerId in (select uid from app_commend_user au2 where ac.id=au2.pid ) order BY io.customerId) buyNumber,
+        (select MAX(created) created from ico_buy_order io where io.customerId in (select uid from app_commend_user au2 where ac.id=au2.pid ) order BY io.customerId) created
+        from
+        app_customer as ac
+        LEFT JOIN ico_customer_level al on ac.id=al.customer_id
+        LEFT JOIN app_person_info as ap on ac.id=ap.customerId
+        LEFT JOIN ico_account as ia ON ac.id=ia.customerId
+        <where>
+            1 = 1
+            <if test="mobilePhone!=null and mobilePhone!='' " >
+                and ap.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="level!=null and level!='' " >
+                and al.gradeName = #{level,jdbcType=VARCHAR}
+            </if>
+        </where>
+         ) t
+        <where>
+            1 = 1
+            <if test="startTime!=null and startTime!='' " >
+                and t.created <![CDATA[ >= ]]> #{startTime,jdbcType=DATE}
+            </if>
+            <if test="endTime!=null and endTime!='' " >
+                and t.created <![CDATA[ <= ]]> #{endTime,jdbcType=DATE}
+            </if>
+        </where>
+        ORDER BY t.created desc
+    </select>
+
+    <select id="newResultsList" resultType="java.util.HashMap" parameterType="java.util.Map">
+
+        SELECT
+            ac.id,ap.email,ap.mobilePhone,al.gradeName level,
+            ord.buyNumber buyNumber ,ord.created created
+        from
+            (select io.customerId customerId,sum(buyNumber) buyNumber,max(created) created from
+                ico_buy_order io where io.created BETWEEN date_sub(curdate(),interval 1 day) and date_sub(curdate(),interval 0 day)
+                                   and io.customerId in (select au.uid from app_commend_user au where au.pid=  #{customerId,jdbcType=VARCHAR}) order BY io.customerId
+            ) ord
+                LEFT JOIN app_person_info ap ON ord.customerId=ap.customerId
+                LEFT JOIN app_customer ac on ord.customerId=ac.id
+                LEFT JOIN ico_customer_level al  on ord.customerId=al.customer_id
+                ORDER BY ord.created desc
+    </select>
+
+    <select id="assetsList" resultType="java.util.HashMap" parameterType="java.util.Map">
+        SELECT
+            ac.id,ap.email,ap.mobilePhone,al.gradeName level,ac.created,
+            (ia.storageMoney+ia.coldMoney+ia.hotMoney) asset
+        from
+            (select au.uid id from app_commend_user au where au.pid= #{customerId,jdbcType=VARCHAR}) aus
+                LEFT JOIN  app_person_info ap ON aus.id=ap.customerId
+                LEFT JOIN  app_customer ac on aus.id=ac.id
+                LEFT JOIN ico_account ia ON aus.id=ia.customerId
+                LEFT JOIN ico_customer_level al on aus.id=al.customer_id
+        <where>
+            1 = 1
+            <if test="mobilePhone!=null and mobilePhone!='' " >
+                and ap.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="email!=null and email!='' " >
+                and ap.email like #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="level!=null and level!='' " >
+                and al.gradeName = #{level,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ORDER BY ac.created desc
+    </select>
+
+</mapper>

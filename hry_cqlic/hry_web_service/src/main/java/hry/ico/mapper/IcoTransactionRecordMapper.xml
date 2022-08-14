@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.ico.dao.IcoTransactionRecordDao">
+    <resultMap id="findPageBySqlMap"   type="hry.ico.model.IcoTransactionRecord">
+        <id column="id" property="id" javaType="java.lang.String" />
+        <result column="projectNumber" property="projectNumber" javaType="java.lang.String" />
+        <result column="type" property="type" javaType="java.lang.Integer" />
+        <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+        <result column="transactionCount" property="transactionCount" javaType="java.math.BigDecimal" />
+        <result column="totalMoney" property="totalMoney" javaType="java.math.BigDecimal" />
+        <result column="hotMoney" property="hotMoney" javaType="java.math.BigDecimal" />
+        <result column="coldMoney" property="coldMoney" javaType="java.math.BigDecimal" />
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+        <result column="state" property="state" javaType="java.lang.Integer" />
+        <result column="remark" property="remark" javaType="java.lang.String" />
+        <result column="foreignKey" property="foreignKey" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+    </resultMap>
+	<select id="getCBTransaction"  resultMap="findPageBySqlMap" >
+			SELECT
+						CONCAT(app.id,"_CB") as id,
+						app.saasId,
+						app.created,
+						app.modified,
+						app.transactionNum AS projectNumber,
+						"41" AS type,
+						app.coinCode,
+						app.transactionMoney AS transactionCount,
+						'' AS totalMoney,
+						'' AS hotMoney,
+						'' AS coldMoney,
+						app.customerId,
+						"202" AS state,
+						app.remark,
+						app.id AS foreignKey
+					FROM
+						ex_dm_transaction AS app
+					WHERE id = #{transactionId} and  customerId = #{customerId}
+	</select>
+    <select id="findPageBySql"  resultMap="findPageBySqlMap" >
+		 SELECT
+			id,
+			saasId,
+			created,
+			modified,
+			projectNumber,
+			type,
+			coinCode,
+			transactionCount,
+			totalMoney,
+			hotMoney,
+			coldMoney,
+			customerId,
+			state,
+			remark,
+			foreignKey
+		FROM
+		(
+			SELECT
+				id,
+				saasId,
+				created,
+				modified,
+				projectNumber,
+				type,
+				coinCode,
+				transactionCount,
+				totalMoney,
+				hotMoney,
+				coldMoney,
+				customerId,
+				state,
+				remark,
+				foreignKey
+			FROM
+				ico_transaction_record
+				where customerId=#{customerId} and isShow=1
+			UNION ALL
+				SELECT
+					tt.*
+				FROM
+					(
+						SELECT
+							CONCAT(app.id,"_CB") as id,
+							app.saasId,
+							app.created,
+							app.modified,
+							app.transactionNum AS projectNumber,
+							"41" AS type,
+							app.coinCode,
+							app.transactionMoney AS transactionCount,
+							'' AS totalMoney,
+							'' AS hotMoney,
+							'' AS coldMoney,
+							app.customerId,
+							"202" AS state,
+							app.remark,
+							app.id AS foreignKey
+						FROM
+							ex_dm_transaction AS app
+						WHERE
+							`status` = 2
+						AND transactionType = 1
+						AND app.customerId = #{customerId}
+					) AS tt
+			) ttt
+		WHERE  1=1
+			<if test="type!=null and type!='' ">
+				and type = #{type}
+				<if test="type == '31' ">
+					or type = 33
+				</if>
+			</if>
+
+			<if test="coinCode!=null and coinCode!='' ">
+				and coinCode = #{coinCode}
+			</if>
+			<if test="starTime!=null and endTime!=null ">
+				and created  BETWEEN  #{starTime} and #{endTime}
+			</if>
+			<if test="minNum!=null and maxNum!='' ">
+				and transactionCount  BETWEEN  #{minNum} and #{maxNum}
+			</if>
+
+		ORDER BY
+			created DESC
+    </select>
+
+</mapper>

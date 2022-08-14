@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.customer.agents.dao.CommissionDetailDao"   >
+
+	<select id="findMoneyByCustromerName" parameterType="java.lang.String"  resultType="hry.customer.agents.model.vo.CommissionForAgents" >
+		SELECT * FROM
+			(SELECT SUM(a.oneParentMoney) f_amoney FROM app_trade_factorage a WHERE a.oneParentName=#{custromerName}) d,
+		
+			(SELECT SUM(b.twoParentMoney) f_bmoney FROM app_trade_factorage b WHERE b.twoParentName=#{custromerName}) e,
+		
+			(SELECT SUM(c.threeParentMoney) f_cmoney FROM app_trade_factorage c WHERE c.threeParentName=#{custromerName}) f
+		  
+	</select>
+
+
+
+</mapper>

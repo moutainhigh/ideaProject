@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>hry.cqlic</groupId>
+        <artifactId>hurong_cqlic</artifactId>
+        <version>6.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>hry.cqlic</groupId>
+    <artifactId>hry_web_app</artifactId>
+    <packaging>war</packaging>
+
+    <properties>
+        <!--指定Maven用什么编码来读取源码及文档 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--指定Maven用什么编码来呈现 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.2</version>
+        </dependency>
+        <!-- ***************************基础包依赖 add by liushilei***************************** -->
+        <dependency>
+            <groupId>hry.common2018</groupId>
+            <artifactId>hry_base_core</artifactId>
+            <version>${hry.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>hry.common2018</groupId>
+                    <artifactId>hry_base_utils</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>hry.common2018</groupId>
+            <artifactId>hry_base_redis</artifactId>
+            <version>${hry.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>hry.common2018</groupId>
+            <artifactId>hry_base_utils</artifactId>
+            <version>${hry.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+
+
+
+        <!-- ***************************业务包依赖 add by liushilei***************************** -->
+        <dependency>
+            <groupId>hry.cqlic</groupId>
+            <artifactId>hry_web_service_api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>hry.unify2018</groupId>
+            <artifactId>hry_web_trade_api</artifactId>
+            <version>${hry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>hry.unify2018</groupId>
+            <artifactId>hry_web_reward_api</artifactId>
+            <version>${hry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>hry.unify2018</groupId>
+            <artifactId>hry_web_lend_api</artifactId>
+            <version>${hry.version}</version>
+        </dependency>
+
+
+        <!-- swagger-springmvc -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>hry.common2018</groupId>
+            <artifactId>hry_plugin_api</artifactId>
+            <version>${hry.version}</version>
+        </dependency>
+
+        <!-- swagger-springmvc dependencies -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>4.3.13.RELEASE</version>
+        </dependency>
+
+
+    </dependencies>
+
+    <profiles>
+        <!-- 默认 -->
+        <profile>
+            <id>main</id>
+            <properties>
+                <profile.active>main</profile.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!-- ABC钱包测试地址 -->
+        <profile>
+            <id>cqlic_test</id>
+            <properties>
+                <profile.active>cqlic_test</profile.active>
+            </properties>
+        </profile>
+		<!-- 李超 -->
+        <profile>
+            <id>cqlic</id>
+            <properties>
+                <profile.active>cqlic</profile.active>
+            </properties>
+        </profile>
+		<!--罗明钊私募-->
+		<profile>
+			<id>lmzjys</id>
+			<properties>
+				<profile.active>lmzjys</profile.active>
+			</properties>
+		</profile>
+
+		      <!--演示理财钱包-->
+        <profile>
+            <id>demo_dcqb</id>
+            <properties>
+                <profile.active>demo_dcqb</profile.active>
+            </properties>
+        </profile>
+		
+    </profiles>
+
+    <build>
+        <!-- 最终打包的名称 -->
+        <finalName>app</finalName>
+        <resources>
+            <resource>
+                <directory>src/${profile.active}/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- 编译的时候使用JDK7和UTF8编码 -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.19.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+
+            <plugin>
+                <groupId>hry_cash_base</groupId>
+                <artifactId>hry-maven-plugin</artifactId>
+                <version>0.0.2-SNAPSHOT</version>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
+
+</project>

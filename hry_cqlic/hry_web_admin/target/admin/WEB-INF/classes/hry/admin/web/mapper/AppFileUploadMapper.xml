@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.AppFileUploadDao">
+    <!-- 新发布版本修改旧版内容 -->
+    <update id="uploadOther" >
+        UPDATE app_fileupload set
+        appStatus = '0'
+        WHERE appType = #{appType}
+    </update>
+</mapper>

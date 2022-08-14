@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.message.dao.AppWorkOrderDao">
+<resultMap type="hry.web.message.model.AppWorkOrder" id="AppWorkOrderResultMap">
+		<id column="id" property="id" />
+		<result column="workOrderNo" property="workOrderNo" />
+		<result column="categoryId" property="categoryId" />
+		<result column="categoryName" property="categoryName" />
+		<result column="workContent" property="workContent" />
+		<result column="state" property="state" />
+		<result column="replyMode" property="replyMode" />
+		<result column="sort" property="sort" />
+		<result column="created" property="created" />
+		<result column="modified" property="modified" />
+		<result column="saasId" property="saasId" />
+		<result column="replyContent" property="replyContent" />
+		<result column="language" property="language" />
+		<result column="processTime" property="processTime" />
+		<result column="customerId" property="customerId" />
+		
+</resultMap>
+  
+  <sql id="BaseResult">
+  aw.id,aw.workOrderNo,aw.id,aw.categoryId,aw.workContent,aw.state,aw.replyMode,aw.sort,aw.replyContent,aw.created,aw.language,aw.processTime,aw.modified,aw.saasId,aw.customerId
+  </sql>
+<select id="queryByPage" parameterType="Object" resultMap="AppWorkOrderResultMap" >
+		SELECT <include refid="BaseResult"/>,awc.typeName categoryName from app_workorder aw LEFT JOIN app_workorder_category awc ON aw.categoryId=awc.id 
+		where 
+		<if test="workOrderNo !=null and workOrderNo !=''">
+		aw.workOrderNo like CONCAT('%', #{workOrderNo} ,'%') and
+		</if>
+		<if test="categoryId !=null and categoryId!=0">
+		aw.categoryId=#{categoryId} and
+		</if>
+		<if test="customerId !=null and customerId !=0">
+		aw.customerId=#{customerId} and
+		</if>
+		<if test="categoryName !=null and categoryName!=''">
+		awc.typeName=#{categoryName} and
+		</if>
+		<if test="state !=null ">
+		aw.state=#{state} and
+		</if>
+		<if test="language ==null or language==''">
+		aw.language=0
+		</if>
+		<if test="language !=null and language !=''">
+		aw.language=#{language} 
+		</if>
+		  order by aw.id desc
+	</select>
+<select id="queryByList" parameterType="Object" resultMap="AppWorkOrderResultMap" >
+		SELECT <include refid="BaseResult"/>,awc.typeName categoryName from app_workorder aw LEFT JOIN app_workorder_category awc ON aw.categoryId=awc.id 
+		where
+		<if test="workOrderNo !=null and workOrderNo !=''">
+		aw.workOrderNo like CONCAT('%', #{workOrderNo} ,'%') and
+		</if>
+		<if test="categoryId !=null and categoryId!=0">
+		aw.categoryId=#{categoryId} and
+		</if>
+		<if test="customerId !=null and customerId !=0">
+		aw.customerId=#{customerId} and
+		</if>
+		<if test="categoryName !=null and categoryName!=''">
+		awc.typeName=#{categoryName} and
+		</if>
+		<if test="state !=null ">
+		aw.state=#{state} and
+		</if>
+		<if test="language !=null and language !=''">
+		aw.language=#{language} and
+		</if>
+		1=1 
+		  order by aw.id desc
+	</select>
+	<select id="get" parameterType="Object"  resultType="hry.web.message.model.AppWorkOrder" >
+		SELECT <include refid="BaseResult"/>,awc.typeName categoryName from app_workorder aw LEFT JOIN app_workorder_category awc ON aw.categoryId=awc.id 
+		where aw.id=#{id} 
+	</select>
+	
+	<select id="queryByCount" resultType="java.lang.Integer"  parameterType="Object">
+		select count(id) from app_workorder t where categoryId=#{categoryId}
+	</select>
+</mapper>

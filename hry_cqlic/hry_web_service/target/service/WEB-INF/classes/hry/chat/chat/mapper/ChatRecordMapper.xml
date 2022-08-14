@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.chat.chat.dao.ChatRecordDao">
+  <select id="get3daychat" parameterType="java.lang.Long" resultType="hry.chat.chat.model.ChatRecord">
+        <![CDATA[ SELECT userName,content,created FROM chat_record WHERE DATEDIFF(created,NOW())<=0 AND DATEDIFF(created,NOW())>-3 ORDER  BY created asc]]>
+    </select>
+</mapper>

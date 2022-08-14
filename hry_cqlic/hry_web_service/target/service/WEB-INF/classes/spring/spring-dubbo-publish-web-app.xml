@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	    <!-- 具体的实现bean -->
+
+ 
+
+     <!-- 具体的实现bean -->
+    <bean id="remoteAppConfigServiceImpl" class="hry.web.remote.RemoteAppConfigServiceImpl" />   
+    <!-- 声明需要暴露的服务接口 -->  
+    <dubbo:service ref="remoteAppConfigServiceImpl"  interface="hry.web.remote.RemoteAppConfigService"   /> 
+ 
+    <bean id="cacheManageCallBack" class="hry.web.cache.CacheManageCallBackImpl"></bean>
+
+    
+ 
+    
+    <!-- 暴露新闻接口 -->
+    <bean id="remoteAppArticleServiceImpl" class="hry.web.remote.RemoteAppArticleServiceImpl" />   
+    <dubbo:service ref="remoteAppArticleServiceImpl"  interface="hry.manage.remote.RemoteAppArticleService"   /> 
+ 
+ 	 <!-- 节假日接口 -->
+    <bean id="remoteBaseInfoServiceImpl" class="hry.web.remote.RemoteBaseInfoServiceImpl" />   
+    <dubbo:service ref="remoteBaseInfoServiceImpl"  interface="hry.manage.remote.RemoteBaseInfoService"   />
+
+ 	 <!-- 站内消息接口 -->
+    <bean id="RemoteOamessageServiceImpl" class="hry.web.remote.RemoteOamessageServiceImpl" />   
+    <dubbo:service ref="RemoteOamessageServiceImpl"  interface="hry.manage.remote.RemoteOamessageService"   />
+    <!-- 工单接口 -->
+    <bean id="RemoteWorkOrderServiceImpl" class="hry.web.remote.RemoteWorkOrderServiceImpl" />   
+    <dubbo:service ref="RemoteWorkOrderServiceImpl"  interface="hry.manage.remote.RemoteWorkOrderService"   />
+    <!-- 工单接口 -->
+    <bean id="RemoteMailConfigServiceImpl" class="hry.web.remote.RemoteMailConfigServiceImpl" />
+    <dubbo:service ref="RemoteMailConfigServiceImpl"  interface="hry.manage.remote.RemoteMailConfigService"   />
+</beans>  

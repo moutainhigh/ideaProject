@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.entrust.dao.ExExOrderInfoDao"   >
+
+    <resultMap id="getpositionAvePrice" type="hry.exchange.account.model.ExDigitalmoneyAccount">
+		<result column="positionAvePrice" property="positionAvePrice" javaType="java.math.BigDecimal" />
+		
+	</resultMap>  
+    <select id="getpositionAvePrice"  parameterType="java.util.Map" resultMap="getpositionAvePrice" >  
+        select sum(transactionSum) from ex_order_info a where a.customerId=#{customerId,jdbcType=VARCHAR}  and a.type=#{type,jdbcType=INTEGER}
+    </select>
+</mapper>

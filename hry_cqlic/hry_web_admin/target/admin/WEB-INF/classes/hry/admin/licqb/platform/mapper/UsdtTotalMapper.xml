@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.licqb.platform.dao.UsdtTotalDao">
+    <resultMap id="pageBySqlMap" type="hry.admin.licqb.platform.model.UsdtTotal">
+    </resultMap>
+    <select id="findUsdtTotalList" resultMap="pageBySqlMap" parameterType="java.util.Map">
+        select
+        ed.customerId, api.email, api.mobilePhone,
+        IFNULL(sum(case when ed.transactionType = 1 and ed.`status` = 2 THEN ed.transactionMoney END), 0) as payMoney,
+        IFNUll(sum(case when ed.transactionType = 2 and ed.`status` = 2 THEN ed.transactionMoney END), 0) as extractMoney,
+        IFNULL(sum(case when ed.transactionType = 1 and ed.`status` = 2 THEN ed.transactionMoney END), 0) -
+        IFNUll(sum(case when ed.transactionType = 2 and ed.`status` = 2 THEN ed.transactionMoney END), 0) as surplusMoney
+        FROM
+        ex_dm_transaction ed
+        LEFT JOIN app_person_info api
+        ON api.customerId = ed.customerId
+        WHERE 1=1
+        <if test="mobilePhone != null and mobilePhone != ''">
+            and api.mobilePhone like #{mobilePhone}
+        </if>
+        <if test="email != null and email != ''">
+            and api.email like #{email}
+        </if>
+        GROUP BY ed.customerId
+    </select>
+</mapper>

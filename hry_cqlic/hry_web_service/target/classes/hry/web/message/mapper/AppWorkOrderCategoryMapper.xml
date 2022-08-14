@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.message.dao.AppWorkOrderCategoryDao">
+<resultMap type="hry.manage.remote.model.AppWorkOrderCategory" id="AppWorkOrderCategoryResultMap">
+		<id column="id" property="id" />
+		<result column="typeName" property="typeName" />
+		<result column="describes" property="describes" />
+		<result column="sort" property="sort" />
+		<result column="state" property="state" />
+		<result column="language" property="language" />
+		<result column="created" property="created" />
+		<result column="modified" property="modified" />
+		<result column="languageDic" property="languageDic" />
+</resultMap>
+<sql id="BaseResult">
+  id,typeName,describes,sort,state,language,modified,created
+  </sql>
+<select id="queryByList" parameterType="Object" resultMap="AppWorkOrderCategoryResultMap" >
+	select <include refid="BaseResult"/> from app_workorder_category where
+	<if test="id !=null and id !=0">
+		id=#{id} and
+		</if>
+		
+		<if test="typeName !=null and typeName !=''">
+		typeName=#{typeName} and
+		</if>
+		<if test="state !=null ">
+		state=#{state} and
+		</if>
+		languageDic=#{languageDic} order by sort desc
+</select>
+</mapper>

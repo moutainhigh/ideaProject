@@ -1,0 +1,910 @@
+package hry.admin.exchange.controller;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import hry.admin.exchange.model.BuildRecord;
+import hry.admin.exchange.model.DateUtil;
+import hry.admin.exchange.model.LastKLinePayload;
+import hry.admin.exchange.model.ObjectUtil;
+import hry.admin.exchange.model.TransactionOrder;
+import hry.admin.exchange.service.BuildRecordService;
+import hry.bean.JsonResult;
+import hry.redis.common.utils.RedisService;
+import hry.util.sys.ContextUtil;
+
+@Controller
+public class KLineHistoryController {
+
+	@Resource
+	private BuildRecordService buildRecordService;
+
+	public static String getWebContentByGet(String urlString, final String charset, int timeout) throws IOException {
+		if (urlString == null || urlString.length() == 0) {
+			return null;
+		}
+		urlString = (urlString.startsWith("http://") || urlString.startsWith("https://")) ? urlString
+				: ("http://" + urlString).intern();
+		URL url = new URL(urlString);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+		// 增加报头，模拟浏览器，防止屏蔽
+		conn.setRequestProperty("User-Agent",
+				"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727)");
+		// 只接受text/html类型，当然也可以接受图片,pdf,*/*任意，就是tomcat/conf/web里面定义那些
+		conn.setRequestProperty("Accept", "*/*");
+		conn.setConnectTimeout(timeout);
+		try {
+			if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+				return null;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		InputStream input = conn.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input, charset));
+		String line = null;
+		StringBuffer sb = new StringBuffer();
+		while ((line = reader.readLine()) != null) {
+			sb.append(line).append("\r\n");
+		}
+		if (reader != null) {
+			reader.close();
+		}
+		if (conn != null) {
+			conn.disconnect();
+		}
+		return sb.toString();
+
+	}
+
+	@RequestMapping("/KlineSectionSave")
+	@ResponseBody
+	public JsonResult KlineSectionSave(HttpServletRequest request) throws ParseException{
+
+		/*SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat simf = new SimpleDateFormat("yyyyMMddHHmm");
+		SimpleDateFormat simple = new SimpleDateFormat("yyyyMMdd");
+
+		RedisService redisService = (RedisService) ContextUtil.getBean("redisService");
+		String key1 = "ETH_USDT:klinedata:TransactionOrder_ETH_USDT_1";
+		String str1 = redisService.get(key1);
+		JSONArray p1 = JSONArray.parseArray(str1);
+		List<TransactionOrder> list1 = ObjectUtil.beanList(p1, TransactionOrder.class);
+		Line15(list1, "ETH", "USDT", redisService, sim, sdf, simf, simple, 5);
+
+		return new JsonResult().setSuccess(true);*/
+
+		String startTime = request.getParameter("startTime");
+		String endTime = request.getParameter("endTime");
+		String tradeCoinCode = request.getParameter("tradeCoinCode"); // 交易币
+		String priceCoinCode = request.getParameter("priceCoinCode"); // 定价币
+
+		try {
+			//两个时间之间有多少分钟
+			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat simf = new SimpleDateFormat("yyyyMMddHHmm");
+			SimpleDateFormat simple = new SimpleDateFormat("yyyyMMdd");
+
+			Date begin = sim.parse(startTime);
+		    Date end = sim.parse(endTime);
+		    long between = (end.getTime()-begin.getTime())/1000;//除以1000是为了转换成秒
+		    long min = between / 60;
+		    if(min > 1440){
+		    	return new JsonResult().setSuccess(false).setMsg("时间区间不正确,区间选择请小等于1天");
+		    }
+
+			if(sim.parse(startTime).getTime() > sim.parse(endTime).getTime()){
+				return new JsonResult().setSuccess(false).setMsg("时间区间不正确");
+			}
+
+			RedisService redisService = (RedisService) ContextUtil.getBean("redisService");
+
+			//获得第三方数据
+			KLineHistoryCallable k = new KLineHistoryCallable(startTime, endTime, tradeCoinCode, priceCoinCode);
+			JsonResult jsonResult = k.call();
+
+			/*String webContentByGet = getWebContentByGet("http://172.16.80.3:8007/open/api/hryr/dc/getTestHistoryPairQuotes", "utf-8", 20000);
+			JSONObject jsonObject = JSONObject.parseObject(webContentByGet);*/
+
+
+			/*String key1 = "ETH_USDT:klinedata:TransactionOrder_ETH_USDT_1";
+			String str1 = redisService.get(key1);
+			JSONArray p1 = JSONArray.parseArray(str1);
+			List<TransactionOrder> listThird = ObjectUtil.beanList(p1, TransactionOrder.class);
+			JsonResult jsonResult = new JsonResult();
+			jsonResult.setSuccess(true);*/
+			if(jsonResult.getSuccess()){
+				long startTimeK = System.currentTimeMillis(); // 开始时间
+				//拉取时间
+				Date pullDate = new Date();
+
+				//第三方数据
+				JSONArray parseArrayThird = JSONArray.parseArray(jsonResult.getObj().toString());
+				//JSONArray parseArrayThird = JSONArray.parseArray(jsonObject.get("data").toString());
+				List<TransactionOrder> listThird = ObjectUtil.beanList(parseArrayThird, TransactionOrder.class);
+
+				//获取当前币种1分钟K线数据
+				String key1min = tradeCoinCode + "_" + priceCoinCode + ":" + "klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_1";
+				String str = redisService.get(key1min);
+
+				if(listThird.size() > 0){
+					if(!StringUtils.isEmpty(str)){
+
+					}else{
+						//说明当前币种没有K线数据,1分钟的都没有，直接存入
+						redisService.save(key1min, JSONArray.toJSONString(listThird));
+					}
+					//redis中当前币种1分钟K线数据
+					JSONArray parseArrayNow = JSONArray.parseArray(str);
+					List<TransactionOrder> listNow = ObjectUtil.beanList(parseArrayNow, TransactionOrder.class);
+					//redis中1分钟K线数据第一个节点
+					TransactionOrder one = listNow.get(listNow.size()-1);
+					//redis中1分钟K线数据最后一个节点
+					TransactionOrder last = listNow.get(0);
+
+					//新list
+					List<TransactionOrder> listAll = new ArrayList<TransactionOrder>();
+
+					//获取的第三方行情数据
+					//listThird =  ObjectUtil.beanList(jsonResult.getObj().toString(), TransactionOrder.class);
+
+					LastKLinePayload l1 = null;
+					LastKLinePayload l5 = null;
+					LastKLinePayload l15 = null;
+					LastKLinePayload l30 = null;
+					LastKLinePayload l60 = null;
+					LastKLinePayload lday = null;
+					LastKLinePayload lweek = null;
+
+					Map<String, LastKLinePayload> map = null;
+
+					if(sim.parse(endTime).getTime() < sim.parse(one.getTransactionTime()).getTime()){
+						//如果结束时间end 小于 redis第一个节点的开始时间,那就是新增
+
+						//生成1分钟K线
+						listAll.addAll(listNow);
+						listAll.addAll(listThird);
+						redisService.save(key1min, JSONArray.toJSONString(listAll));
+
+						map = backData(l1, l5, l15, l30, l60, lday, lweek, tradeCoinCode, priceCoinCode, redisService, listAll, sim, sdf, simf, simple, startTime, endTime);
+
+					}else if(sim.parse(startTime).getTime() < sim.parse(one.getTransactionTime()).getTime() &&
+							(sim.parse(endTime).getTime() > sim.parse(one.getTransactionTime()).getTime() &&
+							sim.parse(endTime).getTime() < sim.parse(last.getTransactionEndTime()).getTime())){
+						//开始时间小于redis第一个节点开始时间，结束时间却在redis第一个节点开始时间和某个节点的开始时间中间
+
+						//首先把第三方的数据切割两部分
+						List<TransactionOrder> list31 = new ArrayList<TransactionOrder>();
+						List<TransactionOrder> list32 = new ArrayList<TransactionOrder>(); // 此为交集,要覆盖数据库的数据
+
+						for(int q=0; q<listThird.size(); q++){
+							if(sim.parse(listThird.get(q).getTransactionTime()).getTime() < sim.parse(one.getTransactionTime()).getTime()){
+								list31.add(listThird.get(q));
+							}else{
+								list32.add(listThird.get(q));
+							}
+						}
+
+						//redis的数据切割
+						List<TransactionOrder> listR1 = new ArrayList<TransactionOrder>();
+						List<TransactionOrder> listR2 = new ArrayList<TransactionOrder>(); // 此为交集,要被覆盖第三方的数据
+						for(int w=0; w<listNow.size(); w++){
+							if(sim.parse(endTime).getTime() >=  sim.parse(listNow.get(w).getTransactionTime()).getTime()){
+								listR1.add(listNow.get(w));
+							}else{
+								listR2.add(listNow.get(w));
+							}
+						}
+
+						//生成1分钟K线
+						listAll.addAll(listR1);
+						listAll.addAll(list32);
+						listAll.addAll(list31);
+						redisService.save(key1min, JSONArray.toJSONString(listAll));
+
+						map = backData(l1, l5, l15, l30, l60, lday, lweek, tradeCoinCode, priceCoinCode, redisService, listAll, sim, sdf, simf, simple, startTime, endTime);
+
+					}else if(sim.parse(startTime).getTime() >= sim.parse(listNow.get(listNow.size()-1).getTransactionTime()).getTime()
+							&& sim.parse(endTime).getTime() <= sim.parse(listNow.get(0).getTransactionTime()).getTime()){
+						//开始时间大于等于redis第一个节点开始时间，结束时间小于等于redis最后一个节点的开始时间
+
+						if(sim.parse(startTime).getTime() == sim.parse(listNow.get(listNow.size()-1).getTransactionTime()).getTime()){
+							//表示开始时间 正好是 redis第一个时间节点的开始时间  那就分割出交集部分 再替换
+							//redis的数据切割
+							List<TransactionOrder> listR1 = new ArrayList<TransactionOrder>(); // 此为交集,要被覆盖的数据
+							List<TransactionOrder> listR2 = new ArrayList<TransactionOrder>();
+
+							for(int t=0; t<listNow.size(); t++){
+								if(sim.parse(listNow.get(t).getTransactionTime()).getTime() <= sim.parse(endTime).getTime()){
+									listR1.add(listNow.get(t));
+								}else{
+									listR2.add(listNow.get(t));
+								}
+							}
+
+							//生成1分钟K线
+							listAll.addAll(listR2);
+							listAll.addAll(listThird);
+							redisService.save(key1min, JSONArray.toJSONString(listAll));
+
+							map = backData(l1, l5, l15, l30, l60, lday, lweek, tradeCoinCode, priceCoinCode, redisService, listAll, sim, sdf, simf, simple, startTime, endTime);
+
+						}else if(sim.parse(startTime).getTime() > sim.parse(listNow.get(listNow.size()-1).getTransactionTime()).getTime() &&
+								 sim.parse(endTime).getTime() < sim.parse(listNow.get(0).getTransactionTime()).getTime()){
+							//开始时间 大于 redis第一个节点的开始时间  结束时间 小于 redis最后一个节点的结束时间
+							//redis的数据切割
+							List<TransactionOrder> listR1 = new ArrayList<TransactionOrder>();
+							List<TransactionOrder> listR2 = new ArrayList<TransactionOrder>(); // 此为交集,要被覆盖的数据
+							List<TransactionOrder> listR3 = new ArrayList<TransactionOrder>();
+
+							for(int t=0; t<listNow.size(); t++){
+								if(sim.parse(listNow.get(t).getTransactionTime()).getTime() < sim.parse(startTime).getTime()){
+									listR1.add(listNow.get(t));
+								}else if(sim.parse(listNow.get(t).getTransactionTime()).getTime() >= sim.parse(startTime).getTime() &&
+										 sim.parse(listNow.get(t).getTransactionTime()).getTime() <= sim.parse(endTime).getTime()){
+									listR2.add(listNow.get(t));
+								}else if(sim.parse(listNow.get(t).getTransactionTime()).getTime() > sim.parse(endTime).getTime()){
+									listR3.add(listNow.get(t));
+								}
+							}
+
+							//生成1分钟K线
+							listAll.addAll(listR3);
+							listAll.addAll(listThird);
+							listAll.addAll(listR1);
+							redisService.save(key1min, JSONArray.toJSONString(listAll));
+
+							map = backData(l1, l5, l15, l30, l60, lday, lweek, tradeCoinCode, priceCoinCode, redisService, listAll, sim, sdf, simf, simple, startTime, endTime);
+
+						}else if(sim.parse(endTime).getTime() == sim.parse(listNow.get(0).getTransactionTime()).getTime()){
+							// 结束时间 正好等于 redis最后一个节点的开始时间
+							List<TransactionOrder> listR1 = new ArrayList<TransactionOrder>(); // 此为交集,要被覆盖的数据
+							List<TransactionOrder> listR2 = new ArrayList<TransactionOrder>();
+
+							for(int t=0; t<listNow.size(); t++){
+								if(sim.parse(listNow.get(t).getTransactionTime()).getTime() >= sim.parse(startTime).getTime()){
+									listR1.add(listNow.get(t));
+								}else{
+									listR2.add(listNow.get(t));
+								}
+							}
+
+							//生成1分钟K线
+							listAll.addAll(listThird);
+							listAll.addAll(listR2);
+							redisService.save(key1min, JSONArray.toJSONString(listAll));
+
+							map = backData(l1, l5, l15, l30, l60, lday, lweek, tradeCoinCode, priceCoinCode, redisService, listAll, sim, sdf, simf, simple, startTime, endTime);
+						}
+					}else if(sim.parse(startTime).getTime() > sim.parse(listNow.get(listNow.size()-1).getTransactionTime()).getTime() &&
+							 sim.parse(endTime).getTime() >= sim.parse(listNow.get(0).getTransactionTime()).getTime()){
+						// 开始时间 大于 redis第一个节点(就是开始时间在redis的节点数据中) 结束时间 大于等于 redis最后一个节点的开始时间
+
+						if(sim.parse(startTime).getTime() >= sim.parse(listNow.get(listNow.size()-1).getTransactionTime()).getTime() &&
+								sim.parse(startTime).getTime() <= sim.parse(listNow.get(0).getTransactionTime()).getTime()){
+							//开始时间在redis数据中间 但 小于redis最后一个节点的结束时间
+
+							//redis的数据切割
+							List<TransactionOrder> listR1 = new ArrayList<TransactionOrder>();
+							List<TransactionOrder> listR2 = new ArrayList<TransactionOrder>();
+
+							for(int t=0; t<listNow.size(); t++){
+								if(sim.parse(startTime).getTime() <= sim.parse(listNow.get(t).getTransactionTime()).getTime()){
+									listR2.add(listNow.get(t)); // 此数据被listThird直接覆盖
+								}else{
+									listR1.add(listNow.get(t));
+								}
+							}
+
+							//生成1分钟K线
+							listAll.addAll(listThird);
+							listAll.addAll(listR1);
+							redisService.save(key1min, JSONArray.toJSONString(listAll));
+
+							map = backData(l1, l5, l15, l30, l60, lday, lweek, tradeCoinCode, priceCoinCode, redisService, listAll, sim, sdf, simf, simple, startTime, endTime);
+
+						}else if(sim.parse(startTime).getTime() >= sim.parse(listNow.get(0).getTransactionTime()).getTime()){
+							// 开始时间 大于等于 redis最后一个节点的开始时间  直接新增
+							//生成1分钟K线
+							listAll.addAll(listThird);
+							listAll.addAll(listNow);
+							redisService.save(key1min, JSONArray.toJSONString(listAll));
+
+							map = backData(l1, l5, l15, l30, l60, lday, lweek, tradeCoinCode, priceCoinCode, redisService, listAll, sim, sdf, simf, simple, startTime, endTime);
+						}
+					}else if(sim.parse(startTime).getTime() <= sim.parse(listNow.get(0).getTransactionTime()).getTime() &&
+							sim.parse(endTime).getTime() >= sim.parse(listNow.get(listNow.size()-1).getTransactionTime()).getTime()){
+							//开始时间小于等于redis第一个节点开始时间，结束时间大于等于redis最后一个节点  直接覆盖
+						listAll.addAll(listThird);
+						redisService.save(key1min, JSONArray.toJSONString(listAll));
+
+						map = backData(l1, l5, l15, l30, l60, lday, lweek, tradeCoinCode, priceCoinCode, redisService, listAll, sim, sdf, simf, simple, startTime, endTime);
+					}
+
+					l1 = map.get("1min");
+					l5 = map.get("5min");
+					l15 = map.get("15min");
+					l30 = map.get("30min");
+					l60 = map.get("60min");
+					lday = map.get("1day");
+					lweek = map.get("1week");
+
+					BuildRecord br = new BuildRecord();
+					br.setStartTime(sim.parse(startTime));
+					br.setEndTime(sim.parse(endTime));
+					br.setPullTime(pullDate);
+					br.setTradeCoinCode(tradeCoinCode);
+					br.setPriceCoinCode(priceCoinCode);
+					br.setM1(listThird.size());
+					br.setM5(l5.getSize());
+					br.setM15(l15.getSize());
+					br.setM30(l30.getSize());
+					br.setM60(l60.getSize());
+					br.setDay1(lday.getSize());
+					br.setWeek1(lweek.getSize());
+					buildRecordService.save(br);
+
+					long finishedTimeK = System.currentTimeMillis(); // 处理完成时间
+					System.out.println("----------------K线补修完成,耗时："+ (finishedTimeK - startTimeK) / 1000 + "m----------------");
+					return new JsonResult().setSuccess(true);
+				}else{
+					return new JsonResult().setSuccess(false).setMsg("未获得第三方数据,请联系管理员");
+				}
+			}
+			return new JsonResult().setSuccess(false).setMsg(jsonResult.getMsg());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new JsonResult().setSuccess(false).setMsg("拉取异常,请联系管理员");
+		}
+	}
+
+	/**
+	 * 取最大值
+	 * @return
+	 */
+	public BigDecimal[] getCode(int keepDecimalForCurrency, BigDecimal[] array){
+	    BigDecimal maxIndex = array[0];//定义最大值为该数组的第一个数
+	    BigDecimal minIndex = array[0];//定义最小值为该数组的第一个数
+        //遍历循环数组
+        for (int i = 0; i < array.length; i++) {
+            if(maxIndex.compareTo(array[i]) < 0){
+                maxIndex = array[i];
+            }
+            if(minIndex.compareTo(array[i]) > 0){
+                minIndex = array[i];
+            }
+        }
+        BigDecimal[] mm = new BigDecimal[]{maxIndex.setScale(keepDecimalForCurrency, BigDecimal.ROUND_HALF_UP), minIndex.setScale(keepDecimalForCurrency, BigDecimal.ROUND_HALF_UP)};
+        return mm;
+	}
+
+	/**
+	 * 取定价币小数位
+	 * @param tradeCoinCode 交易币
+	 * @param priceCoinCode 定价币
+	 * @return
+	 */
+	public int getCoinToCoinKeep(String tradeCoinCode, String priceCoinCode) {
+		RedisService redisService = (RedisService) ContextUtil.getBean("redisService");
+
+		int  keepDecimalForCurrency = 4;
+		String str = redisService.get("cn:coinInfoList");
+		if(!StringUtils.isEmpty(str)){
+			JSONArray array = JSON.parseArray(str);
+			if(array!=null){
+				for(int i =0 ; i < array.size() ;i++){
+					JSONObject jsonObject = array.getJSONObject(i);
+					if(tradeCoinCode.equals(jsonObject.getString("coinCode")) && priceCoinCode.equals(jsonObject.getString("fixPriceCoinCode"))){
+						keepDecimalForCurrency = jsonObject.getInteger("keepDecimalForCurrency");
+						break;
+					}
+				}
+			}
+		}
+		return keepDecimalForCurrency;
+	}
+
+	/**
+	 *
+	 * @param list5
+	 * @param tradeCoinCode
+	 * @param priceCoinCode
+	 * @param redisService
+	 * @param sim
+	 * @param sdf
+	 * @param simf
+	 * @param simple
+	 * @param scale
+	 * @return
+	 * @throws ParseException
+	 */
+	public LastKLinePayload line(List<TransactionOrder> list5, String tradeCoinCode, String priceCoinCode, RedisService redisService,
+			SimpleDateFormat sim, SimpleDateFormat sdf, SimpleDateFormat simf, SimpleDateFormat simple, int scale, String startTime, String endTime) throws ParseException{
+		TransactionOrder tOne = list5.get(list5.size()-1); // 5分钟K线的第一个节点
+		TransactionOrder tLast = list5.get(0); // 5分钟K线的最后一个节点
+
+		List<TransactionOrder> listAll = new ArrayList<TransactionOrder>();
+
+		//获得15分钟起点时间
+    	int minute = Integer.valueOf(tLast.getTransactionTime().split(":")[1]); // 18:12 就得到12
+    	int minuteNew = minute - minute % scale + scale; // 得到10=12-12%2
+    	//第一个节点的开始时间，它是开头  倒叙
+    	String tLastTime = "";
+    	if(minuteNew != 0){
+    		if(minuteNew < 10){
+    			tLastTime = tLast.getTransactionTime().split(":")[0] + ":0" + minuteNew;
+    		}else if(minuteNew == 60){
+    			tLastTime = tLast.getTransactionTime().split(":")[0] + ":00";
+    			tLastTime = sim.format((sim.parse(tLast.getTransactionTime()).getTime() / 1000 + scale * 60) * 1000);
+    		}else{
+    			tLastTime = tLast.getTransactionTime().split(":")[0] + ":" + minuteNew;
+    		}
+    	}else{
+    		tLastTime = tLast.getTransactionTime().split(":")[0] + ":00";
+    	}
+
+		int count = list5.size();
+		while(count > 0){
+			List<TransactionOrder> listNew = new ArrayList<TransactionOrder>();
+			TransactionOrder t = new TransactionOrder();
+	    	Date lastOne = sim.parse(tLastTime); // 计算出当前节点的结束时间
+	    	String startT = sim.format((lastOne.getTime() / 1000 - scale * 60) * 1000); // 当前节点的开始时间
+	    	t.setTransactionTime(startT);//开始时间  beginOne是第一个节点开始时间
+			t.setTransactionEndTime(tLastTime);//结束时间  beginOne是第一个节点开始时间
+
+			//取两个时间点内的数据
+			for(int i=0; i<list5.size(); i++){
+				if(sim.parse(startT).getTime() <= sim.parse(list5.get(i).getTransactionTime()).getTime() &&
+	    				sim.parse(list5.get(i).getTransactionTime()).getTime() < sim.parse(tLastTime).getTime()){
+	    			listNew.add(list5.get(i));
+	    		}
+			}
+			if(listNew.size() > 0){
+				t.setStartPrice(listNew.get(listNew.size() - 1 < 0? 0 : listNew.size() - 1).getStartPrice());
+		    	t.setEndPrice(listNew.get(0).getEndPrice());
+
+		    	BigDecimal[] mmmax = new BigDecimal[listNew.size()]; // 最大值集合
+		    	BigDecimal[] mmmin = new BigDecimal[listNew.size()]; // 最小值集合
+		    	BigDecimal countall = new BigDecimal("0"); //该时间段币总量
+		    	for(int m=0; m<listNew.size(); m++){
+		    		mmmax[m] = listNew.get(m).getMaxPrice();
+		    		mmmin[m] = listNew.get(m).getMinPrice();
+		    		countall = countall.add(listNew.get(m).getTransactionCount());
+		    	}
+		    	mmmax = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmmax);
+		    	mmmin = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmmin);
+
+		    	t.setTransactionCount(countall);
+		    	t.setMaxPrice(mmmax[0]);
+		    	t.setMinPrice(mmmin[1]);
+		    	t.setId(simf.format(sdf.parse(tOne.getTransactionEndTime())));
+		    	listAll.add(t);
+
+		    	tLastTime = startT;
+				startT = sim.format((sim.parse(startT).getTime() / 1000 - scale * 60) * 1000);
+
+				count = count - listNew.size();
+			}else{
+				//重新定义时间 防止中间无数据
+				tLastTime = startT;
+				startT = sim.format((sim.parse(startT).getTime() / 1000 - scale * 60) * 1000);
+			}
+		}
+		redisService.save(tradeCoinCode + "_" + priceCoinCode + ":klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_" + scale, JSONArray.toJSONString(listAll));
+
+		//算出scale分钟线的开高低收
+		LastKLinePayload l = new LastKLinePayload();
+		l.setCount(new BigDecimal(0));
+		l.setDayTotalDealAmount(new BigDecimal(0));
+		l.setEndTime(listAll.get(0).getTransactionEndTime());
+		l.setStartTime(listAll.get(0).getTransactionTime());
+		l.setId(sdf.parse(listAll.get(0).getTransactionEndTime()).getTime());
+		l.setTime(sdf.parse(listAll.get(0).getTransactionEndTime()).getTime());
+		l.setPeriod(scale + "min");
+		l.setPriceOpen(listAll.get(listAll.size()-1).getStartPrice());
+		l.setPriceLast(listAll.get(0).getEndPrice());
+
+		int p = 0;
+		//算出生成节点数
+		for(int t=0; t<listAll.size(); t++){
+			if(sim.parse(startTime).getTime() <= sim.parse(listAll.get(t).getTransactionTime()).getTime() &&
+					sim.parse(listAll.get(t).getTransactionTime()).getTime() <= sim.parse(endTime).getTime()){
+				p++;
+			}
+		}
+		l.setSize(p + 1);
+
+		BigDecimal[] mmMax15 = new BigDecimal[listAll.size()]; // 最大值集合
+    	BigDecimal[] mmMin15 = new BigDecimal[listAll.size()]; // 最小值集合
+    	BigDecimal countAll15 = new BigDecimal("0"); //该时间段币总量
+    	for(int m=0; m<listAll.size(); m++){
+    		mmMax15[m] = listAll.get(m).getMaxPrice();
+    		mmMin15[m] = listAll.get(m).getMinPrice();
+    		countAll15 = countAll15.add(listAll.get(m).getTransactionCount());
+    	}
+    	mmMax15 = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMax15);
+    	mmMin15 = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMin15);
+
+    	l.setPriceHigh(mmMax15[0]);
+    	l.setPriceLow(mmMin15[1]);
+		l.setAmount(countAll15);
+		return l;
+	}
+
+	/**
+	 * 生成日线
+	 * @param list
+	 * @param tradeCoinCode
+	 * @param priceCoinCode
+	 * @param redisService
+	 * @param scale
+	 * @param sim
+	 * @param sdf
+	 * @param simf
+	 * @throws ParseException
+	 */
+	public LastKLinePayload lineDay(List<TransactionOrder> list, String tradeCoinCode, String priceCoinCode, RedisService redisService,
+			SimpleDateFormat sim, SimpleDateFormat sdf, SimpleDateFormat simple, String startTime, String endTime) throws ParseException{
+		List<TransactionOrder> listAll = new ArrayList<TransactionOrder>();
+
+		//计算出1分钟线的 开始节点和最后一个节点差几天  0代表当天
+		int daysBetween = DateUtil.daysBetween(list.get(list.size() - 1).getTransactionTime(), list.get(0).getTransactionTime());
+		daysBetween += 1;
+
+		//redis第一个节点的所在天
+		String oneDay = sdf.format(sdf.parse(list.get(list.size() - 1).getTransactionTime())) + " 00:00";
+		//结束时间
+		String nextDay = sdf.format((sdf.parse(oneDay).getTime() / 1000 + 24 * 60 * 60) * 1000) + " 00:00";
+
+		for(int q=0; q<daysBetween; q++){
+			TransactionOrder t = new TransactionOrder();
+
+			List<TransactionOrder> listDay = new ArrayList<TransactionOrder>();
+
+			for(int i=0; i<list.size(); i++){
+				if(sim.parse(list.get(i).getTransactionTime()).getTime() >= sim.parse(oneDay).getTime() &&
+						sim.parse(list.get(i).getTransactionTime()).getTime() < sim.parse(nextDay).getTime()){
+					//得出当天内的分钟线
+
+					listDay.add(list.get(i));
+				}
+			}
+			if(listDay.size() > 0){
+				t.setTransactionTime(oneDay);
+				t.setTransactionEndTime(nextDay);
+				t.setId(simple.format(sim.parse(oneDay))+"0000");
+				t.setStartPrice(listDay.get(listDay.size() - 1 < 0? 0 : listDay.size() - 1).getStartPrice());
+				t.setEndPrice(listDay.get(0).getStartPrice());
+
+				BigDecimal[] mmMax = new BigDecimal[listDay.size()]; // 最大值集合
+		    	BigDecimal[] mmMin = new BigDecimal[listDay.size()]; // 最小值集合
+		    	BigDecimal countAll = new BigDecimal("0"); //该时间段币总量
+		    	for(int m=0; m<listDay.size(); m++){
+		    		mmMax[m] = listDay.get(m).getMaxPrice();
+		    		mmMin[m] = listDay.get(m).getMinPrice();
+		    		countAll = countAll.add(listDay.get(m).getTransactionCount());
+		    	}
+		    	mmMax = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMax);
+		    	mmMin = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMin);
+
+		    	t.setTransactionCount(countAll);
+		    	t.setMaxPrice(mmMax[0]);
+		    	t.setMinPrice(mmMin[1]);
+
+				listAll.add(t);
+
+				//开始节点为上一个节点的结束时间
+				oneDay = nextDay;
+				//结束时间+1
+				nextDay = sdf.format((sdf.parse(oneDay).getTime() / 1000 + 24 * 60 * 60) * 1000) + " 00:00";
+			}else{
+				//开始节点为上一个节点的结束时间
+				oneDay = nextDay;
+				//结束时间+1
+				nextDay = sdf.format((sdf.parse(oneDay).getTime() / 1000 + 24 * 60 * 60) * 1000) + " 00:00";
+			}
+		}
+		//倒序一下
+		Collections.reverse(listAll);
+		redisService.save(tradeCoinCode + "_" + priceCoinCode + ":klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_1440", JSONArray.toJSONString(listAll));
+
+		//算出日线
+		LastKLinePayload l = new LastKLinePayload();
+		l.setCount(new BigDecimal(0));
+		l.setDayTotalDealAmount(new BigDecimal(0));
+		l.setEndTime(listAll.get(0).getTransactionEndTime());
+		l.setStartTime(listAll.get(0).getTransactionTime());
+		l.setId(simple.parse(listAll.get(0).getTransactionEndTime()).getTime());
+		l.setTime(sdf.parse(listAll.get(0).getTransactionEndTime()).getTime());
+		l.setPeriod("1day");
+		l.setPriceOpen(listAll.get(listAll.size()-1).getStartPrice());
+		l.setPriceLast(listAll.get(0).getEndPrice());
+
+		BigDecimal[] mmMax = new BigDecimal[listAll.size()]; // 最大值集合
+    	BigDecimal[] mmMin = new BigDecimal[listAll.size()]; // 最小值集合
+    	BigDecimal countAll = new BigDecimal("0"); //该时间段币总量
+    	for(int m=0; m<listAll.size(); m++){
+    		mmMax[m] = listAll.get(m).getMaxPrice();
+    		mmMin[m] = listAll.get(m).getMinPrice();
+    		countAll = countAll.add(listAll.get(m).getTransactionCount());
+    	}
+    	mmMax = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMax);
+    	mmMin = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMin);
+
+    	l.setPriceHigh(mmMax[0]);
+    	l.setPriceLow(mmMin[1]);
+		l.setAmount(countAll);
+
+		int p = 0;
+		//算出生成节点数
+		for(int t=0; t<listAll.size(); t++){
+			if(sim.parse(startTime).getTime() <= sim.parse(listAll.get(t).getTransactionTime()).getTime() &&
+					sim.parse(listAll.get(t).getTransactionTime()).getTime() <= sim.parse(endTime).getTime()){
+				p++;
+			}
+		}
+		l.setSize(p + 1);
+		return l;
+	}
+
+	/**
+	 * 生成周线
+	 * @param tradeCoinCode
+	 * @param priceCoinCode
+	 * @param redisService
+	 * @param sim
+	 * @param sdf
+	 * @param simf
+	 * @throws ParseException
+	 */
+	public LastKLinePayload lineWeek(String tradeCoinCode, String priceCoinCode, RedisService redisService,
+			SimpleDateFormat sim, SimpleDateFormat sdf, SimpleDateFormat simf, SimpleDateFormat simple, String startTime, String endTime) throws ParseException{
+		List<TransactionOrder> listAll = new ArrayList<TransactionOrder>();
+
+		//日线Key
+		String key = tradeCoinCode + "_" + priceCoinCode + ":klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_1440";
+		String str = redisService.get(key);
+		if(!StringUtils.isEmpty(str)){
+			//redis中当前币种日线K线数据
+			JSONArray parseArrayNow = JSONArray.parseArray(str);
+			List<TransactionOrder> listNow = ObjectUtil.beanList(parseArrayNow, TransactionOrder.class);
+
+			//计算redis日线中第一个节点和最后一个节点的开始时间相差多少天
+			long from = sdf.parse(listNow.get(listNow.size()-1).getTransactionTime()).getTime();
+	        long to = sdf.parse(listNow.get(0).getTransactionTime()).getTime();
+	        int days = (int) ((to - from) / (1000*3600*24));
+
+	        //有多少周
+	        int week = days / 7 + 1;
+
+	        //redis第一个节点的所在周的开始时间
+			String oneDay = sim.format(DateUtil.getFirstDayOfWeek(sdf.parse(listNow.get(listNow.size() - 1).getTransactionTime())));
+			//结束时间
+			String nextDay = sim.format((DateUtil.getLastDayOfWeek(sdf.parse(listNow.get(listNow.size() - 1).getTransactionTime())).getTime() / 1000 + 24 * 60 * 60) * 1000);
+
+			/*Date d = new Date();
+			long n = (sdf.parse(listNow.get(0).getTransactionTime()).getTime() / 1000 + 24 * 60 * 60) * 1000;
+			d.setTime(n);
+			String nextDay = sim.format((DateUtil.getLastDayOfWeek(d).getTime() / 1000 + 24 * 60 * 60) * 1000);*/
+
+	        for(int q=0; q<week; q++){
+	        	TransactionOrder t = new TransactionOrder();
+
+				List<TransactionOrder> listWeek = new ArrayList<TransactionOrder>();
+
+				for(int i=0; i<listNow.size(); i++){
+					if(sim.parse(listNow.get(i).getTransactionTime()).getTime() >= sim.parse(oneDay).getTime() &&
+							sim.parse(listNow.get(i).getTransactionTime()).getTime() < sim.parse(nextDay).getTime()){
+						//得出本周的日线
+						listWeek.add(listNow.get(i)); // 倒叙数据
+					}
+				}
+				if(listWeek.size() > 0){
+					t.setTransactionTime(oneDay);
+					t.setTransactionEndTime(nextDay);
+					t.setId(simple.format(sim.parse(oneDay))+"0000");
+					t.setStartPrice(listWeek.get(listWeek.size() - 1 < 0? 0 : listWeek.size() - 1).getStartPrice());
+					t.setEndPrice(listWeek.get(0).getStartPrice());
+
+					BigDecimal[] mmMax = new BigDecimal[listWeek.size()]; // 最大值集合
+			    	BigDecimal[] mmMin = new BigDecimal[listWeek.size()]; // 最小值集合
+			    	BigDecimal countAll = new BigDecimal("0"); //该时间段币总量
+			    	for(int m=0; m<listWeek.size(); m++){
+			    		mmMax[m] = listWeek.get(m).getMaxPrice();
+			    		mmMin[m] = listWeek.get(m).getMinPrice();
+			    		countAll = countAll.add(listWeek.get(m).getTransactionCount());
+			    	}
+			    	mmMax = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMax);
+			    	mmMin = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMin);
+
+			    	t.setTransactionCount(countAll);
+			    	t.setMaxPrice(mmMax[0]);
+			    	t.setMinPrice(mmMin[1]);
+
+					listAll.add(t);
+
+					//开始节点为上一个节点的结束时间
+					oneDay = nextDay;
+					//新结束节点 + 7
+					/*d.setTime((sdf.parse(listNow.get(0).getTransactionTime()).getTime() / 1000 + 24 * 60 * 60 * 7) * 1000);
+					nextDay = sim.format((DateUtil.getLastDayOfWeek(d).getTime() / 1000 + 24 * 60 * 60) * 1000);*/
+					nextDay = sim.format((DateUtil.getLastDayOfWeek(sdf.parse(nextDay)).getTime() / 1000 + 24 * 60 * 60) * 1000);
+				}else{
+					//开始节点为上一个节点的结束时间
+					oneDay = nextDay;
+					//新结束节点 + 7
+					/*d.setTime((sdf.parse(listNow.get(0).getTransactionTime()).getTime() / 1000 + 24 * 60 * 60 * 7) * 1000);
+					nextDay = sim.format((DateUtil.getLastDayOfWeek(d).getTime() / 1000 + 24 * 60 * 60) * 1000);*/
+					nextDay = sim.format((DateUtil.getLastDayOfWeek(sdf.parse(nextDay)).getTime() / 1000 + 24 * 60 * 60) * 1000);
+				}
+	        }
+	        redisService.save(tradeCoinCode + "_" + priceCoinCode + ":klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_10080", JSONArray.toJSONString(listAll));
+
+	        //算出日线
+			LastKLinePayload l = new LastKLinePayload();
+			l.setCount(new BigDecimal(0));
+			l.setDayTotalDealAmount(new BigDecimal(0));
+			l.setEndTime(listAll.get(0).getTransactionEndTime());
+			l.setStartTime(listAll.get(0).getTransactionTime());
+			l.setId(sdf.parse(listAll.get(0).getTransactionEndTime()).getTime());
+			l.setTime(sdf.parse(listAll.get(0).getTransactionEndTime()).getTime());
+			l.setPeriod("1week");
+			l.setPriceOpen(listAll.get(listAll.size()-1).getStartPrice());
+			l.setPriceLast(listAll.get(0).getEndPrice());
+
+			BigDecimal[] mmMax = new BigDecimal[listAll.size()]; // 最大值集合
+	    	BigDecimal[] mmMin = new BigDecimal[listAll.size()]; // 最小值集合
+	    	BigDecimal countAll = new BigDecimal("0"); //该时间段币总量
+	    	for(int m=0; m<listAll.size(); m++){
+	    		mmMax[m] = listAll.get(m).getMaxPrice();
+	    		mmMin[m] = listAll.get(m).getMinPrice();
+	    		countAll = countAll.add(listAll.get(m).getTransactionCount());
+	    	}
+	    	mmMax = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMax);
+	    	mmMin = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMin);
+
+	    	l.setPriceHigh(mmMax[0]);
+	    	l.setPriceLow(mmMin[1]);
+			l.setAmount(countAll);
+
+			int p = 0;
+			//算出生成节点数
+			for(int t=0; t<listAll.size(); t++){
+				if(sim.parse(startTime).getTime() <= sim.parse(listAll.get(t).getTransactionTime()).getTime() &&
+						sim.parse(listAll.get(t).getTransactionTime()).getTime() <= sim.parse(endTime).getTime()){
+					p++;
+				}
+			}
+			l.setSize(p + 1);
+			return l;
+		}
+		return null;
+	}
+
+	public Map<String, LastKLinePayload> backData(LastKLinePayload l1, LastKLinePayload l5, LastKLinePayload l15, LastKLinePayload l30 , LastKLinePayload l60,
+			LastKLinePayload lday, LastKLinePayload lweek, String tradeCoinCode, String priceCoinCode, RedisService redisService, List<TransactionOrder> listAll,
+			SimpleDateFormat sim, SimpleDateFormat sdf, SimpleDateFormat simf, SimpleDateFormat simple, String startTime, String endTime) throws ParseException{
+
+		//算出1分钟线的开高低收
+		l1 = new LastKLinePayload();
+		l1.setCount(new BigDecimal(0));
+		l1.setDayTotalDealAmount(new BigDecimal(0));
+		l1.setEndTime(listAll.get(0).getTransactionEndTime());
+		l1.setStartTime(listAll.get(0).getTransactionTime());
+		l1.setId(sdf.parse(listAll.get(listAll.size()-1).getTransactionEndTime()).getTime());
+		l1.setTime(sdf.parse(listAll.get(listAll.size()-1).getTransactionEndTime()).getTime());
+		l1.setPeriod("1min");
+		l1.setPriceOpen(listAll.get(listAll.size()-1).getStartPrice());
+		l1.setPriceLast(listAll.get(0).getEndPrice());
+		l1.setVolume(new BigDecimal(0));
+
+		BigDecimal[] mmMax = new BigDecimal[listAll.size()]; // 最大值集合
+    	BigDecimal[] mmMin = new BigDecimal[listAll.size()]; // 最小值集合
+    	BigDecimal countAll = new BigDecimal("0"); //该时间段币总量
+    	for(int m=0; m<listAll.size(); m++){
+    		mmMax[m] = listAll.get(m).getMaxPrice();
+    		mmMin[m] = listAll.get(m).getMinPrice();
+    		countAll = countAll.add(listAll.get(m).getTransactionCount());
+    	}
+    	mmMax = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMax);
+    	mmMin = getCode(getCoinToCoinKeep(tradeCoinCode, priceCoinCode), mmMin);
+
+    	l1.setPriceHigh(mmMax[0]);
+    	l1.setPriceLow(mmMin[1]);
+		l1.setAmount(countAll);
+		l1.setSize(listAll.size());
+
+		//生成5分钟K线
+		String key1 = tradeCoinCode + "_" + priceCoinCode + ":" + "klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_1";
+		String str1 = redisService.get(key1);
+		JSONArray p1 = JSONArray.parseArray(str1);
+		List<TransactionOrder> list1 = ObjectUtil.beanList(p1, TransactionOrder.class);
+		l5 = line(list1, tradeCoinCode, priceCoinCode, redisService, sim, sdf, simf, simple, 5, startTime, endTime);
+
+		//生成15分钟K线
+		String key5 = tradeCoinCode + "_" + priceCoinCode + ":" + "klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_5";
+		String str5 = redisService.get(key5);
+		JSONArray p5 = JSONArray.parseArray(str5);
+		List<TransactionOrder> list5 = ObjectUtil.beanList(p5, TransactionOrder.class);
+		l15 = line(list5, tradeCoinCode, priceCoinCode, redisService, sim, sdf, simf, simple, 15, startTime, endTime);
+
+		//生成30分钟K线
+		String key15 = tradeCoinCode + "_" + priceCoinCode + ":" + "klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_15";
+		String str15 = redisService.get(key15);
+		JSONArray p15 = JSONArray.parseArray(str15);
+		List<TransactionOrder> list15 = ObjectUtil.beanList(p15, TransactionOrder.class);
+		l30 = line(list15, tradeCoinCode, priceCoinCode, redisService, sim, sdf, simf, simple, 30, startTime, endTime);
+
+		//生成60分钟K线
+		String key30 = tradeCoinCode + "_" + priceCoinCode + ":" + "klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_30";
+		String str30 = redisService.get(key30);
+		JSONArray p30 = JSONArray.parseArray(str30);
+		List<TransactionOrder> list30 = ObjectUtil.beanList(p30, TransactionOrder.class);
+		l60 = line(list30, tradeCoinCode, priceCoinCode, redisService, sim, sdf, simf, simple, 60, startTime, endTime);
+
+		//生成日线
+		String key60 = tradeCoinCode + "_" + priceCoinCode + ":" + "klinedata:TransactionOrder_" + tradeCoinCode + "_" + priceCoinCode + "_60";
+		String str60 = redisService.get(key60);
+		JSONArray p60 = JSONArray.parseArray(str60);
+		List<TransactionOrder> list60 = ObjectUtil.beanList(p60, TransactionOrder.class);
+		lday = lineDay(list60, tradeCoinCode, priceCoinCode, redisService, sim, sdf, simple, startTime, endTime);
+
+		//生成周线
+		lweek = lineWeek(tradeCoinCode, priceCoinCode, redisService, sim, sdf, simf, simple, startTime, endTime);
+
+		//修改redis例BTC_USDT:PeriodLastKLineList_backups的值
+		Map<String, LastKLinePayload> map = new HashMap<String, LastKLinePayload>(7);
+		map.put("1min", l1);
+		map.put("5min", l5);
+		map.put("15min", l15);
+		map.put("30min", l30);
+		map.put("60min", l60);
+		map.put("1day", lday);
+		map.put("1week", lweek);
+		String keyl = tradeCoinCode + "_" + priceCoinCode + ":PeriodLastKLineList_backups";
+		redisService.save(keyl, JSONArray.toJSONString(map));
+
+		//修改redis例BTC_ETH:PeriodLastKLineList
+		List<LastKLinePayload> listNew = new ArrayList<LastKLinePayload>();
+		listNew.add(l1);
+		listNew.add(l5);
+		listNew.add(l15);
+		listNew.add(l30);
+		listNew.add(l60);
+		listNew.add(lday);
+		listNew.add(lweek);
+		String key2 = tradeCoinCode + "_" + priceCoinCode + ":PeriodLastKLineList";
+		redisService.save(key2, JSONArray.toJSONString(listNew));
+
+		return map;
+	}
+}

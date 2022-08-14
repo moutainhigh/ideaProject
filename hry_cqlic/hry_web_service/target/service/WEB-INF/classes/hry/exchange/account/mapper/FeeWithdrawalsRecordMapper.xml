@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.account.dao.FeeWithdrawalsRecordDao"   >
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"   resultType="hry.account.fund.model.FeeWithdrawalsRecord" >
+		select * from fee_withdrawals_record as ac
+		order by ac.created desc
+	</select>
+</mapper>

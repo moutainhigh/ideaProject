@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.calculate.mvc.dao.AppReportSettlementDao" >
+	
+	 <resultMap id="ResultOfDate" type="hry.calculate.settlement.model.AppReportSettlement">
+		<result column="settleDate" property="settleDate" javaType="java.util.Date" />
+		<result column="startSettleDate" property="startSettleDate" javaType="java.util.Date" />
+		<result column="endSettleDate" property="endSettleDate" javaType="java.util.Date" />
+		
+	</resultMap>  
+    <select id="getEndDate" resultMap="ResultOfDate" >  
+        select a.settleDate,a.startSettleDate,a.endSettleDate  from app_report_settlement as a 
+        where 	a.customerId= #{0} and a.currencyType= #{1} and a.website= #{2}
+        order by a.id desc limit 0,1
+       
+    </select>  
+    
+    <select id="findPageByStates" resultType="hry.calculate.settlement.model.AppReportSettlement">
+    	SELECT 
+		  * 
+		FROM
+		  (SELECT 
+		    * 
+		  FROM
+		    `app_report_settlement` 
+		 <if test="stutus != null">
+		   WHERE stutus = #{stutus}
+		 </if>
+		 <if test="stutus == null">
+		 	 WHERE stutus != 1
+		 </if>
+		 <if test="userName != null">
+		  AND userName like #{userName}
+		 </if>
+		
+		  ORDER BY settleDate DESC) a 
+		GROUP BY a.userName 
+    
+    
+    </select>
+    
+    
+    
+    
+    
+
+</mapper>
+
+
+
+
+
+
+
+
+

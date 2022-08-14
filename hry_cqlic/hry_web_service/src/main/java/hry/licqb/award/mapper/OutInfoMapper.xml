@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.licqb.award.dao.OutInfoDao">
+    <resultMap id="findOutInfoMap" type="hry.licqb.award.model.OutInfo"></resultMap>
+    <resultMap id="bySqlMap" type="hry.licqb.award.model.UserCommendAsset"></resultMap>
+
+<!--    <resultMap id="resultMap" type="hry.licqb.award.model.Upgrade">-->
+<!--        <result column="customerId" property="customerId" javaType="java.lang.Long" />-->
+<!--        <result column="userNum" property="userNum" javaType="java.lang.Integer" />-->
+<!--        <result column="levelNum" property="levelNum" javaType="java.lang.Integer" />-->
+<!--        <result column="assetSum" property="assetSum" javaType="java.math.BigDecimal" />-->
+<!--    </resultMap>-->
+
+    <select id="findOutInfoList" resultMap="findOutInfoMap" parameterType="java.util.Map">
+        select i.customerId,i.id,i.accountId,i.coinCode,
+        i.baseMaxMoney,i.baseMoney,i.outMultiple,i.allMoney,
+        i.coldMoney,i.hotMoney,i.`status`,i.created,i.modified,
+        cl.sort,cl.teamSort
+        from lc_out_info i, lc_customer_level cl
+        where i.customerId = cl.customerId
+        and i.`status` = 0
+        <if test="customerId != null and customerId != ''">
+            and i.customerId = #{customerId}
+        </if>
+    </select>
+
+    <select id="findPageInfo" resultMap="findOutInfoMap">
+        select id,accountId,customerId,coinCode,
+               baseMaxMoney,baseMoney,outMultiple,allMoney,
+               coldMoney,hotMoney,`status`,created,modified
+        from lc_out_info
+        where `status` = 0
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="getOutInfoCount" resultType="java.lang.Integer">
+        select count(id)
+        from lc_out_info
+        where `status` = 0
+    </select>
+
+    <select id="findParentUserList" resultMap="findOutInfoMap" parameterType="java.util.Map">
+        select t.parentId as customerId,t.level,
+        i.id,i.accountId,i.coinCode,
+        i.baseMaxMoney,i.baseMoney,i.outMultiple,i.allMoney,
+        i.coldMoney,i.hotMoney,i.`status`,i.created,i.modified,
+        cl.sort,cl.teamSort
+        from app_team_level t
+        LEFT JOIN
+        lc_out_info i
+        ON t.parentId = i.customerId
+        LEFT JOIN
+        lc_customer_level cl
+        ON i.customerId = cl.customerId
+        where t.customerId = #{customerId}
+        and t.parentId != 0
+        and i.`status` = 0
+        <if test="tierNum != null and tierNum != ''">
+            and t.level <![CDATA[<=]]> #{tierNum}
+        </if>
+        <if test="upTierNum != null and upTierNum != ''">
+            and t.level > #{upTierNum}
+        </if>
+        and i.id is not null
+        order by t.customerId desc
+    </select>
+
+    <select id="findParentUserListTwo" resultMap="findOutInfoMap" parameterType="java.util.Map">
+        select t.parentId as customerId,t.level,
+        i.id,i.accountId,i.coinCode,
+        i.coldMoney,i.hotMoney
+        from app_team_level t
+        LEFT JOIN
+        lc_out_info i
+        ON t.parentId = i.customerId
+        where t.customerId = #{customerId}
+        and t.parentId != 0
+        and i.`status` = 0
+        <if test="tierNum != null and tierNum != ''">
+            and t.level <![CDATA[<=]]> #{tierNum}
+        </if>
+        <if test="upTierNum != null and upTierNum != ''">
+            and t.level > #{upTierNum}
+        </if>
+        and i.id is not null
+        order by t.customerId desc
+    </select>
+
+    <select id="findSonUserList" resultMap="findOutInfoMap" parameterType="java.util.Map">
+        select t.customerId,t.level,
+        i.id,i.accountId,i.coinCode,
+        i.baseMaxMoney,i.baseMoney,i.outMultiple,i.allMoney,
+        i.coldMoney,i.hotMoney,i.`status`,i.created,i.modified,
+        cl.sort,cl.teamSort
+        from app_team_level t
+        LEFT JOIN
+        lc_out_info i
+        ON t.customerId = i.customerId
+        LEFT JOIN
+        lc_customer_level cl
+        ON i.customerId = cl.customerId
+        where t.parentId = #{customerId}
+        and t.parentId != 0
+        and i.`status` = 0
+        <if test="level != null and level != ''">
+            and t.level = #{level}
+        </if>
+        and i.id is not null
+    </select>
+
+    <select id="getSonUserCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(1)
+        from app_team_level t
+        LEFT JOIN
+        lc_out_info i
+        ON t.customerId = i.customerId
+        where t.parentId = #{customerId}
+        and t.parentId != 0
+        and i.`status` = 0
+        <if test="level != null and level != ''">
+            and t.level = #{level}
+        </if>
+        and i.id is not null
+    </select>
+
+    <select id="findDirecUserNum" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        select count(tt.customerId) as userNum ,tt.parentId
+        FROM
+        (
+        select t.customerId,t.parentId
+        from app_team_level t
+        where t.parentId = #{customerId}
+        and t.`level` = 1
+        ) tt
+        LEFT JOIN
+        lc_out_info lc
+        ON tt.customerId = lc.customerId
+        where lc.`status` = 0
+    </select>
+
+    <select id="findDirecUserNumTwo" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        select count(i.customerId) as userNum, u.pid as parentId
+        from app_commend_user u
+        LEFT JOIN
+        lc_out_info i
+        ON u.uid = i.customerId
+        WHERE u.pid = #{customerId} and i.`status` = 0
+    </select>
+
+    <select id="findTeamAsset" resultType="java.math.BigDecimal" parameterType="java.lang.Long">
+        select sum(lc.baseMoney) as assetSum
+        FROM
+        (
+        select t.customerId,t.parentId
+        from app_team_level t
+        where t.parentId = #{customerId}
+        and t.parentId != 0
+        ) tt
+        LEFT JOIN
+        lc_out_info lc
+        ON tt.customerId = lc.customerId
+        where lc.`status` = 0
+    </select>
+
+    <select id="findTeamAssetTwo" resultType="java.math.BigDecimal" parameterType="java.lang.String">
+        select IFNULL(sum(i.baseMoney), 0) as assetSum
+        from app_commend_user u
+        LEFT JOIN
+        lc_out_info i
+        ON u.uid = i.customerId
+        WHERE u.sid like #{customerId} and i.`status` = 0
+    </select>
+
+    <select id="findWireNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(0) as levelNum
+        FROM
+        (
+        select sum(bb.levelNum) as levelNum
+        FROM
+        (
+        select
+        case when
+        <if test="sort != null">
+            tb.sort != 0
+        </if>
+        <if test="teamSort != null">
+            tb.teamSort != 0
+        </if>
+        then count(0) else 0 end as levelNum,
+        ta.customerId
+        FROM
+        (
+        select i.customerId, u.pid as parentId
+        from app_commend_user u
+        LEFT JOIN
+        lc_out_info i
+        ON u.uid = i.customerId
+        WHERE u.pid = #{customerId}
+        and i.`status` = 0
+        ) ta
+        LEFT JOIN
+        (
+        select tt.customerId,tt.parentId,cl.sort,cl.teamSort
+        FROM
+        lc_out_info lc
+        LEFT JOIN
+        app_team_level tt
+        ON tt.customerId = lc.customerId
+        LEFT JOIN lc_customer_level cl
+        ON tt.customerId = cl.customerId
+        where 1=1
+        and lc.`status` = 0
+        <if test="sort != null">
+            and cl.sort >= #{sort}-1
+        </if>
+        <if test="teamSort != null">
+            and cl.teamSort >= #{teamSort}-1
+        </if>
+        ) tb
+        ON ta.customerId = tb.parentId
+        WHERE 1=1 group by ta.customerId
+        UNION ALL
+        select
+        case when
+        tb.teamSort != 0
+        then count(0) else 0 end as levelNum,
+        tb.customerId
+        FROM
+        (
+        select i.customerId, u.pid as parentId,cl.sort,cl.teamSort
+        from app_commend_user u
+        LEFT JOIN
+        lc_out_info i
+        ON u.uid = i.customerId
+        LEFT JOIN lc_customer_level cl
+        ON u.uid = cl.customerId
+        WHERE u.pid = #{customerId}
+        and i.`status` = 0
+        <if test="sort != null">
+            and cl.sort >= #{sort}-1
+        </if>
+        <if test="teamSort != null">
+            and cl.teamSort >= #{teamSort}-1
+        </if>
+        ) tb
+        WHERE 1=1 group by tb.customerId
+        ) bb
+        where 1=1 group by bb.customerId
+        ) t
+        WHERE 1=1 AND t.levelNum > 0
+
+        <!--select count(0) as levelNum
+        FROM
+        (
+            select sum(bb.levelNum) as levelNum
+                FROM
+                (
+                    select
+                    case when
+                    <if test="sort != null">
+                        tb.sort != 0
+                    </if>
+                    <if test="teamSort != null">
+                        tb.teamSort != 0
+                    </if>
+                    then count(0) else 0 end as levelNum,
+                    ta.customerId
+                    FROM
+                    (
+                        select t.customerId,t.parentId
+                        from app_team_level t
+                        LEFT JOIN
+                        lc_out_info lc
+                        ON t.customerId = lc.customerId
+                        where t.parentId = #{customerId}
+                        and t.`level` = 1
+                        and lc.`status` = 0
+                    ) ta
+                    LEFT JOIN
+                    (
+                        select tt.customerId,tt.parentId,cl.sort,cl.teamSort
+                        FROM
+                        lc_out_info lc
+                        LEFT JOIN
+                        app_team_level tt
+                        ON tt.customerId = lc.customerId
+                        LEFT JOIN lc_customer_level cl
+                        ON tt.customerId = cl.customerId
+                        where 1=1
+                        and lc.`status` = 0
+                        <if test="sort != null">
+                            and cl.sort >= #{sort}-1
+                        </if>
+                        <if test="teamSort != null">
+                            and cl.teamSort >= #{teamSort}-1
+                        </if>
+                    ) tb
+                    ON ta.customerId = tb.parentId
+                    WHERE 1=1 group by ta.customerId
+                    UNION ALL
+                    select
+                    case when
+                    <if test="sort != null">
+                        tb.sort != 0
+                    </if>
+                    <if test="teamSort != null">
+                        tb.teamSort != 0
+                    </if>
+                    then count(0) else 0 end as levelNum,
+                    tb.customerId
+                    FROM
+                    (
+                        select tt.customerId,tt.parentId,cl.sort,cl.teamSort
+                        FROM
+                        lc_out_info lc
+                        LEFT JOIN
+                        app_team_level tt
+                        ON tt.customerId = lc.customerId
+                        LEFT JOIN lc_customer_level cl
+                        ON tt.customerId = cl.customerId
+                        where 1=1 and lc.`status` = 0
+                        and tt.`level` = 1
+                        and tt.parentId = #{customerId}
+                        <if test="sort != null">
+                            and cl.sort >= #{sort}-1
+                        </if>
+                        <if test="teamSort != null">
+                            and cl.teamSort >= #{teamSort}-1
+                        </if>
+                    ) tb
+                    WHERE 1=1 group by tb.customerId
+                ) bb
+             where 1=1 group by bb.customerId
+        ) t
+        WHERE 1=1 AND t.levelNum > 0-->
+    </select>
+
+    <select id="findWireNumTwo" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select sum(b.levelNum) as levelNum
+        FROM (
+        select count(0) as levelNum
+        from app_commend_user u
+        LEFT JOIN
+        lc_out_info i
+        ON u.uid = i.customerId
+        LEFT JOIN lc_customer_level cl
+        ON u.uid = cl.customerId
+        WHERE 1=1
+        and i.`status` = 0
+        <if test="sort != null">
+            and cl.sort >= #{sort}-1
+        </if>
+        <if test="teamSort != null">
+            and cl.teamSort >= #{teamSort}-1
+        </if>
+        and u.uid = #{customerId}
+        UNION ALL
+        select count(0) as levelNum
+        from app_commend_user u
+        LEFT JOIN
+        lc_out_info i
+        ON u.uid = i.customerId
+        LEFT JOIN lc_customer_level cl
+        ON u.uid = cl.customerId
+        WHERE 1=1
+        and i.`status` = 0
+        <if test="sort != null">
+            and cl.sort >= #{sort}-1
+        </if>
+        <if test="teamSort != null">
+            and cl.teamSort >= #{teamSort}-1
+        </if>
+        and u.sid like CONCAT('%-', #{customerId},',%')
+        ) b
+        <!--select count(0) as levelNum
+        from app_commend_user u
+        LEFT JOIN
+        lc_out_info i
+        ON u.uid = i.customerId
+        LEFT JOIN lc_customer_level cl
+        ON u.uid = cl.customerId
+        WHERE 1=1
+        and i.`status` = 0
+        <if test="sort != null">
+            and cl.sort >= #{sort}-1
+        </if>
+        <if test="teamSort != null">
+            and cl.teamSort >= #{teamSort}-1
+        </if>
+        and u.sid like #{customerId}-->
+    </select>
+
+    <select id="findDirectUser"  resultMap="findOutInfoMap" parameterType="java.lang.Long">
+        select u.uid as customerId, i.id
+        from lc_out_info i
+        left join
+        app_commend_user u
+        ON i.customerId = u.uid
+        where 1=1
+        and i.`status` = 0
+        and u.pid = #{customerId}
+    </select>
+
+
+    <select id="findGiveOutTeamAwardList" resultMap="findOutInfoMap" >
+        select i.id,i.accountId,i.customerId,i.coinCode,
+               i.baseMaxMoney,i.baseMoney,i.outMultiple,i.allMoney,
+               i.coldMoney,i.hotMoney,i.`status`,i.created,i.modified,
+               cl.isTeamAward,cl.teamSort
+        from lc_out_info i
+        LEFT JOIN lc_customer_level cl
+        ON i.customerId = cl.customerId
+        WHERE i.`status` = 0 and cl.isTeamAward = 1
+    </select>
+
+    <select id="findUserPerformance" resultMap="bySqlMap" parameterType="java.lang.Long">
+        select a.teamAllAsset, b.oneAllAsset,c.twoAllAsset,d.threeAllAsset,e.lastMonthAsset,f.thisMonthAsset
+            from
+            (
+            select sum(lc.baseMoney) as teamAllAsset
+            FROM
+            (
+            select t.customerId,t.parentId
+            from app_team_level t
+            where t.parentId = #{customerId}
+            ) tt
+            LEFT JOIN
+            lc_out_info lc
+            ON tt.customerId = lc.customerId
+            where lc.`status` = 0
+            )a,
+            (
+            select sum(lc.baseMoney) as oneAllAsset
+            FROM
+            (
+            select t.customerId,t.parentId
+            from app_team_level t
+            where t.parentId = #{customerId}
+            and t.level = 1
+            ) tt
+            LEFT JOIN
+            lc_out_info lc
+            ON tt.customerId = lc.customerId
+            where lc.`status` = 0
+            )b,
+            (
+            select sum(lc.baseMoney) as twoAllAsset
+            FROM
+            (
+            select t.customerId,t.parentId
+            from app_team_level t
+            where t.parentId = #{customerId}
+            and t.level = 2
+            ) tt
+            LEFT JOIN
+            lc_out_info lc
+            ON tt.customerId = lc.customerId
+            where lc.`status` = 0
+            )c,
+            (
+            select sum(lc.baseMoney) as threeAllAsset
+            FROM
+            (
+            select t.customerId,t.parentId
+            from app_team_level t
+            where t.parentId = #{customerId}
+            and t.level >= 3
+            ) tt
+            LEFT JOIN
+            lc_out_info lc
+            ON tt.customerId = lc.customerId
+            where lc.`status` = 0
+            )d,
+            (
+            select ifNUll(tt.parentId, #{customerId}) as customerId,IFNUll(sum(ldr.dealMoney),0) as lastMonthAsset
+            from
+            (
+            select t.customerId,t.parentId
+            from app_team_level t
+            where t.parentId = #{customerId}
+            ) tt
+            LEFT JOIN lc_deal_record ldr
+            ON tt.customerId = ldr.customerId
+            WHERE ldr.dealType = 8
+            AND
+            PERIOD_DIFF(date_format(now(), '%Y%m' ), date_format(ldr.created, '%Y%m' ) ) =1
+            )e,
+            (
+            select ifNUll(tt.parentId, #{customerId} ) as customerId,IFNUll(sum(ldr.dealMoney),0) as thisMonthAsset
+            from
+            (
+            select t.customerId,t.parentId
+            from app_team_level t
+            where t.parentId = #{customerId}
+            ) tt
+            LEFT JOIN lc_deal_record ldr
+            ON tt.customerId = ldr.customerId
+            WHERE ldr.dealType = 8
+            AND
+            DATE_FORMAT(ldr.created, '%Y%m' ) = DATE_FORMAT(CURDATE() , '%Y%m')
+        )f
+    </select>
+
+</mapper>

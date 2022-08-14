@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/hry_single/hry_single.iml" filepath="$PROJECT_DIR$/hry_single/hry_single.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_single_api/hry_single_api.iml" filepath="$PROJECT_DIR$/hry_single_api/hry_single_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_web_admin/hry_web_admin.iml" filepath="$PROJECT_DIR$/hry_web_admin/hry_web_admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_web_app/hry_web_app.iml" filepath="$PROJECT_DIR$/hry_web_app/hry_web_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_web_service/hry_web_service.iml" filepath="$PROJECT_DIR$/hry_web_service/hry_web_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_web_service_api/hry_web_service_api.iml" filepath="$PROJECT_DIR$/hry_web_service_api/hry_web_service_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../hry_web_trade/hry_web_trade.iml" filepath="$PROJECT_DIR$/../hry_web_trade/hry_web_trade.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hurong_cqlic.iml" filepath="$PROJECT_DIR$/hurong_cqlic.iml" />
+    </modules>
+  </component>
+</project>

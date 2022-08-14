@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.account.fund.dao.AppAgencyTranAwardRecordDao">
+
+	<resultMap id="BaseResultMap" type="hry.account.fund.model.AppAgencyTranAwardRecord">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+		<result column="agentId" property="agentId" javaType="java.lang.Long" />
+		<result column="exOrderInfoId" property="exOrderInfoId" javaType="java.lang.Long" />
+		<result column="sellPersonId" property="sellPersonId" javaType="java.lang.Long" />
+		<result column="awardMoney" property="awardMoney" javaType="java.math.BigDecimal" />
+		<result column="status" property="status" javaType="java.lang.Integer" />
+		<result column="failMsg" property="failMsg" javaType="java.lang.String" />
+
+		<association property="agentPerson" column="agentId" javaType="hry.customer.person.model.AppPersonInfo">
+			<id column="agent_id" property="id" javaType="java.lang.Long" />
+			<result column="agent_mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="agent_trueName" property="trueName" javaType="java.lang.String" />
+		</association>
+		
+		<association property="sellPerson" column="sellPersonId" javaType="hry.customer.person.model.AppPersonInfo">
+			<id column="sell_id" property="id" javaType="java.lang.Long" />
+			<result column="sell_mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="sell_trueName" property="trueName" javaType="java.lang.String" />
+		</association>
+		
+		<association property="exOrderInfo" column="exOrderInfoId" javaType="hry.trade.entrust.model.ExOrderInfo">
+			<id column="order_id" property="id" javaType="java.lang.Long" />
+			<result column="orderNum" property="orderNum" javaType="java.lang.String" />
+			<result column="transactionPrice" property="transactionPrice" javaType="java.math.BigDecimal" />
+			<result column="transactionSum" property="transactionSum" javaType="java.math.BigDecimal" />
+			<result column="transactionTime" property="transactionTime" javaType="java.util.Date" />
+		</association>
+		
+	</resultMap>
+	
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+		select 
+			aar.*,
+			eoi.*,
+			apagent.id as agent_id,
+			apagent.mobilePhone as agent_mobilePhone,
+			apagent.trueName as agent_trueName,
+			apagent.id as agent_id,
+			sellPerson.mobilePhone as sell_mobilePhone,
+			sellPerson.trueName as sell_trueName,
+			eoi.id as order_id
+		from
+		app_agencytranaward_record as aar 
+		LEFT JOIN app_person_info as apagent on aar.agentId = apagent.id
+		LEFT JOIN app_person_info as sellPerson on aar.sellPersonId = sellPerson.id
+		LEFT JOIN ex_order_info as eoi on aar.exOrderInfoId = eoi.id
+		<where>
+			1=1
+			<if test="agentName!=null and agentName!='' " >
+				and apagent.trueName like #{agentName,jdbcType=VARCHAR}
+			</if>
+			<if test="agentMobile!=null and agentMobile!='' " >
+				and apagent.mobilePhone like #{agentMobile,jdbcType=VARCHAR}
+			</if>
+			<if test="orderNum!=null and orderNum!='' " >
+				and eoi.orderNum = #{orderNum,jdbcType=TINYINT}
+			</if>
+		</where>
+		order by aar.created desc
+	</select>
+</mapper>

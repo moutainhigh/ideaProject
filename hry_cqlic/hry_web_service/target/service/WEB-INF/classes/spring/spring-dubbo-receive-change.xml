@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+      <!-- remoteAppCustomerService -->
+<!--       <dubbo:reference id="remoteAppCustomerService" interface="hry.customer.remote.RemoteAppCustomerService"  check="false"></dubbo:reference>  
+ -->
+ 
+     <dubbo:reference id="remoteExDigitalmoneyAccountService" interface="hry.change.remote.account.RemoteExDigitalmoneyAccountService"  check="false"></dubbo:reference>
+
+    <dubbo:reference id="remoteExAmineOrderService" interface="hry.change.remote.account.RemoteExAmineOrderService"  check="false"></dubbo:reference>
+     <dubbo:reference id="remoteExApiApplyService" interface="hry.change.remote.account.RemoteExApiApplyService"  check="false"></dubbo:reference>
+      <dubbo:reference id="remoteProductCommonService" interface="hry.change.remote.account.RemoteProductCommonService"  check="false"></dubbo:reference>
+  
+     <dubbo:reference id="remoteProductReviewService" interface="hry.change.remote.account.RemoteProductReviewService"  check="false"></dubbo:reference>
+  
+    
+     <dubbo:reference id="remoteExDmLendService" interface="hry.change.remote.lend.RemoteExDmLendService"  check="false"></dubbo:reference>
+  
+    
+     <dubbo:reference id="remoteExDmTransactionService" interface="hry.change.remote.dmtransaction.RemoteExDmTransactionService"  check="false"></dubbo:reference>
+     
+     
+      <dubbo:reference id="remoteExOrderService" interface="hry.change.remote.exEntrust.RemoteExOrderService"  check="false"></dubbo:reference>
+     <dubbo:reference id="remoteExEntrustService" interface="hry.change.remote.exEntrust.RemoteExEntrustService"  check="false"></dubbo:reference>
+     <dubbo:reference id="remoteExExOrderService" interface="hry.change.remote.exEntrust.RemoteExExOrderService"  check="false"></dubbo:reference>
+      <dubbo:reference id="remoteExExEntrustService" interface="hry.change.remote.exEntrust.RemoteExExEntrustService"  check="false"></dubbo:reference>
+      
+      <dubbo:reference id="remoteExOrderInfoServiceNoTr" interface="hry.change.remote.exEntrust.RemoteExOrderInfoServiceNoTr"  check="false"></dubbo:reference>
+ </beans> 
+ 
+ 
+ 
+ 
+ 

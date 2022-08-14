@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.account.dao.ExDigitalmoneyAccountDao">
+	<update id="updateByVersion" parameterType="hry.exchange.account.model.ExDigitalmoneyAccount"
+		flushCache="true">
+		update ex_digitalmoney_account
+		<set>
+			coldMoney= #{0},
+			hotMoney= #{1},
+			lendMoney= #{2},
+			version= #{3}
+		</set>
+		where customerId = #{4} and coinCode=#{5} and currencyType= #{6} and
+		website = #{7} and version= #{8}
+	</update>
+
+
+	<select id="findNewProductByCustomer"
+		resultType="hry.exchange.account.model.vo.DigitalmoneyAccountAndProduct">
+		SELECT a.name as
+		coinName,a.coinCode,a.buyFeeRate as buyRate,a.keepDecimalForCurrency,a.sellFeeRate as sellRate,a.picturePath,b.hotMoney,b.coldMoney,b.lendMoney,b.userName,b.publicKey,a.sort
+		FROM `ex_product` a,`ex_digitalmoney_account` b
+		WHERE
+		a.coinCode=b.coinCode AND a.issueState=1 AND b.website=#{website} AND
+		b.userName=#{customerName}
+		<if test="isMarket != null">
+			AND a.transactionType = #{isMarket}
+		</if>
+	</select>
+
+
+
+
+	<resultMap id="findPageBySqlMap"   type="hry.exchange.account.model.ExDigitalmoneyAccount">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="hotMoney" property="hotMoney" javaType="java.math.BigDecimal" />
+		<result column="coldMoney" property="coldMoney" javaType="java.math.BigDecimal" />
+		<result column="lendMoney" property="lendMoney" javaType="java.math.BigDecimal" />
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+		<result column="accountNum" property="accountNum" javaType="java.lang.String" />
+		<result column="publicKey" property="publicKey" javaType="java.lang.String" />
+		<result column="privateKey" property="privateKey" javaType="java.lang.String" />
+		<result column="coinName" property="coinName" javaType="java.lang.String" />
+		<result column="coinCode" property="coinCode" javaType="java.lang.String" />
+		
+		<association property="appPersonInfo"
+			javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="created" property="created" javaType="java.util.Date" />
+			<result column="modified" property="modified" javaType="java.util.Date" />
+			<result column="saasId" property="saasId" javaType="java.lang.String" />
+			
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="country" property="country" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+			<result column="surname" property="surname" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap" >
+		SELECT 
+		aa.id,
+		aa.coinCode,
+		aa.publicKey,
+		aa.accountNum,
+		aa.hotMoney,
+		aa.coldMoney,
+		
+		
+		ap.email,
+		ap.mobilePhone,
+		ap.surname,
+		ap.trueName,
+		ap.country
+		
+		FROM ex_digitalmoney_account AS aa 
+		LEFT JOIN app_person_info
+		AS ap ON aa.customerId = ap.customerId
+		<where>
+			<if test="email!=null and email!='' ">
+				ap.email like
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and ap.mobilePhone like
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="coinCode!=null and coinCode!='' " >
+				and aa.coinCode = #{coinCode}
+			</if>
+			<if test="publicKey!=null and publicKey!=''">
+				and aa.publicKey like #{publicKey,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName!=null and trueName!=''">
+				and ap.trueName like #{trueName,jdbcType=VARCHAR}
+			</if>
+			
+		</where>
+	</select>
+
+	<!-- 新通过sql分页查询 -->
+	<select id="findPageBySqlList" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap" >
+		select
+			eda.*,
+			ap.email,
+			ap.mobilePhone,
+			ap.surname,
+			ap.trueName,
+			ap.country
+		from
+			(SELECT 
+				aa.id,
+				aa.customerId,
+				aa.coinCode,
+				aa.publicKey,
+				aa.accountNum,
+				aa.hotMoney,
+				aa.coldMoney
+			FROM ex_digitalmoney_account AS aa
+			<where>
+				1 = 1
+				<if test="coinCode!=null and coinCode!='' " >
+					and aa.coinCode = #{coinCode}
+				</if>
+				<if test="publicKey!=null and publicKey!=''">
+					and aa.publicKey like #{publicKey,jdbcType=VARCHAR}
+				</if>
+				<if test="customerId!=null ">
+					and aa.customerId in
+					<foreach item="item" index="index" collection="customerId"
+						open="(" separator="," close=")">
+						#{item}	
+					</foreach>
+				</if>
+			</where>
+			limit #{start},#{end}
+			) as eda
+			LEFT JOIN app_person_info AS ap ON eda.customerId = ap.customerId
+	</select>
+	
+	<!-- 根据条件查询客户信息 -->
+	<select id="findCustomerByCondition" parameterType="java.util.Map" 	resultType="java.lang.String" >
+		SELECT
+			b.customerId 
+		FROM
+			app_person_info AS b
+		<where>
+			<if test="email!=null and email!='' ">
+				and b.email like #{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName!=null and trueName!=''">
+				and b.trueName like #{trueName,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取分页总页数 -->
+	<select id="findPageBySqlCount" resultType="Long">
+		SELECT
+			count(*)
+		FROM
+			ex_digitalmoney_account AS aa
+		<where>
+			1 = 1
+			<if test="coinCode!=null and coinCode!='' " >
+				and aa.coinCode = #{coinCode}
+			</if>
+			<if test="publicKey!=null and publicKey!=''">
+				and aa.publicKey like #{publicKey,jdbcType=VARCHAR}
+			</if>
+			<if test="customerId!=null ">
+				and aa.customerId in
+				<foreach item="item" index="index" collection="customerId"
+					open="(" separator="," close=")">
+					#{item}	
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+</mapper>

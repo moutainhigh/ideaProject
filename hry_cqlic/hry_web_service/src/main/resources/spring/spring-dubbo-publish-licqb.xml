@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+
+    <bean id="remoteAwardServiceImpl" class="hry.licqb.remote.RemoteAwardServiceImpl" />
+    <dubbo:service ref="remoteAwardServiceImpl"  interface="hry.licqb.remote.RemoteAwardService"/>
+
+    <bean id="remoteLevelServiceImpl" class="hry.licqb.remote.RemoteLevelServiceImpl" />
+    <dubbo:service ref="remoteLevelServiceImpl"  interface="hry.licqb.remote.RemoteLevelService"/>
+
+    <bean id="remoteRecordServiceImpl" class="hry.licqb.remote.RemoteRecordServiceImpl" />
+    <dubbo:service ref="remoteRecordServiceImpl"  interface="hry.licqb.remote.RemoteRecordService"/>
+
+    <bean id="remoteAssetServiceImpl" class="hry.licqb.remote.RemoteAssetServiceImpl" />
+    <dubbo:service ref="remoteAssetServiceImpl"  interface="hry.licqb.remote.RemoteAssetService"/>
+
+    <bean id="remoteEcologyServiceImpl" class="hry.licqb.remote.RemoteEcologyServiceImpl" />
+    <dubbo:service ref="remoteEcologyServiceImpl"  interface="hry.licqb.remote.RemoteEcologyService"/>
+
+    <bean id="remoteExchangeServiceImpl" class="hry.licqb.remote.RemoteExchangeServiceImpl" />
+    <dubbo:service ref="remoteExchangeServiceImpl"  interface="hry.licqb.remote.RemoteExchangeService"/>
+</beans>

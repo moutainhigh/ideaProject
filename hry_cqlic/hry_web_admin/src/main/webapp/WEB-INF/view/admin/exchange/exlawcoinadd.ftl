@@ -1,0 +1,56 @@
+ <!-- Copyright:    -->
+ <!-- ExLawcoinAdd.html     -->
+ <!-- @author:      tianpengyu  -->
+ <!-- @version:     V1.0             -->
+ <!-- @Date:        2018-08-22 09:57:59      -->
+
+<#include "/base/base.ftl">
+ <div class="centerRowBg centerRowBg_admin">
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="page-header">添加法币  <button type="button"  class="btn btn-info-blue pull-right"  onclick="loadUrl('${ctx}/v.do?u=/admin/exchange/exlawcoinlist')" > <i class="fa fa-mail-forward"></i>返回</button></h3>
+    </div>
+</div>
+
+
+<form id="form" >
+
+<div class="row">
+	<div class="col-md-4 column">
+		<div class="form-group">
+			 <label for="name">法币币种</label>
+			 <input type="text" class="form-control" name="name" id="name" />
+		</div>
+		<div class="form-group">
+			 <label for="coinSymbol">币种符号</label>
+			 <input type="text" class="form-control" name="coinSymbol" id="coinSymbol" />
+		</div>
+		<div class="form-group">
+			 <label for="coinCode">币种代号</label>
+			 <input type="text" class="form-control" name="coinCode" id="coinCode" />
+		</div>
+		<div class="form-group">
+			 <label for="coinDecimal">保留小数位数</label>
+			 <input type="text" class="form-control" name="coinDecimal" id="coinDecimal" />
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-2 column">
+		<button type="button" id="addSubmit" class="btn btn-info-blue btn-block" >保存</button>
+	</div>
+</div>
+
+</form>
+
+</div>
+<script type="text/javascript">
+seajs.use("js/admin/exchange/ExLawcoin",function(o){
+	o.add();
+});
+</script>
+
+
+
+

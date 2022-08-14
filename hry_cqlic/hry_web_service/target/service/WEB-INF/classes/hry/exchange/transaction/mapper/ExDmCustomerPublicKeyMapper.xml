@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.transaction.dao.ExDmCustomerPublicKeyDao"   >
+
+	<resultMap id="findPageBySqlMap"   type="hry.exchange.transaction.model.ExDmCustomerPublicKey">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+
+		<result column="publicKeyName" property="publicKeyName" javaType="java.lang.String" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+		<result column="publicKey" property="publicKey" javaType="java.lang.String" />
+		<result column="remark" property="remark" javaType="java.lang.String" />
+		
+		<association property="appPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="created" property="created" javaType="java.util.Date" />
+			<result column="modified" property="modified" javaType="java.util.Date" />
+			<result column="saasId" property="saasId" javaType="java.lang.String" />
+			
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="country" property="country" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+			<result column="surname" property="surname" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+	
+	
+		<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap" >
+		SELECT 
+		a.id,
+		a.currencyType,
+		a.publicKey,
+		a.remark,
+		
+		b.email,
+		b.mobilePhone,
+		b.surname,
+		b.trueName,
+		b.country
+		
+		FROM ex_dm_customer_publickey AS a 
+		LEFT JOIN app_person_info
+		AS b ON a.customerId = b.customerId
+		<where>
+			<if test="email!=null and email!='' ">
+				b.email like
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone like
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="currencyType!=null and currencyType!='' " >
+				and a.currencyType = #{currencyType}
+			</if>
+			<if test="trueName!=null and trueName!=''">
+				and b.trueName like #{trueName,jdbcType=VARCHAR}
+			</if>
+			
+			
+		</where>
+	</select>
+	
+	<!-- 新通过sql分页查询 -->
+	<select id="findPageBySqlList" parameterType="java.util.Map"
+		resultMap="findPageBySqlMap" >
+		select
+			edcp.*,
+			b.email,
+			b.mobilePhone,
+			b.surname,
+			b.trueName,
+			b.country
+		from
+		(SELECT 
+			a.id,
+			a.customerId,
+			a.currencyType,
+			a.publicKey,
+			a.remark
+		FROM ex_dm_customer_publickey AS a 
+		<where>
+			1 = 1
+			<if test="currencyType!=null and currencyType!='' " >
+				and a.currencyType = #{currencyType}
+			</if>
+			<if test="customerId!=null " >
+				and a.customerId in
+				<foreach item="item" index="index" collection="customerId"
+					open="(" separator="," close=")">
+					#{item}	
+				</foreach>
+			</if>
+		</where>
+		) as edcp
+		LEFT JOIN app_person_info
+		AS b ON edcp.customerId = b.customerId
+	</select>
+	
+	<!-- 根据条件查询客户信息 -->
+	<select id="findCustomerByCondition" parameterType="java.util.Map" 	resultType="java.lang.String" >
+		SELECT
+			b.customerId 
+		FROM
+			app_person_info AS b
+		<where>
+			1 = 1
+			<if test="email!=null and email!='' ">
+				and b.email =
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and b.mobilePhone =
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName!=null and trueName!=''">
+				and b.trueName = #{trueName,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取分页总页数 -->
+	<select id="findPageBySqlCount" resultType="Long">
+		SELECT
+			count(*)
+		FROM
+			ex_dm_customer_publickey AS a
+		<where>
+			1 = 1
+			<if test="currencyType!=null and currencyType!='' " >
+				and a.currencyType = #{currencyType}
+			</if>
+			<if test="customerId!=null " >
+				and a.customerId in
+				<foreach item="item" index="index" collection="customerId"
+					open="(" separator="," close=")">
+					#{item}	
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+</mapper>

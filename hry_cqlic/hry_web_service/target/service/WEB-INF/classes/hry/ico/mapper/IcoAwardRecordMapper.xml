@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.ico.dao.IcoAwardRecordDao">
+
+    <select id="recommendedLockSum" resultType="java.lang.String">
+        SELECT sum(award_quantity) as recommendedAward from
+        ico_award_record
+        where  customer_id = #{customerId,jdbcType=BIGINT}
+    </select>
+
+</mapper>

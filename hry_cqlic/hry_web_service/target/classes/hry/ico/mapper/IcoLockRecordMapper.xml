@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.ico.dao.IcoLockRecordDao">
+
+
+    <select id="getWaitReleaseList" resultType="hry.ico.model.IcoLockRecord">
+        select
+        id,customerId,coinCode,type,
+        number,lockDay,state,lockDeduct,
+        lockDeductType,releaseDeduct,
+        releaseDeductType,releaseDate,
+        releaseType
+        from ico_lock_record where  state=0 and DATEDIFF(releaseDate,NOW()) &lt; 1;
+
+    </select>
+
+    <!-- 释放-->
+    <update id="updateByState">
+        update
+        ico_lock_record
+        set
+        <if test="releaseDeduct!=null and releaseDeduct!='' " >
+            releaseDeduct = #{releaseDeduct} ,
+        </if>
+        <if test="releaseType!=null and releaseType!='' " >
+            releaseType = #{releaseType} ,
+        </if>
+        <if test="actualReleaseNum!=null and actualReleaseNum!='' " >
+            actualReleaseNum = #{actualReleaseNum},
+        </if>
+        <if test="releaseDeductNum!=null and releaseDeductNum!='' " >
+            releaseDeductNum = #{releaseDeductNum},
+        </if>
+        modified= now(),
+        actualReleaseTime= now(),
+        state  = 1
+        where
+        id = #{id}
+        and
+        state = 0
+    </update>
+    <!-- 追加天数-->
+    <update id="appendLockDays">
+        update
+        ico_lock_record
+        set
+        modified= now(),
+        releaseDate = DATE_ADD(releaseDate,INTERVAL #{addDay} DAY),
+				lockDay=lockDay + #{addDay}
+        where
+        id = #{id}
+        and
+        state = 0
+    </update>
+</mapper>

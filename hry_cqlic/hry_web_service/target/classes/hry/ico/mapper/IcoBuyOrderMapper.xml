@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.ico.dao.IcoBuyOrderDao">
+
+    <resultMap id="finRecommendMap"   type="hry.ico.remote.model.RemoteRecommend">
+        <id column="uid" property="uid" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="country" property="country" javaType="java.lang.String" />
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+        <result column="email" property="email" javaType="java.lang.String" />
+        <result column="buyNumber" property="buyNumber" javaType="java.lang.String" />
+    </resultMap>
+    <resultMap id="finRecommenderOrderMap"   type="hry.ico.model.util.RecommenderOrder">
+        <id column="customerId" property="customerId" javaType="java.lang.Long" />
+        <id column="superiorCustomerId" property="superiorCustomerId" javaType="java.lang.Long" />
+        <result column="myCount" property="myCount" javaType="java.lang.Integer" />
+        <result column="superiorCount" property="superiorCount" javaType="java.lang.Integer" />
+    </resultMap>
+    <resultMap id="findPageBySqlMap"   type="hry.ico.model.IcoBuyOrder">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+        <result column="orderNumber" property="orderNumber" javaType="java.lang.String" />
+        <result column="payCoinName" property="payCoinName" javaType="java.lang.String" />
+        <result column="payCoinCode" property="payCoinCode" javaType="java.lang.String" />
+        <result column="payNumber" property="payNumber" javaType="java.math.BigDecimal" />
+
+        <result column="buyPrice" property="buyPrice" javaType="java.math.BigDecimal" />
+        <result column="buyNumber" property="buyNumber" javaType="java.math.BigDecimal" />
+        <result column="buyCoinCode" property="buyCoinCode"  javaType="java.lang.String" />
+
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+        <result column="email" property="email" javaType="java.lang.String" />
+    </resultMap>
+
+    <!-- 通过sql分页查询 -->
+    <select id="findPageBySql" parameterType="java.util.Map"
+            resultMap="findPageBySqlMap" >
+        select api.mobilePhone,api.email,
+        ibo.orderNumber,ibo.payCoinName,
+        ibo.payCoinCode,ibo.payNumber,
+        ibo.created,ibo.modified,
+        ibo.buyPrice,ibo.buyCoinCode,ibo.buyNumber
+        from app_person_info api,ico_buy_order ibo
+        <where>
+            api.customerId=ibo.customerId
+            <if test="customerId!=null and customerId!='' ">
+                and ibo.customerId = #{customerId}
+            </if>
+        </where>
+        order by ibo.created desc
+    </select>
+
+    <!-- 查询推荐列表 -->
+    <select id="finRecommendBySql"  resultMap="finRecommendMap" >
+        SELECT
+        acu.uid,
+        acu.created,
+        api.country,
+        api.mobilePhone,
+        api.email,
+        (SELECT sum(buyNumber) from ico_buy_order where customerId=acu.uid) as buyNumber
+        FROM
+        app_commend_user acu,
+        app_person_info api
+        WHERE
+        acu.uid = api.customerId
+        AND acu.pid =  #{customerId}
+    </select>
+
+    <!-- 查询推荐列表 -->
+    <select id="finSuperiorCountByCustomerId"  resultMap="finRecommenderOrderMap" >
+    SELECT
+	uid AS customerId,
+	pid AS superiorCustomerId,
+        (
+            SELECT
+                count(1)
+            FROM
+                ico_buy_order
+            WHERE
+                customerId = pid
+        ) AS superiorCount,
+    (
+            SELECT
+                count(1)
+            FROM
+                ico_buy_order
+            WHERE
+                customerId = uid
+        ) AS myCount
+    FROM
+        app_commend_user
+    WHERE
+        uid =  #{customerId}
+    </select>
+    <!-- 查询推荐列表 -->
+    <select id="findBuyTotal"  resultType="hry.ico.model.IcoBuyOrder" >
+        select
+            customerId,
+            SUM(buyNumber) buyNumber
+        from ico_buy_order  GROUP BY customerId
+    </select>
+</mapper>

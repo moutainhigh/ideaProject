@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.AppWorkOrderDao">
+    <resultMap type="hry.admin.web.model.AppWorkOrder" id="AppWorkOrderResultMap">
+        <id column="id" property="id" />
+        <result column="workOrderNo" property="workOrderNo" />
+        <result column="categoryId" property="categoryId" />
+        <result column="categoryName" property="categoryName" />
+        <result column="workContent" property="workContent" />
+        <result column="state" property="state" />
+        <result column="replyMode" property="replyMode" />
+        <result column="sort" property="sort" />
+        <result column="created" property="created" />
+        <result column="modified" property="modified" />
+        <result column="saasId" property="saasId" />
+        <result column="replyContent" property="replyContent" />
+        <result column="language" property="language" />
+        <result column="processTime" property="processTime" />
+        <result column="customerId" property="customerId" />
+        <result column="languageDic" property="languageDic" />
+        <result column="email" property="email" />
+        <result column="mobilePhone" property="mobilePhone" />
+    </resultMap>
+
+    <sql id="BaseResult">
+  aw.id,aw.workOrderNo,aw.id,aw.categoryId,aw.workContent,aw.state,aw.replyMode,aw.sort,aw.replyContent,aw.created,aw.language,aw.processTime,aw.modified,aw.saasId,aw.customerId
+  </sql>
+    <select id="queryByPage" parameterType="Object" resultMap="AppWorkOrderResultMap" >
+        SELECT <include refid="BaseResult"/>,awc.typeName categoryName , api.email, api.mobilePhone from app_workorder aw LEFT JOIN app_workorder_category awc ON aw.categoryId=awc.id LEFT JOIN app_person_info api ON aw.customerId = api.customerId
+        where 1 = 1
+        <if test="workOrderNo !=null and workOrderNo !=''">
+            and aw.workOrderNo like CONCAT('%', #{workOrderNo} ,'%')
+        </if>
+        <if test="categoryName !=null and categoryName!=''">
+            and awc.typeName like CONCAT('%', #{categoryName} ,'%')
+        </if>
+        <if test="state !=null ">
+            and aw.state=#{state}
+        </if>
+            and aw.languageDic=#{languageDic}
+        order by aw.id desc
+    </select>
+</mapper>

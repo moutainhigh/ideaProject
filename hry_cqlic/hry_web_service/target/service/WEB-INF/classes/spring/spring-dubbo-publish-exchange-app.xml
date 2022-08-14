@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~接口实现和发布~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+   <bean id="remoteExDigitalmoneyAccountServiceImpl" class="hry.exchange.remote.account.RemoteExDigitalmoneyAccountServiceImpl" />   
+   <dubbo:service ref="remoteExDigitalmoneyAccountServiceImpl"  interface="hry.change.remote.account.RemoteExDigitalmoneyAccountService"   /> 
+  
+   <bean id="remoteExProductServiceImpl" class="hry.exchange.remote.account.RemoteExProductServiceImpl" />   
+   <dubbo:service ref="remoteExProductServiceImpl"  interface="hry.exchange.remote.account.RemoteExProductService"   /> 
+  
+  
+   <bean id="remoteExApiApplyServiceImpl" class="hry.exchange.remote.account.RemoteExApiApplyServiceImpl" />   
+   <dubbo:service ref="remoteExApiApplyServiceImpl"  interface="hry.change.remote.account.RemoteExApiApplyService"   /> 
+
+   <bean id="remoteExAmineOrderServiceImpl" class="hry.exchange.remote.account.RemoteExAmineOrderServiceImpl" />   
+   <dubbo:service ref="remoteExAmineOrderServiceImpl"  interface="hry.change.remote.account.RemoteExAmineOrderService"   /> 
+
+    
+   <bean id="remoteProductReviewServiceImpl" class="hry.exchange.remote.account.RemoteProductReviewServiceImpl" />   
+   <dubbo:service ref="remoteProductReviewServiceImpl"  interface="hry.change.remote.account.RemoteProductReviewService"   /> 
+   
+  <bean id="remoteExDmTransactionServiceImpl" class=" hry.exchange.remote.dmtransaction.RemoteExDmTransactionServiceImpl" />   
+   <dubbo:service ref="remoteExDmTransactionServiceImpl"  interface=" hry.change.remote.dmtransaction.RemoteExDmTransactionService"   /> 
+   
+
+   <bean id="remoteExExEntrustServiceImpl" class="hry.exchange.remote.exEntrust.RemoteExExEntrustServiceImpl" />   
+   <dubbo:service ref="remoteExExEntrustServiceImpl"  interface="hry.change.remote.exEntrust.RemoteExExEntrustService"   /> 
+   
+   <bean id="remoteExExOrderServiceImpl" class="hry.exchange.remote.exEntrust.RemoteExExOrderServiceImpl" />   
+   <dubbo:service ref="remoteExExOrderServiceImpl"  interface="hry.change.remote.exEntrust.RemoteExExOrderService"   executes="100" actives="100"/> 
+
+     <bean id="remoteProductCommonServiceImpl" class="hry.exchange.remote.account.RemoteProductCommonServiceImpl" />   
+   <dubbo:service ref="remoteProductCommonServiceImpl"  interface="hry.change.remote.account.RemoteProductCommonService"   /> 
+   
+     <bean id="remoteExSubscriptionServiceImpl" class="hry.exchange.remote.subscription.RemoteExSubscriptionServiceImpl" />   
+   <dubbo:service ref="remoteExSubscriptionServiceImpl"  interface="hry.exchange.remote.subscription.RemoteExSubscriptionService"   /> 
+  
+     <bean id="remoteExDmLendServiceImpl" class="hry.exchange.remote.lend.RemoteExDmLendServiceImpl" />   
+   <dubbo:service ref="remoteExDmLendServiceImpl"  interface="hry.change.remote.lend.RemoteExDmLendService"   /> 
+ 
+     
+</beans>  

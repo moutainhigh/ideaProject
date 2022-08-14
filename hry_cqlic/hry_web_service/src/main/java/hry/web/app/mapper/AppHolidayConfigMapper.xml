@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.app.dao.AppHolidayConfigDao" >
+		<select id="judgeHoliday" parameterType="java.lang.String" resultType="java.lang.Integer">
+			SELECT count(id) FROM `app_holiday_config` as config
+			<where>
+				config.states=1
+				<if test="date != null and date != '' ">
+		            AND
+		             <![CDATA[  config.beginDate <=#{date}   ]]>
+				</if>
+				<if test="date != null and date != '' ">
+		            AND
+		           <![CDATA[   config.endDate   >=#{date}   ]]>
+				</if>
+			</where>
+		</select> 
+				
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.licqb.ecology.dao.EcofundDao">
+    <resultMap id="pageBySqlMap" type="hry.admin.licqb.ecology.model.Ecofund">
+    </resultMap>
+    <select id="findEcofundList" resultMap="pageBySqlMap" parameterType="java.util.Map">
+        select le.id, le.customerId, le.orderNum, le.activityName, le.activityDate, le.activityAddress,
+        le.peopleCount, le.activityIntro, le.activityImage, le.activityStatus,le.againActivityReply,le.againActivityVideo,
+        le.activityReply, le.againCreated, le.againActivityDate, le.againActivityAddress, le.itAgain,
+        le.againPeopleCount, le.againActivityIntro, le.againActivityImage, le.created,le.saasId,
+        api.mobilePhone, api.email
+        from lc_ecofund le
+        left join app_person_info api
+        ON le.customerId = api.customerId
+        where 1=1
+        <if test="id != null and id != ''">
+            and le.id = #{id}
+        </if>
+        <if test="mobilePhone != null and mobilePhone != ''">
+            and api.mobilePhone like #{mobilePhone}
+        </if>
+        <if test="email != null and email != ''">
+            and api.email like #{email}
+        </if>
+        <if test="orderNum != null and orderNum != ''">
+            and le.orderNum like #{orderNum}
+        </if>
+        <if test="activityStatus != null and activityStatus != ''">
+            and le.activityStatus = #{activityStatus}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and le.created >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and le.created<![CDATA[ <= ]]> #{endTime}
+        </if>
+        <if test="itAgain != null and itAgain != ''">
+            and le.itAgain = #{itAgain}
+        </if>
+        order by le.modified DESC
+    </select>
+</mapper>

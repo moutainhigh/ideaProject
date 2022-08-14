@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.transaction.dao.ExDmTransactionDao"   >
+
+  <resultMap id="BaseResultMap" type="hry.exchange.transaction.model.ExDmTransaction">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+
+		<result column="transactionNum" property="transactionNum" javaType="java.lang.String" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="customerName" property="customerName" javaType="java.lang.String" />
+		<result column="accountId" property="accountId" javaType="java.lang.Long" />
+		<result column="transactionType" property="transactionType" javaType="java.lang.Integer" />
+		<result column="transactionMoney" property="transactionMoney" javaType="java.math.BigDecimal" />
+		<result column="status" property="status" javaType="java.lang.Integer" />
+		<result column="userId" property="userId" javaType="java.lang.Long" />
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+	    <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+		<result column="fee" property="fee" javaType="java.math.BigDecimal" />
+		<result column="rejectionReason" property="rejectionReason" javaType="java.lang.String" />
+	    <result column="inAddress" property="inAddress" javaType="java.lang.String" />
+	    <result column="outAddress" property="outAddress" javaType="java.lang.String" />
+	    <result column="time" property="time" javaType="java.lang.String" />
+	    <result column="confirmations" property="confirmations" javaType="java.lang.String" />
+	    <result column="timereceived" property="timereceived" javaType="java.lang.String" />
+	    <result column="blocktime" property="blocktime" javaType="java.lang.String" />
+	    <result column="remark" property="remark" javaType="java.lang.String" />
+		<association property="appPersonInfo" javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="country" property="country" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+			<result column="surname" property="surname" javaType="java.lang.String" />
+		</association>
+
+
+	</resultMap>
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"   resultMap="BaseResultMap" >
+		SELECT
+			app.id,
+			app.customerId,
+			app.transactionType,
+			app.status,
+			app.coinCode,
+			app.transactionMoney,
+			app.transactionNum,
+			app.inAddress,
+			app.outAddress,
+			app.rejectionReason,
+			app.blocktime,
+			app.created,
+			app.modified,
+			app.remark,
+			app.fee,
+			info.email,info.mobilePhone,info.country,info.trueName,info.surname
+		FROM
+			ex_dm_transaction AS app
+		LEFT JOIN app_person_info AS info ON app.customerId = info.customerId
+
+		<where>
+			app.remark != 'C2C卖币'
+			<if test="transactionType!=null and transactionType!='' " >
+				and app.transactionType  =#{transactionType,jdbcType=TINYINT}
+			</if>
+			<if test="status!=null and status!='' " >
+			    and app.status  = #{status,jdbcType=TINYINT}
+			</if>
+
+			<if test="coinCode!=null and coinCode!='' " >
+				and app.coinCode = #{coinCode,jdbcType=VARCHAR}
+			</if>
+
+			<if test="createdG!=null and createdG!='' " >
+			    and app.created <![CDATA[ >= ]]> #{createdG,jdbcType=DATE}
+			</if>
+			<if test="createdL!=null and createdL!=''" >
+			    and app.created <![CDATA[ <= ]]> #{createdL,jdbcType=DATE}
+			</if>
+
+			<if test="inAddress!=null and inAddress!='' " >
+			    and app.inAddress  like #{inAddress,jdbcType=VARCHAR}
+			</if>
+
+			<if test="outAddress!=null and outAddress!='' " >
+			    and app.outAddress  like #{outAddress,jdbcType=VARCHAR}
+			</if>
+
+			<if test="transactionNum!=null and transactionNum!='' " >
+			    and app.transactionNum  like #{transactionNum,jdbcType=VARCHAR}
+			</if>
+
+			<if test="trueName!=null and trueName!='' " >
+			    and info.trueName like #{trueName,jdbcType=VARCHAR}
+			</if>
+			<if test="email!=null and email!='' " >
+			    and info.email like #{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' " >
+			    and info.mobilePhone like #{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<![CDATA[ and app.optType <> 10 ]]>
+
+			ORDER BY app.created desc
+		</where>
+	</select>
+
+	<select id="findLastTrasaction" resultType="hry.exchange.transaction.model.ExDmTransaction">
+		SELECT * FROM ex_dm_transaction WHERE STATUS IN(1,2) AND transactionType=1 ORDER BY id DESC LIMIT 0,1
+	</select>
+
+	<select id="findGetNumByCustomer" resultType="java.math.BigDecimal">
+	  <![CDATA[	SELECT
+		  SUM(transactionMoney)
+		FROM
+		  ex_dm_transaction
+		WHERE customerId = #{customerId}
+		  AND coinCode = #{coinCode}
+		  AND STATUS IN (1,2)
+		  and transactionType = 2
+		  and optType = 2
+		  AND modified >= DATE(NOW())
+		  AND modified < DATE_ADD(DATE(NOW()), INTERVAL 1 DAY) ]]>
+	</select>
+
+	<resultMap id="FrontMap" type="hry.manage.remote.model.ExDmTransactionManage"></resultMap>
+	<select id="findExdmtransaction" parameterType="java.util.Map" resultMap="FrontMap">
+		select coinCode,transactionMoney,transactionNum,fee,status,created,rejectionReason from ex_dm_transaction where customerId = #{customerId} and transactionType = #{transactionType}
+		<if test="status!=null and status!=''">
+			and status = #{status}
+		</if>
+		<if test="coinCode!=null and coinCode!=''">
+			and coinCode = #{coinCode}
+		</if>
+		<if test="optType!=null and optType!=''">
+			and optType = #{optType}
+		</if>
+		ORDER BY created desc
+	</select>
+
+	<select id="findExdmtransactionRecord" parameterType="java.util.Map" resultMap="FrontMap">
+		select
+			coinCode,
+			transactionMoney,
+			transactionNum,
+			fee,
+			status,
+			created,
+			rejectionReason
+		from ex_dm_transaction
+		<where>
+			customerId = #{customerId}
+			<if test="transactionType!=null and transactionType!=''">
+				and transactionType = #{transactionType}
+			</if>
+			<if test="status!=null and status!=''">
+				and status = #{status}
+			</if>
+			<if test="coinCode!=null and coinCode!=''">
+				and coinCode = #{coinCode}
+			</if>
+			<if test="transactionType ==1 || transactionType =='1'">
+				and optType in(1,4)
+			</if>
+			<if	test="transactionType ==2 || transactionType =='2'">
+				and optType in(2,5)
+			</if>
+			<if	test="transactionType ==null || transactionType ==''">
+				and optType in(1,2,4,5)
+			</if>
+		</where>
+		ORDER BY created desc
+	</select>
+
+	<resultMap id="FrontPageMap" type="hry.manage.remote.model.ExDmTransactionManage">
+    	<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="transactionMoney" property="transactionMoney" javaType="java.math.BigDecimal" />
+		<result column="transactionNum" property="transactionNum" javaType="java.lang.String" />
+		<result column="fee" property="fee" javaType="java.math.BigDecimal" />
+		<result column="status" property="status" javaType="java.lang.Integer" />
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="customerName" property="customerName" javaType="java.lang.String" />
+		<result column="accountId" property="accountId" javaType="java.lang.Long" />
+		<result column="transactionType" property="transactionType" javaType="java.lang.Integer" />
+		<result column="userId" property="userId" javaType="java.lang.Long" />
+		<result column="currencyType" property="currencyType" javaType="java.lang.String" />
+	    <result column="coinCode" property="coinCode" javaType="java.lang.String" />
+	    <result column="inAddress" property="inAddress" javaType="java.lang.String" />
+	    <result column="outAddress" property="outAddress" javaType="java.lang.String" />
+	    <result column="remark" property="remark" javaType="java.lang.String" />
+	    <result column="rejectionReason" property="rejectionReason" javaType="java.lang.String" />
+		<association property="appPersonInfo" javaType="hry.manage.remote.model.AppPersonInfoManage">
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="country" property="country" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+			<result column="surname" property="surName" javaType="java.lang.String" />
+		</association>
+	</resultMap>
+
+	<!-- 前台通过sql分页查询 -->
+	<select id="findFrontPage" parameterType="java.util.Map" resultMap="FrontPageMap" >
+		SELECT
+			app.id,
+			app.customerId,
+			app.transactionType,
+			app.status,
+			app.coinCode,
+			app.transactionMoney,
+			app.transactionNum,
+			app.inAddress,
+			app.outAddress,
+			app.rejectionReason,
+			app.blocktime,
+			app.created,
+			app.modified,
+			app.remark,
+			app.customerName,
+			info.email,info.mobilePhone,info.country,info.trueName,info.surname
+		FROM
+			ex_dm_transaction AS app
+		LEFT JOIN app_person_info AS info ON app.customerId = info.customerId
+
+		<where>
+			app.remark != 'C2C卖币'
+			<if test="transactionType!=null and transactionType!='' " >
+				and app.transactionType = #{transactionType,jdbcType=TINYINT}
+			</if>
+			<if test="status!=null and status!='' " >
+			    and app.status  = #{status,jdbcType=TINYINT}
+			</if>
+
+			<if test="coinCode!=null and coinCode!='' " >
+				and app.coinCode = #{coinCode,jdbcType=VARCHAR}
+			</if>
+
+			<if test="created_GT!=null and created_GT!='' " >
+			    and app.created <![CDATA[ >= ]]> #{created_GT,jdbcType=DATE}
+			</if>
+			<if test="created_LT!=null and created_LT!=''" >
+			    and app.created <![CDATA[ <= ]]> #{created_LT,jdbcType=DATE}
+			</if>
+
+			<if test="inAddress!=null and inAddress!='' " >
+			    and app.inAddress like CONCAT('%', #{inAddress},'%')
+			</if>
+
+			<if test="outAddress!=null and outAddress!='' " >
+			    and app.outAddress like CONCAT('%', #{outAddress},'%')
+			</if>
+
+			<if test="transactionNum!=null and transactionNum!='' " >
+			    and app.transactionNum like CONCAT('%', #{transactionNum},'%')
+			</if>
+			<if test="customerName!=null and customerName!='' " >
+			    and app.customerName like CONCAT('%', #{customerName},'%')
+			</if>
+			<if test="trueName!=null and trueName!='' " >
+			    and info.trueName like CONCAT('%', #{trueName},'%')
+			</if>
+			<if test="surName!=null and surName!='' " >
+				and info.surname like CONCAT('%', #{surName},'%')
+			</if>
+			<if test="email!=null and email!='' " >
+			    and info.email like CONCAT('%', #{email},'%')
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' " >
+			    and info.mobilePhone like CONCAT('%', #{mobilePhone},'%')
+			</if>
+			<![CDATA[ and app.optType <> 10 ]]>
+
+			ORDER BY app.created desc
+		</where>
+	</select>
+</mapper>

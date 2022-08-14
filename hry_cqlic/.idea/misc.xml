@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/hry_single" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_web_admin" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_web_app" />
+    <file type="web" url="file://$PROJECT_DIR$/hry_web_service" />
+    <file type="web" url="file://$PROJECT_DIR$/../hry_web_trade" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/hry_single_api/pom.xml" />
+        <option value="$PROJECT_DIR$/hry_single/pom.xml" />
+        <option value="$PROJECT_DIR$/../hry_web_trade/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/classes" />
+  </component>
+  <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://192.168.0.60/svn/hry_proj/dcrt/hry_cqlic" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../hry_web_trade">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="https://192.168.0.60/svn/hry_proj/unify/hry_web_trade" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

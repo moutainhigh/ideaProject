@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.account.fund.dao.AppPlatformSettlementRecordDao">
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"   resultType="hry.account.fund.model.AppPlatformSettlementRecord" >
+		select * from app_platform_settlement_record as ac
+		order by ac.created desc
+	</select>
+	
+	
+	<!-- 一段时间内的充值总金额 -->
+	<select id="getRechargeMoney" parameterType="java.lang.String"   resultType="java.math.BigDecimal" >
+		SELECT 
+		    SUM(transactionMoney) totalMoney 
+		  FROM
+		    app_transaction 
+		  WHERE transactionType IN (1,3,5) 
+		    AND STATUS = 2 
+		    AND modified BETWEEN #{0} 
+		    AND #{1}
+	</select>
+	<!-- 一段时间内的提现总金额 -->
+	<select id="getWithdrawalsMoney" parameterType="java.lang.String"   resultType="java.math.BigDecimal" >
+		SELECT 
+		    SUM(transactionMoney) totalMoney 
+		  FROM
+		    app_transaction 
+		  WHERE transactionType IN (2,4) 
+		    AND STATUS = 2 
+		    AND modified BETWEEN #{0} 
+		    AND #{1}
+	</select>
+	
+	<!-- 充值手续费+提现手续费 -->
+	<select id="getTranFeeMoney" parameterType="java.lang.String"   resultType="java.math.BigDecimal" >
+		SELECT 
+		    SUM(fee) totalMoney 
+		  FROM
+		    app_transaction 
+		  WHERE STATUS = 2 
+		    AND modified BETWEEN #{0} 
+		    AND #{1}
+	</select>
+	
+	
+	<!-- 一段时间内的交易买手续费+交易卖手续费总金额 -->
+	<select id="getTradeFeeMoney" parameterType="java.lang.String"   resultType="java.math.BigDecimal" >
+		SELECT 
+		    SUM(transactionMoney) totalMoney 
+		  FROM
+		    app_account_record 
+		  WHERE recordType IN (5,6) 
+		    AND source = 3 
+		    AND status = 5 
+		    AND modified BETWEEN #{0} 
+		    AND #{1}
+	</select>
+</mapper>

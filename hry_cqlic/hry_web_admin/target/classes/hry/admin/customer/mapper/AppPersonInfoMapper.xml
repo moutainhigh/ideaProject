@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.customer.dao.AppPersonInfoDao">
+    <resultMap id="BaseResultMap" type="hry.admin.customer.model.AppPersonInfo">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="created" property="created" javaType="java.util.Date" />
+        <result column="modified" property="modified" javaType="java.util.Date" />
+        <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+        <result column="customerType" property="customerType" javaType="java.lang.Integer" />
+        <result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+        <result column="email" property="email" javaType="java.lang.String" />
+        <result column="surname" property="surname" javaType="java.lang.String" />
+        <result column="trueName" property="trueName" javaType="java.lang.String" />
+        <result column="sex" property="sex" javaType="java.lang.Integer" />
+        <result column="birthday" property="birthday" javaType="java.lang.String" />
+        <result column="country" property="country" javaType="java.lang.String" />
+        <result column="cardType" property="cardType" javaType="java.lang.Integer" />
+        <result column="cardId" property="cardId" javaType="java.lang.String" />
+        <result column="customerSource" property="customerSource" javaType="java.lang.Integer" />
+        <result column="realTime" property="realTime" javaType="java.util.Date" />
+        <result column="cardIdUsd" property="cardIdUsd" javaType="java.lang.String" />
+        <result column="cardIdValidPeriod" property="cardIdValidPeriod" javaType="java.lang.String" />
+        <result column="postalAddress" property="postalAddress" javaType="java.lang.String" />
+        <result column="contacts" property="contacts" javaType="java.lang.String" />
+        <result column="postCode" property="postCode" javaType="java.lang.Integer" />
+        <result column="stage" property="stage" javaType="java.lang.Integer" />
+        <result column="contactsTel" property="contactsTel" javaType="java.lang.String" />
+        <result column="handIdCardUrl" property="handIdCardUrl" javaType="java.lang.String" />
+        <result column="idCardFrontUrl" property="idCardFrontUrl" javaType="java.lang.String" />
+        <result column="idCardBackUrl" property="idCardBackUrl" javaType="java.lang.String" />
+        <result column="handDealUrl" property="handDealUrl" javaType="java.lang.String" />
+        <result column="isExamine" property="isExamine" javaType="java.lang.Integer" />
+        <result column="eamineRefusalReason" property="eamineRefusalReason" javaType="java.lang.String" />
+
+        <result column="vipUserId" property="vipUserId" javaType="java.lang.Long" />
+        <result column="agentUserId" property="agentUserId" javaType="java.lang.Long" />
+        <result column="vipName" property="vipName" javaType="java.lang.String" />
+        <result column="agentName" property="agentName" javaType="java.lang.String" />
+        <result column="surname" property="surname" javaType="java.lang.String" />
+        <result column="isCancle" property="isCancle" javaType="java.lang.Integer" />
+        <result column="cancleReason" property="cancleReason" javaType="java.lang.String" />
+        <result column="vipNumber" property="vipNumber" javaType="java.lang.String" />
+        <result column="agentNumber" property="agentNumber" javaType="java.lang.String" />
+        <result column="withdrawCheckMoney" property="withdrawCheckMoney" javaType="java.math.BigDecimal" />
+
+
+        <result column="isGivePerAgentRecommendCoin" property="isGivePerAgentRecommendCoin" javaType="java.lang.String" />
+        <result column="hasRecommendNum" property="hasRecommendNum" javaType="java.lang.Integer" />
+        <result column="jkApplyState" property="jkApplyState" javaType="java.lang.Integer" />
+        <result column="jkApplyType" property="jkApplyType" javaType="java.lang.Integer" />
+        <result column="jkAgentType" property="jkAgentType" javaType="java.lang.Integer" />
+        <result column="jkApplyAuthorizationCode" property="jkApplyAuthorizationCode" javaType="java.lang.String" />
+        <result column="jkApplyAuthorizationCodeState" property="jkApplyAuthorizationCodeState" javaType="java.lang.Integer" />
+        <result column="jkApplyAgentProvince" property="jkApplyAgentProvince" javaType="java.lang.String" />
+        <result column="jkApplyAgentProvinceCode" property="jkApplyAgentProvinceCode" javaType="java.lang.String" />
+        <result column="jkApplyAgentCity" property="jkApplyAgentCity" javaType="java.lang.String" />
+        <result column="jkApplyAgentCityCode" property="jkApplyAgentCityCode" javaType="java.lang.String" />
+        <result column="jkApplyAgentCounty" property="jkApplyAgentCounty" javaType="java.lang.String" />
+        <result column="jkApplyAgentCountyCode" property="jkApplyAgentCountyCode" javaType="java.lang.String" />
+        <result column="withdrawCheckMoney" property="withdrawCheckMoney" javaType="java.math.BigDecimal" />
+        <result column="lendTimes" property="lendTimes" javaType="java.math.BigDecimal" />
+        <result column="lengPing" property="lengPing" javaType="java.math.BigDecimal" />
+        <result column="lengRiskRate" property="lengRiskRate" javaType="java.math.BigDecimal" />
+
+        <!--<association property="appBankCard"
+                     javaType="hry.account.fund.model.AppBankCard">
+            <id column="id" property="id" javaType="java.lang.Long" />
+            <result column="created" property="created" javaType="java.util.Date" />
+            <result column="modified" property="modified" javaType="java.util.Date" />
+            <result column="saasId" property="saasId" javaType="java.lang.String" />
+
+            <result column="accountId" property="accountId" javaType="java.lang.Long" />
+            <result column="customerId" property="customerId" javaType="java.lang.Long" />
+            <result column="userName" property="userName" javaType="java.lang.String" />
+            <result column="btrueName" property="trueName" javaType="java.lang.String" />
+            <result column="currencyType" property="currencyType" javaType="java.lang.String" />
+            <result column="cardName" property="cardName" javaType="java.lang.String" />
+            <result column="cardNumber" property="cardNumber" javaType="java.lang.String" />
+            <result column="cardBank" property="cardBank" javaType="java.lang.String" />
+            <result column="bankAddress" property="bankAddress" javaType="java.lang.String" />
+            <result column="subBank" property="subBank" javaType="java.lang.String" />
+            <result column="website" property="website" javaType="java.lang.String" />
+            <result column="bankProvince" property="bankProvince" javaType="java.lang.String" />
+            <result column="signBank" property="signBank" javaType="java.lang.String" />
+        </association>-->
+    </resultMap>
+
+    <select id="getAppPersonInfoByEmailPhone" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT * FROM app_person_info person where
+        person.mobilePhone in
+        <foreach collection="listId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        or
+        person.email in
+        <foreach collection="listId" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

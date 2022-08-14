@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.licqb.ecology.dao.EcologEnterDao">
+    <resultMap id="pageBySqlMap" type="hry.admin.licqb.ecology.model.EcologEnter">
+    </resultMap>
+    <select id="findEcologEnterList" resultMap="pageBySqlMap" parameterType="java.util.Map">
+        select le.id, le.customerId, le.orderNum, le.plateId, lcp.plateName, le.enterLevel, le.enterName,
+        le.enterLogo, le.downloadLink, le.enterApplyIntro, le.enterStatus, le.renewStatus, le.enterReply,
+        le.validityDay, le.verifyDate, le.expireDate, le.created, le.modified, le.saasId,
+        api.mobilePhone, api.email
+        from lc_ecolog_enter le
+        left join app_person_info api
+        ON le.customerId = api.customerId
+        left join lc_ecolog_plate lcp
+        ON le.plateId = lcp.id
+        where 1=1
+        <if test="id != null and id != ''">
+            and le.id = #{id}
+        </if>
+        <if test="mobilePhone != null and mobilePhone != ''">
+            and api.mobilePhone like #{mobilePhone}
+        </if>
+        <if test="email != null and email != ''">
+            and api.email like #{email}
+        </if>
+        <if test="orderNum != null and orderNum != ''">
+            and le.orderNum like #{orderNum}
+        </if>
+        <if test="enterStatus != null and enterStatus != ''">
+            and le.enterStatus = #{enterStatus}
+        </if>
+        <if test="status == 1 ">
+            and le.enterStatus = 1
+        </if>
+        <if test="status == 5 ">
+            and (le.enterStatus = 5 or le.renewStatus = 1)
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and le.created >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and le.created<![CDATA[ <= ]]> #{endTime}
+        </if>
+        order by modified DESC
+    </select>
+
+    <select id="countEnter" parameterType="java.util.Map" resultType="Integer">
+        select count(1)
+        from lc_ecolog_enter e
+        where 1=1
+        <if test="plateId != null and plateId != ''">
+            and e.plateId = #{plateId}
+        </if>
+        <if test="enterLevel != null and enterLevel != ''">
+            and e.enterLevel = #{enterLevel}
+        </if>
+        <if test="enterStatus == 'enterStatusA' ">
+            and e.enterStatus in (1,3,5,6)
+        </if>
+    </select>
+</mapper>

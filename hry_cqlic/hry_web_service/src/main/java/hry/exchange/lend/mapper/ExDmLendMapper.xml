@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.lend.dao.ExDmLendDao"   >
+    <resultMap id="dmlend" type="hry.exchange.lend.model.ExDmLend">
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+	</resultMap>
+	
+	<select id="getMayPingCustomer"  parameterType="java.util.Map"  resultMap="dmlend">
+    select * from ex_dm_lend edl where  
+        <![CDATA[ 
+	   edl.website=#{website,jdbcType=VARCHAR} and  edl.currencyType=#{currencyType,jdbcType=VARCHAR} 
+	     and    edl.status <3
+	   ]]> 
+	    <if test="lendCoinType!=null and lendCoinType!='' " >
+			  and edl.lendCoinType=#{lendCoinType,jdbcType=VARCHAR}  
+		</if>
+	    group by edl.customerId
+	</select>
+     <resultMap id="LendBycustmer" type="hry.exchange.lend.model.ExDmLend">
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="lendCount" property="lendCount" javaType="java.math.BigDecimal" />
+		<result column="repayLendCount" property="repayLendCount" javaType="java.math.BigDecimal" />
+		<result column="interestCount" property="interestCount" javaType="java.math.BigDecimal" />
+		<result column="repayLendCount" property="repayLendCount" javaType="java.math.BigDecimal" />
+	</resultMap>
+	
+	<select id="getLendBycustmer" resultMap="LendBycustmer">
+    select customerId,sum(lendCount) as lendCount,
+    sum(repayLendCount) as repayLendCount,
+    sum(interestCount) as interestCount, 
+    sum(repayInterestCount) as repayInterestCount  from ex_dm_lend edl where 
+      edl.website=#{3} and edl.currencyType=#{2} and edl.lendCoin=#{0}  and
+    <![CDATA[     edl.status <3  ]]> and edl.customerId=#{1}
+	</select>
+	
+		
+	   <resultMap id="BaseResultMap" type="hry.exchange.lend.model.ExDmLend">
+		<result column="customerId" property="customerId" javaType="java.lang.Long" />
+		<result column="lendCount" property="lendCount" javaType="java.math.BigDecimal" />
+		<result column="repayLendCount" property="repayLendCount" javaType="java.math.BigDecimal" />
+		<result column="interestCount" property="interestCount" javaType="java.math.BigDecimal" />
+		<result column="repayLendCount" property="repayLendCount" javaType="java.math.BigDecimal" />
+		<result column="totalRepay" property="totalRepay" javaType="java.math.BigDecimal" />
+		<result column="totalCount" property="totalCount" javaType="java.math.BigDecimal" />
+		<result column="userName" property="userName" javaType="java.lang.String" />
+	</resultMap>
+	<resultMap id="FrontMap" type="hry.manage.remote.model.Lend">
+	</resultMap>
+	<select  id="see"  resultMap="FrontMap"  parameterType="java.util.Map" >
+			SELECT
+				lend.*, cus.userName,
+				lend.repayInterestCount + lend.repayLendCount AS totalRepay,
+				lend.lendCount + lend.interestCount AS totalCount
+			FROM
+				ex_dm_lend AS lend,
+				app_customer AS cus
+			
+		<where>
+		    lend.customerId = cus.id
+			<if test="customerId!=null and customerId!='' " >
+				AND lend.customerId = #{customerId}
+			</if>
+			<if test="userName!=null and userName!='' " >
+			and	lend.userName like #{userName,jdbcType=VARCHAR}
+			</if>
+			<if test="lendCoinType!=null and lendCoinType!='' " >
+				and lend.lendCoinType  = #{lendCoinType,jdbcType=TINYINT}
+			</if>
+			<if test="status!=null and status!='' " >
+				and lend.status = #{status,jdbcType=TINYINT}
+			</if>
+			
+			<if test="lendTimeG!=null and lendTimeG!='' " >
+			    and lend.lendTime &gt;= #{lendTimeG,jdbcType=DATE} 
+			</if> 
+			<if test="lendTimeL!=null and lendTimeL!=''" >
+			    and lend.lendTime &lt;  #{lendTimeL,jdbcType=DATE}
+			</if> 
+			<if test="trueName!=null and trueName!=''" >
+			   and	lend.trueName like #{trueName,jdbcType=VARCHAR}
+			</if> 
+		</where>
+		ORDER BY lend.lendTime DESC
+	</select>
+	
+	  <resultMap id="Lending" type="hry.exchange.lend.model.ExDmLend">
+		<result column="lendCount" property="lendCount" javaType="java.math.BigDecimal" />
+	</resultMap>
+	
+	<select id="getLending" resultMap="Lending"  parameterType="java.util.Map" >
+         SELECT sum(d.lendCount-d.repayLendCount) as  lendCount from ex_dm_lend as d 
+         <where>
+             1=1
+            <if test="lendCoinType!=null and lendCoinType!='' " >
+				and lend.lendCoinType like #{lendCoinType,jdbcType=VARCHAR}
+			</if>
+			 <if test="lendCoin!=null and lendCoin!='' " >
+				and lend.lendCoin like #{lendCoin,jdbcType=VARCHAR}
+			</if>
+         </where>
+	</select>
+	  <resultMap id="lendingBycustomerId" type="hry.exchange.lend.model.ExDmLend">
+		<result column="lendCount" property="lendCount" javaType="java.math.BigDecimal" />
+		<result column="lendCoin" property="lendCoin" javaType="java.lang.String" />
+		<result column="lendCoinType" property="lendCoinType" javaType="java.lang.String" />
+	<result column="userName" property="userName" javaType="java.lang.String" />
+	</resultMap>
+		<select id="getLendingByGroupCustomerId" resultMap="lendingBycustomerId"  parameterType="java.util.Map" >
+         SELECT sum(d.lendCount)+(d.interestCount)-(d.repayLendCount)-sum(d.repayInterestCount)as  lendCount,lendCoin,lendCoinType,userName from ex_dm_lend d 
+         <where>
+            d.customerId= #{customerId} and<![CDATA[ d.status<3]]>
+            <if test="lendCoinType!=null and lendCoinType!='' " >
+				and lend.lendCoinType like #{lendCoinType,jdbcType=VARCHAR}
+			</if>
+			 <if test="lendCoin!=null and lendCoin!='' " >
+				and lend.lendCoin like #{lendCoin,jdbcType=VARCHAR}
+			</if>
+         </where>
+         group by d.lendCoin
+	</select>
+</mapper>

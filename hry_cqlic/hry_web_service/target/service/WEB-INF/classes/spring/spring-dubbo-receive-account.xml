@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+        ">  
+      <!-- remoteAppAccountService -->
+      <dubbo:reference id="remoteAppAccountService" interface="hry.account.remote.RemoteAppAccountService"  check="false"></dubbo:reference>  
+	  <!-- remoteAppBankCardService -->
+      <dubbo:reference id="remoteAppBankCardService" interface="hry.account.remote.RemoteAppBankCardService"  check="false"></dubbo:reference>  
+	  <!-- remoteAppTransactionService -->
+      <dubbo:reference id="remoteAppTransactionService" interface="hry.account.remote.RemoteAppTransactionService"  check="false"></dubbo:reference>  
+	  <!-- remoteAppColdAccountRecordService -->
+      <dubbo:reference id="remoteAppColdAccountRecordService" interface="hry.account.remote.RemoteAppColdAccountRecordService"  check="false"></dubbo:reference>  
+	  <!-- remoteAppHotAccountRecordService -->
+      <dubbo:reference id="remoteAppHotAccountRecordService" interface="hry.account.remote.RemoteAppHotAccountRecordService"  check="false"></dubbo:reference>  
+	
+	  <!-- remoteAppOurAccountService -->
+      <dubbo:reference id="remoteAppOurAccountService" interface="hry.account.remote.RemoteAppOurAccountService"  check="false"></dubbo:reference>  
+
+      <dubbo:reference id="remoteAppAccountSureoldService" interface="hry.account.remote.RemoteAppAccountSureoldService"  check="false"></dubbo:reference>  
+ 
+
+</beans> 

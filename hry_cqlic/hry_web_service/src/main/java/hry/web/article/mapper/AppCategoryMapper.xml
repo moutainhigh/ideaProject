@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.web.article.dao.AppCategoryDao"   >
+
+<resultMap type="hry.web.app.model.AppCategoryVo" id="AppFooterCategory">
+		<!-- 订单信息 -->
+		<id column="id" property="id" />
+		<result column="preateName" property="preateName" />
+		<collection property="list" ofType="hry.web.app.model.AppCategory">
+			<id column="name" property="name" />
+			<result column="footerUrl" property="footerUrl" />
+		</collection>
+</resultMap>
+
+<select id="findFooterCategory" parameterType="java.lang.Long"  resultMap="AppFooterCategory" >
+		<![CDATA[   SELECT c.id cid,c.preateName,a.name,a.footerUrl FROM app_artic_category AS c,app_artic_category AS a WHERE c.id=a.id AND a.isShow=0 AND a.TYPE='footer' AND a.state=0 ;
+
+		 ]]>
+	</select>
+
+	<resultMap type="hry.web.app.model.AppCategory" id="BaseResultMap">
+		<id column="id" property="id" />
+		<result column="preateId" property="preateId" javaType="java.lang.Long" />
+		<result column="preateName" property="preateName" javaType="java.lang.String" />
+		<result column="name" property="name" javaType="java.lang.String" />
+		<result column="type" property="type" javaType="java.lang.String" />
+		<result column="seoFication" property="seoFication" javaType="java.lang.String" />
+		<result column="footerUrl" property="footerUrl" javaType="java.lang.String" />
+		<result column="state" property="state" javaType="java.lang.Integer" />
+		<result column="isShow" property="isShow" javaType="java.lang.Integer" />
+		<result column="sort" property="sort" javaType="java.lang.Integer" />
+		<result column="describes" property="describes" javaType="java.lang.String" />
+		<result column="website" property="website" javaType="java.lang.String" />
+		<result column="isPage" property="isPage" javaType="java.lang.Integer" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="findPageBySql" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			aac.id,
+			aac.preateId,
+			aac.preateName,
+			aac.name,
+			aac.type,
+			aac.seoFication,
+			aac.footerUrl,
+			aac.state,
+			aac.isShow,
+			aac.sort,
+			IFNULL(aac.describes,'') as describes,
+			aac.website,
+			aac.isPage,
+			aac.created,
+			aac.modified
+		FROM
+		app_artic_category as aac
+		<where>
+			1 = 1
+			and aac.state = 0
+			<if test="preateId!=null and preateId!='' " >
+				and aac.preateId = #{preateId}
+			</if>
+		</where>
+		ORDER BY aac.sort
+	</select>
+	
+	<select id="getCategoryById" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		aac.id,
+		aac.preateId,
+		aac.preateName,
+		aac.name,
+		aac.type,
+		aac.seoFication,
+		aac.footerUrl,
+		aac.state,
+		aac.isShow,
+		aac.sort,
+		IFNULL(aac.describes,'') as describes,
+		aac.website,
+		aac.isPage,
+		aac.created,
+		aac.modified
+		FROM
+		app_artic_category as aac
+		<where>
+			1 = 1
+			and aac.state = 0
+			<if test="id!=null and id!='' " >
+				and aac.id = #{id}
+			</if>
+		</where>
+	</select>
+
+	<!--加载文章分类列表-->
+	<select id="findArticleCategory" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		aac.id,
+		aac.preateId,
+		(select langName from app_article_category_langname where dicKey = aacl.dicKey and categoryId = aac.preateId) as preateName,
+		aac.isPage,
+		aacl.langName,
+		aacl.langContent,
+		aacl.dicKey
+		FROM
+		app_artic_category aac
+		LEFT JOIN app_article_category_langname aacl ON aac.id = aacl.categoryId
+		<where>
+			1 = 1
+			<if test="pCategoryId!=null and pCategoryId!='' ">
+				and aac.preateId = #{pCategoryId}
+			</if>
+			<if test="langCode!=null and langCode!='' ">
+				and aacl.dicKey = #{langCode}
+			</if>
+			and aac.state = 0
+		</where>
+		ORDER BY aac.sort
+	</select>
+
+</mapper>

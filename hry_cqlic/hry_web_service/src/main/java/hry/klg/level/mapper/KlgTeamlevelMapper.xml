@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.klg.level.dao.KlgTeamlevelDao">
+
+    <resultMap id="resultCountMap" type="hry.klg.level.model.KlgLevelCount">
+        <result column="sort" property="sort" javaType="java.lang.Integer" />
+        <result column="count" property="count" javaType="java.lang.Integer" />
+    </resultMap>
+    <resultMap id="resultBaseMap" type="hry.klg.level.model.KlgTeamlevel">
+        <result column="sort" property="sort" javaType="java.lang.Integer" />
+        <result column="nowSort" property="nowSort" javaType="java.lang.Integer" />
+        <result column="gradation" property="gradation" javaType="java.math.BigDecimal" />
+        <result column="pointAlgebra" property="pointAlgebra" javaType="java.lang.Integer" />
+        <result column="rewardNum" property="rewardNum" javaType="java.math.BigDecimal" />
+    </resultMap>
+     <resultMap id="resultVoBaseMap" type="hry.klg.level.model.vo.KlgTeamlevelVo">
+    </resultMap>
+    <select id="getSuperiorLeveConfig" resultMap="resultBaseMap">
+	select kt.*,
+	 kcl.sort,
+			  kcl.gradation,
+			  kcl.pointAlgebra,
+			  kcl.rewardNum,
+			  kcl.nowSort,
+			  kcl.fixedGradation
+	 FROM (
+	select id,customerId,parentId,`level`,created,modified from klg_teamlevel where customerId=  #{customerId}) kt INNER JOIN
+	 klg_customer_level kcl ON kcl.customerId=kt.parentId
+	  where kcl.nowSort>0
+	  ORDER BY `level` asc
+    </select>
+
+    <select id="countSubordinateByCustomer" resultMap="resultCountMap">
+      SELECT
+	sort,
+	count(sort) as count
+FROM
+	klg_customer_level ckl,
+	(
+		SELECT
+			customerId
+		FROM
+			klg_teamlevel
+		WHERE
+			parentId = #{customerId}
+	) AS cc
+WHERE
+	ckl.customerId = cc.customerId and ckl.nowSort>0
+	GROUP BY sort  ORDER BY sort desc
+    </select>
+        <!-- 统计用户推荐星级用户总数-->
+    <select id="getStarCount" parameterType="java.util.Map"
+            resultType="Integer">
+        SELECT
+        	COUNT(kt.id)
+		from
+			klg_teamlevel kt
+		LEFT JOIN
+			klg_customer_level kcl ON kcl.customerId=kt.customerId
+		LEFT JOIN
+			klg_level_config klc ON klc.id=kcl.levelId
+		WHERE
+			kt.parentId= #{customerId}
+		AND klc.sort>0
+		AND kt.level=#{level}
+    </select>
+    <!-- 统计用户推荐非星级用户总数-->
+    <select id="getNoStarCount" parameterType="java.util.Map"
+            resultType="Integer">
+        SELECT
+        	COUNT(kt.id)
+		from
+			klg_teamlevel kt
+		LEFT JOIN
+			klg_customer_level kcl ON kcl.customerId=kt.customerId
+		LEFT JOIN
+			klg_level_config klc ON klc.id=kcl.levelId
+		WHERE
+			kt.parentId= #{customerId}
+		AND 0>=klc.sort
+		AND kt.level=#{level}
+    </select>
+    <!-- 统计用户推荐星级用户非星级总数-->
+    <select id="getStarVipCount"  resultMap="resultVoBaseMap">
+        SELECT
+			COUNT(
+				CASE
+				WHEN klc.sort > 0 THEN
+					kt.id
+				ELSE
+					NULL
+				END
+			) AS startNum,
+			COUNT(
+				CASE
+				WHEN 0 >= klc.sort
+				OR klc.sort = NULL THEN
+					kt.id
+				ELSE
+					NULL
+				END
+			) AS noStartNum
+		FROM
+			klg_teamlevel kt
+		LEFT JOIN klg_customer_level kcl ON kcl.customerId = kt.customerId
+		LEFT JOIN klg_level_config klc ON klc.id = kcl.levelId
+		WHERE
+			kt.parentId=#{arg0}
+		AND kt.level=#{arg1}
+    </select>
+    <!-- 统计用户排单总数和本周排单数-->
+    <select id="getBuyMoneyByDate"  resultMap="resultVoBaseMap">
+        SELECT
+			SUM(kbt.usdtMoney) AS buySum,
+			SUM(
+				CASE
+				WHEN YEARWEEK(
+					DATE_ADD(kbt.created, INTERVAL - 1 DAY)
+				) = YEARWEEK(
+					DATE_ADD(now(), INTERVAL - 1 DAY)
+				) THEN
+					kbt.usdtMoney
+				ELSE
+					0
+				END
+			) AS weekBuySum
+		FROM
+			klg_teamlevel kt
+		LEFT JOIN klg_customer_level kcl ON kcl.customerId = kt.customerId
+		LEFT JOIN klg_level_config klc ON klc.id = kcl.levelId
+		LEFT JOIN klg_buy_transaction kbt ON kt.customerId = kbt.customerId
+		WHERE
+			kt.parentId= #{arg0}
+		AND kt.level=#{arg1}
+    </select>
+</mapper>

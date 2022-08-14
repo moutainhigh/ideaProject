@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.ico.dao.IcoAccountDao">
+    <resultMap id="icoAccountAtioPo"   type="hry.ico.model.util.IcoAccountAtioPo">
+        <result column="accountAtio" property="accountAtio" javaType="java.lang.String" />
+        <result column="additionRatio" property="additionRatio" javaType="java.lang.String" />
+        <result column="customerId" property="customerId" javaType="java.lang.Long" />
+        <result column="level_id" property="level_id" javaType="java.lang.Long" />
+        <result column="sort" property="sort" javaType="java.lang.Integer" />
+    </resultMap>
+    <update id="updateByVersion">
+        update
+        ico_account
+        set
+        modified= now(),
+        storageMoney = storageMoney + #{number},
+        version  = version + 1
+        where
+        id = #{id}
+        and
+        version = #{version}
+    </update>
+
+    <select id="recommendedLockSum" resultType="java.lang.String">
+      SELECT sum(ia.storageMoney) as lockSum from
+       app_commend_user acu,ico_account ia
+        where  acu.uid=ia.customerId
+        and  acu.pid = #{customerId,jdbcType=BIGINT}
+    </select>
+
+    <select id="allMemberLockSum" resultType="java.lang.String">
+      SELECT
+	    sum(ia.storageMoney) AS allStorageMoney
+        FROM
+            ico_account ia
+             where ia.storageMoney>0
+    </select>
+
+    <select id="getMemberLockAtio" resultType="java.lang.String">
+    SELECT
+	ROUND(
+		t2.storageMoney / t1.allStorageMoney,
+		6
+	) as accountAtio
+FROM
+	(
+		SELECT
+			sum(ia.storageMoney) AS allStorageMoney
+		FROM
+			ico_account ia
+		WHERE
+			ia.storageMoney > 0
+	) t1,
+	(
+		SELECT
+			storageMoney
+		FROM
+			ico_account
+		WHERE
+			customerId = #{customerId,jdbcType=BIGINT}
+	) t2
+    </select>
+
+    <select id="getAccountAtioBylevelSort" resultMap="icoAccountAtioPo">
+select accountAtio,customerId,level_id,sort,additionRatio  from
+(
+SELECT
+	ROUND(
+		t2.storageMoney / t1.allStorageMoney,
+		6
+	) as accountAtio,
+t2.customerId,t2.level_id,t2.sort,t2.additionRatio
+FROM
+	(
+		SELECT
+			sum(ia.storageMoney) AS allStorageMoney
+		FROM
+			ico_account ia
+		WHERE
+			ia.storageMoney > 0
+	) t1,
+	(
+        SELECT
+        ic.storageMoney,ic.customerId,icl.level_id,icl.sort,iuc.additionRatio
+        FROM
+        ico_account ic, ico_customer_level icl,ico_upgrade_config iuc where ic.customerId=icl.customer_id and  iuc.id=icl.level_id
+        <if test="levelSort!=null and levelSort!='' ">
+            and icl.sort  &gt;  #{levelSort,jdbcType=INTEGER}
+        </if>
+	) t2
+)t3
+ WHERE t3.accountAtio>0
+    </select>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.exchange.lend.dao.ExDmLendIntentDao"   >
+    	<select id="findPageBySql" parameterType="java.util.Map" resultType="hry.exchange.lend.model.vo.ExDmLendIntentAndCustomer">
+    		 SELECT a.userName,a.lendCoinType,b.lendCount,a.repayCount,a.trueName,a.intentType,a.factTime FROM ex_dm_lend_intent a,ex_dm_lend b,app_customer c 
+			 			WHERE a.lendId = b.id AND a.customerId = c.id AND a.intentType = 'interest'
+						<if test="userName != null and userName !='' ">
+							AND c.userName like #{userName}
+						</if>
+						<if test="trueName != null and trueName !=''">
+							AND a.trueName like #{trueName}
+						</if>
+						<if test="lendCoinType != null and lendCoinType !='' ">
+							AND a.lendCoinType = #{lendCoinType}
+		   				</if>
+		   				<if test="beginTime != null">
+					  		 <![CDATA[  AND a.factTime >= #{beginTime}  ]]>
+					   </if>
+					   	<if test="endTime != null">
+							<![CDATA[ AND a.factTime <= #{endTime}  ]]>
+						</if>
+						ORDER BY factTime DESC
+    	</select>
+    	
+    	
+    	 	<select id="findLendIntentList" parameterType="java.util.Map" resultType="hry.manage.remote.model.LendIntent">
+    		 SELECT a.userName,a.lendCoinType,b.lendCount,a.repayCount,a.trueName,a.intentType,a.factTime FROM ex_dm_lend_intent a,ex_dm_lend b,app_customer c 
+			 			WHERE a.lendId = b.id AND a.customerId = c.id and a.lendId=#{lendId}
+						<if test="userName != null and userName !='' ">
+							AND c.userName like #{userName}
+						</if>
+						<if test="trueName != null and trueName !=''">
+							AND a.trueName like #{trueName}
+						</if>
+						<if test="lendCoinType != null and lendCoinType !='' ">
+							AND a.lendCoinType = #{lendCoinType}
+		   				</if>
+		   				<if test="beginTime != null">
+					  		 <![CDATA[  AND a.factTime >= #{beginTime}  ]]>
+					   </if>
+					   	<if test="endTime != null">
+							<![CDATA[ AND a.factTime <= #{endTime}  ]]>
+						</if>
+						ORDER BY factTime DESC
+    	</select>
+</mapper>

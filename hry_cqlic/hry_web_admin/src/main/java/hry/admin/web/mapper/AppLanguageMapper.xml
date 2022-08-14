@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.web.dao.AppLanguageDao">
+
+    <!--批量插入数据-用于多语种数据同步-->
+    <insert id="insertByBatch" parameterType="java.util.List">
+        insert into app_language (langKey, langVal, langType, langCode, saasId, wordSource)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.langKey}, #{item.langVal}, #{item.langType}, #{item.langCode}, "hurong_system", #{item.wordSource})
+        </foreach>
+    </insert>
+
+    <!--根据语种查询多语言配置key-->
+    <select id="findLangKeyByLangCode" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+            langKey
+        FROM app_language
+        <where>
+            1 = 1
+            <if test="langCode!=null and langCode!=''">
+                and langCode = #{langCode}
+            </if>
+        </where>
+    </select>
+</mapper>

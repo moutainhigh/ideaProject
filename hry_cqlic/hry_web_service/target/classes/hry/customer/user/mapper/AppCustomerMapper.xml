@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.customer.user.dao.AppCustomerDao">
+	<resultMap id="BaseResultMap" type="hry.customer.user.model.AppCustomer">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="created" property="created" javaType="java.util.Date" />
+		<result column="modified" property="modified" javaType="java.util.Date" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+		<result column="states" property="states" javaType="java.lang.Integer" />
+		<result column="hasEmail" property="hasEmail" javaType="java.lang.Integer" />
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="passWord" property="passWord" javaType="java.lang.String" />
+		<result column="accountPassWord" property="accountPassWord" javaType="java.lang.String" />
+		<result column="isLock" property="isLock" javaType="java.lang.Integer" />
+		<result column="lockTime" property="lockTime" javaType="java.util.Date" />
+		<result column="isDelete" property="isDelete" javaType="java.lang.Integer" />
+		<result column="isReal" property="isReal" javaType="java.lang.Integer" />
+		<result column="salt" property="salt" javaType="java.lang.String" />
+		<result column="userCode" property="userCode" javaType="java.lang.String" />
+		<result column="isChange" property="isChange" javaType="java.lang.Integer" />
+		<result column="googleState" property="googleState" javaType="java.lang.Integer" />
+		<result column="phoneState" property="phoneState" javaType="java.lang.Integer" />
+		<result column="isGag" property="isGag" javaType="java.lang.Integer" />
+		<result column="gagDate" property="gagDate" javaType="java.util.Date" />
+		<result column="isAdmin" property="isAdmin" javaType="java.lang.Integer" />
+		<result column="gagTime" property="gagTime" javaType="java.lang.Integer" />
+
+		<association property="appPersonInfo"
+			javaType="hry.customer.person.model.AppPersonInfo">
+			<id column="personId" property="id" javaType="java.lang.Long" />
+			<result column="created" property="created" javaType="java.util.Date" />
+			<result column="modified" property="modified" javaType="java.util.Date" />
+			<result column="saasId" property="saasId" javaType="java.lang.String" />
+			<result column="customerId" property="customerId" javaType="java.lang.Long" />
+			<result column="mobilePhone" property="mobilePhone" javaType="java.lang.String" />
+			<result column="email" property="email" javaType="java.lang.String" />
+			<result column="trueName" property="trueName" javaType="java.lang.String" />
+			<result column="sex" property="sex" javaType="java.lang.Integer" />
+			<result column="birthday" property="birthday" javaType="java.util.Date" />
+			<result column="country" property="country" javaType="java.lang.String" />
+			<result column="personCard" property="personCard" javaType="java.lang.String" />
+			<result column="frontpersonCard" property="frontpersonCard"
+				javaType="java.lang.String" />
+			<result column="personBank" property="personBank" javaType="java.lang.String" />
+			<result column="surname" property="surname" javaType="java.lang.String" />
+			<result column="cardType" property="cardType" javaType="java.lang.Integer" />
+			<result column="cardId" property="cardId" javaType="java.lang.String" />
+			<result column="customerSource" property="customerSource"
+				javaType="java.lang.Integer" />
+			<result column="customerType" property="customerType"
+				javaType="java.lang.Integer" />
+			<result column="withdrawCheckMoney" property="withdrawCheckMoney"
+				javaType="java.math.BigDecimal" />
+
+		</association>
+	</resultMap>
+
+	<resultMap id="AppCustomerSimple" type="hry.customer.user.model.AppCustomerSimple">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="trueName" property="trueName" javaType="java.lang.String" />
+	</resultMap>
+
+
+	<!-- 通过sql分页查询 -->
+	<select id="findPageBySql" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select *
+		from
+		app_customer as ac INNER JOIN app_person_info as ap
+		on ac.id =
+		ap.customerId
+
+		<where>
+			<if test="email!=null and email!='' ">
+				 ap.email like
+				#{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and ap.mobilePhone like
+				#{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="surname !=null and surname !='' ">
+				and ap.surname like
+				#{surname,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName !=null and trueName!='' ">
+				and ap.trueName like
+				#{trueName,jdbcType=VARCHAR}
+			</if>
+			<if test="states!=null and states!='' ">
+				and ac.states = #{states,jdbcType=TINYINT}
+			</if>
+			<if test="unstates!=null and unstates!='' ">
+				and ac.states != #{unstates}
+			</if>
+			<if test="referralCode!=null and referralCode!='' ">
+				and
+				ac.referralCode like #{referralCode,jdbcType=VARCHAR}
+			</if>
+			<if test="type!=null and type!='' ">
+				and ac.type like
+				#{type,jdbcType=VARCHAR}
+			</if>
+			<if test="cardId!=null and cardId!='' ">
+				and ap.cardId like
+				#{cardId,jdbcType=VARCHAR}
+			</if>
+			<if test="isGag !=null and isGag !='' ">
+				and
+				ac.isGag = #{isGag}
+			</if>
+			<if test="isAdmin !=null and isAdmin !='' ">
+				and
+				ac.isAdmin = #{isAdmin}
+			</if>
+			<if test="userName_in!=null and userName_in!='' ">
+				<foreach collection="userName_in" index="index" item="item"
+					open="and userName in(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+
+		order by ac.created desc
+	</select>
+
+	<select id="findAppCustomerSimple" parameterType="java.util.Map"
+		resultMap="AppCustomerSimple">
+		select ac.id as id,
+		ac.userName as userName,
+		ap.trueName as trueName
+		from app_customer as ac LEFT JOIN app_person_info as ap on ac.id =
+		ap.customerId
+		where ac.isReal = '1'
+	</select>
+
+	<select id="findById" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select *
+		from
+		app_customer as ac LEFT JOIN app_person_info as ap
+		on ac.id = ap.customerId
+
+		<where>
+			<if test="id!=null and id!='' ">
+				ac.id = #{id,jdbcType=VARCHAR}
+			</if>
+
+		</where>
+	</select>
+
+
+
+
+	<select id="getRealNameCustomer" resultMap="BaseResultMap">
+		select *
+		from
+		app_customer AS a
+		WHERE
+		a.isReal = '1'
+
+
+	</select>
+
+
+	<select id="getFundChangeCustomers" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+
+		select a.customerId as id from ex_entrust a 
+			 <![CDATA[ 
+			where a.created <=#{endTime} and a.created >= #{beginTime}  group by a.customerId
+			 ]]>
+		UNION
+		select b.customerId as id from app_transaction b 
+			 <![CDATA[ 
+			where b.created<=#{endTime} and b.created >=#{beginTime}   group by b.customerId
+			  ]]>
+		UNION
+		select c.customerId as id from ex_dm_transaction c
+			 <![CDATA[ 
+			 where c.created<=#{endTime} and c.created >=#{beginTime}   group by c.customerId
+			 ]]>
+		UNION
+		select d.customerId as id from app_cold_account_record d
+			 <![CDATA[  
+			where d.created<=#{endTime} and d.created >=#{beginTime}   group by d.customerId
+			 ]]>
+		UNION
+		select f.customerId as id from app_hot_account_record f
+			 <![CDATA[ 
+			 where f.created<=#{endTime} and f.created >=#{beginTime}   group by f.customerId
+			 ]]>
+		UNION
+		select e.customerId as id from ex_dm_hot_account_record e 
+			 <![CDATA[ 
+			where e.created<=#{endTime} and e.created >=#{beginTime}   group by e.customerId
+			 ]]>
+		UNION
+		select g.customerId as id from ex_dm_cold_account_record g 
+			 <![CDATA[ 
+			where g.created<=#{endTime} and g.created >=#{beginTime}   group by g.customerId
+		      ]]>
+		UNION
+		select i.customerId as id from ex_dm_lend_intent i 
+			 <![CDATA[ 
+			where i.created<=#{endTime} and i.created >=#{beginTime}   group by i.customerId
+		      ]]>
+		UNION
+		select h.customerId as id from ex_dm_lend h 
+			 <![CDATA[ 
+			where h.created<=#{endTime} and h.created >=#{beginTime}   group by h.customerId
+		      ]]>
+
+		UNION
+		select j.customerId as id from app_account_disable j 
+			 <![CDATA[ 
+			where j.created<=#{endTime} and j.created >=#{beginTime}   group by j.customerId
+		      ]]>
+	</select>
+
+	<!-- 获取实名用户的数量 -->
+	<select id="getHasAuthNum" resultType="java.lang.Integer">
+		select count(*)
+		from
+		app_customer AS a
+		WHERE
+		a.isReal = '1'
+	</select>
+		
+		<!---->
+	<resultMap id="BaseResultMap1" type="hry.customer.user.model.AppCustomer">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="isLock" property="isLock" javaType="java.lang.Integer" />
+		<result column="lockTime" property="lockTime" javaType="java.util.Date" />
+		<result column="isDelete" property="isDelete" javaType="java.lang.Integer" />
+		<result column="isReal" property="isReal" javaType="java.lang.Integer" />
+		<result column="userCode" property="userCode" javaType="java.lang.String" />
+		<result column="isChange" property="isChange" javaType="java.lang.Integer" />
+		<result column="salt" property="salt" javaType="java.lang.String" />
+		<result column="googleKey" property="googleKey" javaType="java.lang.String" />
+		<result column="messIp" property="messIp" javaType="java.lang.String" />
+		<result column="googleState" property="googleState" javaType="java.lang.Integer" />
+		<result column="phoneState" property="phoneState" javaType="java.lang.Integer" />
+		<result column="passWord" property="passWord" javaType="java.lang.String" />
+		<result column="states" property="states" javaType="java.lang.Integer" />
+		<result column="hasEmail" property="hasEmail" javaType="java.lang.Integer" />
+
+		<result column="passDate" property="passDate" javaType="java.util.Date" />
+		<result column="accountPassWord" property="accountPassWord"
+			javaType="java.lang.String" />
+		<association property="appPersonInfo"
+			javaType="hry.customer.person.model.AppPersonInfo">
+			<result column="customerType" property="customerType"
+				javaType="java.lang.Integer" />
+		</association>
+	</resultMap>
+	<select id="getAppCustomer" parameterType="java.util.Map"
+		resultMap="BaseResultMap1">
+		select
+		ac.id,ac.saasId,ac.userName,ac.isLock,ac.lockTime,ac.isDelete,ac.isReal,ac.isChange,
+		ac.accountPassWord as accountPassWord,ac.salt as salt,ac.passWord as
+		passWord,ac.userCode,
+		ac.googleKey as
+		googleKey,ac.googleState,ac.messIp,ac.passDate,ac.phoneState,ac.states,ac.hasEmail
+		from
+		app_customer as ac
+
+		<where>
+			ac.userName like #{userName,jdbcType=VARCHAR}
+
+		</where>
+
+
+	</select>
+
+	<resultMap id="BaseResultMaptest" type="hry.customer.user.model.AppCustomer">
+		<id column="id" property="id" javaType="java.lang.Long" />
+		<result column="saasId" property="saasId" javaType="java.lang.String" />
+		<result column="userName" property="userName" javaType="java.lang.String" />
+		<result column="isLock" property="isLock" javaType="java.lang.Integer" />
+		<result column="lockTime" property="lockTime" javaType="java.util.Date" />
+		<result column="isDelete" property="isDelete" javaType="java.lang.Integer" />
+		<result column="isReal" property="isReal" javaType="java.lang.Integer" />
+		<result column="userCode" property="userCode" javaType="java.lang.String" />
+		<result column="isChange" property="isChange" javaType="java.lang.Integer" />
+		<result column="salt" property="salt" javaType="java.lang.String" />
+
+	</resultMap>
+	<select id="getAppCustomerSingleByUserName" parameterType="java.util.Map"
+		resultMap="BaseResultMaptest">
+		select ac.id,ac.userName
+		from
+		app_customer as ac
+
+		<where>
+			ac.userName = #{userName,jdbcType=VARCHAR}
+
+		</where>
+
+
+	</select>
+
+	<!-- 获取推荐用户数量 -->
+	<select id="commendCount" resultType="java.lang.Integer"
+		parameterType="java.util.Map">
+		select count(*)
+		from
+		app_customer AS a
+		WHERE
+		a.commendCode = #{userName,jdbcType=VARCHAR}
+		and a.hasEmail=1
+	</select>
+
+
+
+	<select id="getByCustomerId" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		SELECT *
+		FROM app_customer person
+		<where>
+			<if test="username and username!='' ">
+				person.username = #{username,jdbcType=VARCHAR}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="getByPhone" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT *
+		FROM app_customer person
+		<where>
+			<if test="phone and phone'' ">
+				person.phone = #{phone,jdbcType=VARCHAR}
+			</if>
+
+		</where>
+	</select>
+	
+	<!-- 新sql分页查询 -->
+	<select id="findPageBySqlList" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select 
+			act.*,
+			ap.*
+		from 	
+			(select *
+			from
+			app_customer as ac 
+			<where>
+				1 = 1
+				<if test="isBlacklist!=null and isBlacklist!='' ">
+					and ac.isBlacklist = #{isBlacklist,jdbcType=INTEGER}
+				</if>
+				<if test="states!=null and states!='' ">
+					and ac.states = #{states,jdbcType=TINYINT}
+				</if>
+				<if test="referralCode!=null and referralCode!='' ">
+					and ac.referralCode like #{referralCode,jdbcType=VARCHAR}
+				</if>
+				<if test="type!=null and type!='' ">
+					and ac.type like #{type,jdbcType=VARCHAR}
+				</if>
+				<if test="customerId!=null ">
+					and ac.id in
+					<foreach item="item" index="index" collection="customerId"
+						open="(" separator="," close=")">
+						#{item}	
+					</foreach>
+				</if>
+				<if test="userName_in!=null and userName_in!='' ">
+					<foreach collection="userName_in" index="index" item="item"
+						open="and userName in(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</where>
+			order by ac.created desc
+			limit #{start},#{end}
+		) as act 
+		INNER JOIN app_person_info as ap
+		on act.id = ap.customerId
+	</select>
+	
+	<!-- 根据条件查询客户信息 -->
+	<select id="findCustomerByCondition" parameterType="java.util.Map" 	resultType="java.lang.String" >
+		SELECT
+			ap.customerId 
+		FROM
+			app_person_info AS ap
+		<where>
+			1 = 1
+			<if test="email!=null and email!='' ">
+				and ap.email = #{email,jdbcType=VARCHAR}
+			</if>
+			<if test="mobilePhone!=null and mobilePhone!='' ">
+				and ap.mobilePhone = #{mobilePhone,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName!=null and trueName!='' ">
+				and ap.trueName =
+				#{trueName,jdbcType=VARCHAR}
+			</if>
+			<if test="cardId!=null and cardId!='' ">
+				and ap.cardId = #{cardId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取分页总页数 -->
+	<select id="findPageBySqlCount" resultType="Long">
+		SELECT
+			count(*)
+		FROM
+			app_customer AS ac
+		<where>
+			1 = 1
+			<if test="isBlacklist!=null and isBlacklist!='' ">
+				and ac.isBlacklist = #{isBlacklist,jdbcType=INTEGER}
+			</if>
+			<if test="states!=null and states!='' ">
+				and ac.states = #{states,jdbcType=TINYINT}
+			</if>
+			<if test="referralCode!=null and referralCode!='' ">
+				and ac.referralCode like #{referralCode,jdbcType=VARCHAR}
+			</if>
+			<if test="type!=null and type!='' ">
+				and ac.type like #{type,jdbcType=VARCHAR}
+			</if>
+			<if test="customerId!=null ">
+				and ac.id in
+				<foreach item="item" index="index" collection="customerId"
+					open="(" separator="," close=")">
+					#{item}	
+				</foreach>
+			</if>
+			<if test="userName_in!=null and userName_in!='' ">
+				<foreach collection="userName_in" index="index" item="item"
+					open="and userName in(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateGag">
+		update app_customer set isGag=0,gagDate=NULL,gagTime=NULL where gagDate &lt;= NOW()-gagTime 
+	</update>
+</mapper>

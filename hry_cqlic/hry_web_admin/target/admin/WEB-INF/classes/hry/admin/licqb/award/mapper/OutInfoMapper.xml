@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.licqb.award.dao.OutInfoDao">
+    <resultMap id="pageBySqlMap" type="hry.admin.licqb.award.model.OutInfo">
+        <result property="customerId" column="customerId" javaType="java.lang.Long" />
+        <collection property="userCommendAsset"  select="findUserPerformance" column="customerId">
+        </collection>
+    </resultMap>
+
+    <resultMap id="sonPageBySqlMap" type="hry.admin.licqb.award.model.OutInfo">
+
+    </resultMap>
+
+    <resultMap id="bySqlMap" type="hry.admin.licqb.award.model.UserCommendAsset"></resultMap>
+    
+    <select id="findPageBySql" resultMap="pageBySqlMap" parameterType="java.util.Map">
+        select api.customerId,acu.receCode,api.email,api.mobilePhone,loi.baseMoney,loi.allMoney,loi.created,lcl.levelName,lcl.sort,lcl.teamLevelName,lcl.teamSort
+        from lc_out_info loi
+        LEFT JOIN app_person_info api
+        ON loi.customerId = api.customerId
+        LEFT JOIN lc_customer_level lcl
+        ON api.customerId = lcl.customerId
+        LEFT JOIN app_commend_user acu
+        ON api.customerId = acu.uid
+        WHERE 1=1
+        and loi.`status`= 0
+        and api.id is not null
+        <if test="receCode != null and receCode != ''">
+            and acu.receCode like #{receCode}
+        </if>
+        <if test="email != null and email != ''">
+            and api.email like #{email}
+        </if>
+        <if test="mobilePhone != null and mobilePhone != ''">
+            and api.mobilePhone like #{mobilePhone}
+        </if>
+        ORDER by loi.id ASC
+    </select>
+
+    <select id="findUserPerformance" resultMap="bySqlMap" parameterType="java.lang.String">
+        SELECT a.teamAllAsset, a.oneAllAsset, a.twoAllAsset, a.threeAllAsset, b.lastMonthAsset,b.thisMonthAsset
+        FROM
+        (SELECT
+        sum(case when tt.level != 0 THEN lc.baseMoney END) as teamAllAsset,
+        sum(case when tt.level = 1 THEN lc.baseMoney END) as oneAllAsset,
+        sum(case when tt.level = 2 THEN lc.baseMoney END) as twoAllAsset,
+        sum(case when tt.level >= 3 THEN lc.baseMoney END) as threeAllAsset
+        FROM
+        (
+        select t.customerId,t.level
+        from app_team_level t
+        where t.parentId = #{customerId}
+        ) tt
+        LEFT JOIN
+        lc_out_info lc
+        ON tt.customerId = lc.customerId
+        where lc.`status` = 0) a,
+        (
+        SELECT
+        sum(case when PERIOD_DIFF(date_format(now(), '%Y%m' ), date_format(ldr.created, '%Y%m' ) ) =1 THEN ldr.dealMoney END)  as lastMonthAsset,
+        sum(case when DATE_FORMAT(ldr.created, '%Y%m' ) = DATE_FORMAT(CURDATE() , '%Y%m') THEN ldr.dealMoney END)  as thisMonthAsset
+        FROM
+        (
+        select t.customerId,t.parentId
+        from app_team_level t
+        where t.parentId = #{customerId}
+        ) tt
+        LEFT JOIN lc_deal_record ldr
+        ON tt.customerId = ldr.customerId
+        WHERE ldr.dealType in(8,13)
+        ) b
+    </select>
+
+    <select id="findSonPageBySql" resultMap="sonPageBySqlMap" parameterType="java.util.Map">
+            select tt.customerId,api.email,api.mobilePhone,lcl.levelName,lcl.teamLevelName,tt.`level`, lc.baseMoney,lc.created
+            FROM
+            (
+            select t.customerId,t.parentId,t.`level`
+            from app_team_level t
+            where t.parentId = #{customerId}
+            <if test="level != null and level != ''">
+                and t.`level` = #{level}
+            </if>
+            <if test="default != null and default == 'true'">
+                and t.`level` <![CDATA[ <= ]]> 10
+            </if>
+            <if test="default != null and default == 'false'">
+                and t.`level` > 10
+            </if>
+            ) tt
+            LEFT JOIN
+            lc_out_info lc
+            ON tt.customerId = lc.customerId
+            LEFT JOIN app_person_info api
+            ON tt.customerId = api.customerId
+            LEFT JOIN lc_customer_level lcl
+            ON tt.customerId = lcl.customerId
+            where lc.`status` = 0
+            <if test="email != null and email != ''">
+                and api.email like #{email}
+            </if>
+            <if test="mobilePhone != null and mobilePhone != ''">
+                and api.mobilePhone like #{mobilePhone}
+            </if>
+            <if test="sort != null and sort != ''">
+                and lcl.sort = #{sort}
+            </if>
+    </select>
+</mapper>

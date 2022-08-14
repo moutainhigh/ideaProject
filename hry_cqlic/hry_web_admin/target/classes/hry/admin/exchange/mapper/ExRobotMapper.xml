@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.admin.exchange.dao.ExRobotDao">
+    <!-- 根据id修改isSratAuto为开启 -->
+    <update id="startAuto">
+        update ex_robot set isSratAuto = #{isSratAuto}
+        where id = #{id}
+    </update>
+
+    <!-- 根据ids修改isSratAuto为关闭 -->
+    <update id="closeAutoByIds">
+        update ex_robot set isSratAuto = #{isSratAuto}
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

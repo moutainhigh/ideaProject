@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="hry_web_app" />
+        <module name="hry_single_api" />
+        <module name="hry_web_service_api" />
+        <module name="hry_web_trade" />
+        <module name="hry_single" />
+        <module name="hry_web_service" />
+        <module name="hry_web_admin" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="hry_single" target="1.8" />
+      <module name="hry_single_api" target="1.8" />
+      <module name="hry_web_admin" target="1.8" />
+      <module name="hry_web_app" target="1.8" />
+      <module name="hry_web_service" target="1.8" />
+      <module name="hry_web_service_api" target="1.8" />
+      <module name="hry_web_trade" target="1.8" />
+      <module name="hurong_cqlic" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
