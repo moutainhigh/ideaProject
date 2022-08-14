@@ -1,0 +1,143 @@
+package hry.platform.communication.sms.util;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import hry.bean.JsonResult;
+import hry.util.SpringUtil;
+import hry.util.httpRequest.HttpConnectionUtil;
+import hry.util.rsa.FXHParam;
+import hry.util.rsa.RSAUtil;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.util.StringUtils;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * @author: liuchenghui
+ * @Date: 2020/3/24 15:09
+ * @Description: 调用易租云接口
+ */
+public class HrySmsCallable implements Callable {
+
+    private Map<String, String> params;
+
+    public HrySmsCallable (Map<String, String> params) {
+        this.params = params;
+    }
+
+    @Override
+    public JsonResult call () throws Exception {
+        SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssSSS");
+        String time = format.format(new Date(System.currentTimeMillis()));
+        String randomStr = RandomStringUtils.random(4, false, true);
+        JsonResult jsonResult = new JsonResult();
+        Jedis jedis = null;
+        try {
+            JedisPool jedisPool = SpringUtil.getBean("jedisPool");
+            jedis = jedisPool.getResource();
+            FXHParam fxhParam = getFxhParam(jedis);
+            //根据短信类型取相应的短信id
+            String type = params.get("templateCode");
+            AtomicReference<String> templateId = getStringAtomicReference(jedis, type);
+            //获取模板签名
+            String str = params.get("text");
+            int start = str.indexOf("【");
+            int end = str.indexOf("】");
+            String signName = str.substring(start + 1, end);
+            String sign = setMap(time, randomStr, fxhParam, templateId, str, end, signName);
+
+            Map<String, String> paramMap = new HashMap<>();
+            paramMap.put("companyCode", fxhParam.getCompanyCode());
+            paramMap.put("sign", sign);
+
+            String returnMsg = HttpConnectionUtil.doPostQuery(fxhParam.getPayUrl(), paramMap);
+            if (StringUtils.isEmpty(returnMsg)) {
+                jsonResult.setSuccess(false);
+                jsonResult.setMsg(returnMsg);
+            } else {
+                JSONObject jsonObject = JSONObject.parseObject(returnMsg);
+                if ("8888".equals(jsonObject.getString("resultCode"))) {
+                    jsonResult.setSuccess(true);
+                    jsonResult.setMsg(returnMsg);
+                } else {
+                    jsonResult.setSuccess(false);
+                    jsonResult.setMsg(returnMsg);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (jedis == null) {
+                jedis.close();
+            }
+        }
+        return jsonResult;
+    }
+
+    private String setMap (String time, String randomStr, FXHParam fxhParam, AtomicReference<String> templateId, String str, int end, String signName) throws Exception {
+        //map存需要加密的字段
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("signName", signName);
+        map.put("ordernumber", time + randomStr);
+        map.put("belonged", "");
+        map.put("phone", params.get("mobile"));
+
+        String msg = str.substring(end + 1);
+        map.put("msg", msg);
+        map.put("templateCode", templateId.get());
+        map.put("templateParam", params.get("param"));
+        //获取模板签名
+        String state = "0";
+        if (params.get("mobile").contains("+")) {
+            state = "1";
+        }
+        map.put("state", state);
+
+        return RSAUtil.encryptByPrivateKey(JSONObject.toJSONString(map), fxhParam.getPrivateKey());
+    }
+
+    private FXHParam getFxhParam (Jedis jedis) {
+        FXHParam fxhParam = new FXHParam();
+
+        JSONArray array = JSONObject.parseArray(jedis.get("configCache:smsConfig"));
+        array.forEach(app -> {
+            JSONObject appConfig = JSONObject.parseObject(app.toString());
+            switch (appConfig.getString("configkey")) {
+                case "klinedataurl":
+                    fxhParam.setPayUrl(appConfig.getString("value"));
+                    break;
+                case "businessNumber":
+                    fxhParam.setCompanyCode(appConfig.getString("value"));
+                    break;
+                case "publickey":
+                    fxhParam.setPublicKey(appConfig.getString("value"));
+                    break;
+                case "privatekey":
+                    fxhParam.setPrivateKey(appConfig.getString("value"));
+                    break;
+                default:
+                    break;
+            }
+        });
+        return fxhParam;
+    }
+
+    private AtomicReference<String> getStringAtomicReference (Jedis jedis, String type) {
+        AtomicReference<String> templateId = new AtomicReference<>("");
+        JSONArray array2 = JSONObject.parseArray(jedis.get("configCache:noticeConfig"));
+        array2.forEach(app -> {
+            JSONObject appConfig = JSONObject.parseObject(app.toString());
+            if (appConfig.getString("configkey").equals(type + "_key")) {
+                templateId.set(appConfig.getString("value"));
+            }
+        });
+        return templateId;
+    }
+}

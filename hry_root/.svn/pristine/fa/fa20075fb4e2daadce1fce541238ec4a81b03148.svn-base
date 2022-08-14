@@ -1,0 +1,33 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-12 17:53:14 
+ */
+package hry.activiti.process.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.activiti.process.model.ProDefineDcoument;
+import hry.activiti.process.service.ProDefineDcoumentService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> ProDefineDcoumentService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-12 17:53:14 
+ */
+@Service("proDefineDcoumentService")
+public class ProDefineDcoumentServiceImpl extends BaseServiceImpl<ProDefineDcoument, Long> implements ProDefineDcoumentService {
+
+	@Resource(name = "proDefineDcoumentDao")
+	@Override
+	public void setDao (BaseDao<ProDefineDcoument, Long> dao) {
+		super.dao = dao;
+	}
+
+}

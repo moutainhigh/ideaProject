@@ -1,0 +1,241 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: zhouming
+ * @version: V1.0
+ * @Date: 2020-07-17 15:29:53 
+ */
+package hry.business.fa.model;
+
+import hry.bean.BaseModel;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.*;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+/**
+ * <p> FaProduct </p>
+ *
+ * @author: zhouming
+ * @Date: 2020-07-17 15:29:53 
+ */
+@Data
+@ApiModel(value = "产品表实体类")
+@Table(name="fa_product")
+public class FaProduct extends BaseModel {
+
+	/**
+	* 主键id
+	*/
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", unique = true, nullable = false)
+    @ApiModelProperty(value = "主键id")
+	private Long id;
+
+	/**
+	* 产品名称
+	*/
+	@Column(name= "productname")
+    @ApiModelProperty(value = "产品名称")
+	private String productname;
+
+	/**
+	* 产品类型id
+	*/
+	@Column(name= "typeid")
+    @ApiModelProperty(value = "产品类型id")
+	private Long typeid;
+
+	/**
+	* 产品类型名称
+	*/
+	@Column(name= "typename")
+    @ApiModelProperty(value = "产品类型名称")
+	private String typename;
+
+	/**
+	* 工作流id
+	*/
+	@Column(name= "projectId")
+    @ApiModelProperty(value = "工作流id")
+	private Long projectId;
+
+	/**
+	* 融资期限（月）
+	*/
+	@Column(name= "financingTerm")
+    @ApiModelProperty(value = "融资期限（月）")
+	private Integer financingTerm;
+
+	/**
+	* 产品说明
+	*/
+	@Column(name= "productdesc")
+    @ApiModelProperty(value = "产品说明")
+	private String productdesc;
+
+	/**
+	* 还款方式 1 等额本金 2 等额本息 3 等本等息 4 按期收息, 到本还期 5 其他方式
+	*/
+	@Column(name= "repaytype")
+    @ApiModelProperty(value = "还款方式 1 等额本金 2 等额本息 3 等本等息 4 按期收息, 到本还期 5 其他方式")
+	private Integer repaytype;
+
+	/**
+	* 还款周期 1 日 2 月 3 季 4 半季, 年 5 自定义
+	*/
+	@Column(name= "repayperiod")
+    @ApiModelProperty(value = "还款周期 1 日 2 月 3 季 4 半季 5 年 6 自定义")
+	private Integer repayperiod;
+
+	/**
+	* 每期天数 注：只有自定义时天数有值
+	*/
+	@Column(name= "periodday")
+    @ApiModelProperty(value = "每期天数 注：只有自定义时天数有值")
+	private Integer periodday;
+
+	/**
+	* 模型类型 1 算头不算尾 2 算头又算尾
+	*/
+	@Column(name= "modeltype")
+    @ApiModelProperty(value = "模型类型 1 算头不算尾 2 算头又算尾")
+	private Integer modeltype;
+
+	/**
+	* 月息（期息类型） 1 按月化利率直接计算 2 按日化利率乘实际天数计算 3 按日化利率乘固定天数30天计算
+	*/
+	@Column(name= "periodtype")
+    @ApiModelProperty(value = "月息（期息类型） 1 按月化利率直接计算 2 按日化利率乘实际天数计算 3 按日化利率乘固定天数30天计算")
+	private Integer periodtype;
+
+	/**
+	* 年模型 1 360天 2 365天
+	*/
+	@Column(name= "yearmodeltype")
+    @ApiModelProperty(value = "年模型 1 360天 2 365天")
+	private Integer yearmodeltype;
+
+	/**
+	* 合计日比例
+	*/
+	@Column(name= "totaldayratio")
+    @ApiModelProperty(value = "合计日比例")
+	private BigDecimal totaldayratio;
+
+	/**
+	* 合计月比例
+	*/
+	@Column(name= "totalmonthratio")
+    @ApiModelProperty(value = "合计月比例")
+	private BigDecimal totalmonthratio;
+
+	/**
+	* 合计年比例
+	*/
+	@Column(name= "totalyearratio")
+    @ApiModelProperty(value = "合计年比例")
+	private BigDecimal totalyearratio;
+
+	/**
+	* 合计总额
+	*/
+	@Column(name= "totalsum")
+    @ApiModelProperty(value = "合计总额")
+	private BigDecimal totalsum;
+
+	/**
+	* 还款日类型 1 按还款日对日还款 2 按固定还款
+	*/
+	@Column(name= "repaydaytype")
+    @ApiModelProperty(value = "还款日类型 1 按还款日对日还款 2 按固定还款")
+	private Integer repaydaytype;
+
+	/**
+	* 每月多少号还款 注 只有固定还款时有值
+	*/
+	@Column(name= "repayday")
+    @ApiModelProperty(value = "每月多少号还款 注 只有固定还款时有值")
+	private Integer repayday;
+
+	/**
+	* 罚息比例
+	*/
+	@Column(name= "penaltyratio")
+    @ApiModelProperty(value = "罚息比例")
+	private BigDecimal penaltyratio;
+
+	/**
+	* 是否开启第三方代扣 0 关闭 1 开启
+	*/
+	@Column(name= "openthirddebit")
+    @ApiModelProperty(value = "是否开启第三方代扣 0 关闭 1 开启")
+	private Integer openthirddebit;
+
+	/**
+	* 是否开启第三方支付 0 关闭 1 开启
+	*/
+	@Column(name= "openthirdpay")
+    @ApiModelProperty(value = "是否开启第三方支付 0 关闭 1 开启")
+	private Integer openthirdpay;
+
+	/**
+	* 是否开启资方 0 关闭 1 开启
+	*/
+	@Column(name= "openfunding")
+    @ApiModelProperty(value = "是否开启资方 0 关闭 1 开启")
+	private Integer openfunding;
+
+	/**
+	* 宽限日(天)
+	*/
+	@Column(name= "graceday")
+    @ApiModelProperty(value = "宽限日(天)")
+	private Integer graceday;
+
+	/**
+	* 是否开启节假日顺延 0 关闭 1 开启
+	*/
+	@Column(name= "openholidays")
+    @ApiModelProperty(value = "是否开启节假日顺延 0 关闭 1 开启")
+	private Integer openholidays;
+
+	/**
+	* 产品创建状态 1 第一步（产品基础信息） 2 第二步（产品计息模型配置） 3 第三步（选择附加费用）4 完成 
+	*/
+	@Column(name= "status")
+    @ApiModelProperty(value = "产品创建状态 1 第一步（产品基础信息） 2 第二步（产品计息模型配置） 3 第三步（选择附加费用）4 完成 ")
+	private Integer status;
+
+	/**
+	* 是否启用 0 关闭 1 启用
+	*/
+	@Column(name= "openstart")
+    @ApiModelProperty(value = "是否启用 0 关闭 1 启用")
+	private Integer openstart;
+
+	/**
+	* 是否上架 0 下架 1 上架
+	*/
+	@Column(name= "openputaway")
+    @ApiModelProperty(value = "是否上架 0 下架 1 上架")
+	private Integer openputaway;
+
+	@ApiModelProperty(value = "产品费率集合")
+	@Transient
+	private String productRateJson;
+
+	@ApiModelProperty(value = "产品费用Id集合")
+	@Transient
+	private String productCostIds;
+
+	@ApiModelProperty(value = "产品费用集合")
+	@Transient
+	private List<FaCost> faCostList;
+
+}

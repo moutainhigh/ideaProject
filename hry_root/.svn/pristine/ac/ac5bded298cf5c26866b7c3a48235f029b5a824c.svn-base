@@ -1,0 +1,221 @@
+package hry.platform.communication.sms.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import hry.bean.JsonResult;
+import hry.core.thread.ThreadPoolUtils;
+import hry.platform.communication.sms.model.AppSmsSend;
+import hry.platform.communication.sms.model.AppSmsTemplate;
+import hry.platform.communication.sms.service.AppSmsSendService;
+import hry.platform.communication.sms.service.AppSmsTemplateService;
+import hry.platform.communication.sms.util.HrySmsCallable;
+import hry.platform.config.service.AppConfigService;
+import hry.platform.utils.BaseConfUtil;
+import hry.redis.RedisService;
+import hry.util.sms.SmsSendParam;
+import hry.util.sms.SmsSendUtils;
+import hry.util.sms.SmsStrategy;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
+
+/**
+ * @author: liuchenghui
+ * @Date: 2020/3/23 17:50
+ * @Description: 易租云短信
+ * 采用策略模式
+ * 该类使用的是易租云发送短信，如果使用其他第三方发送短信，需要创建实现类，并实现SmsStrategy接口
+ */
+@Component
+@Slf4j
+public class HrySmsServiceImpl implements SmsStrategy {
+
+    private final static String SMS_KEY = "hurongyuseen";
+    private final static String CONST_ZERO = "0";
+    private final static String STATUS_CODE = "8888";
+    private final static String ZH_CN = "zh_CN";
+
+    @Autowired
+    private AppSmsSendService appSmsSendService;
+    @Autowired
+    private AppConfigService appConfigService;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private AppSmsTemplateService appSmsTemplateService;
+
+    @Override
+    public JsonResult smsSend (SmsSendParam sendParam) {
+        System.out.println("----------发送短信前的验证及发送记录对象封装----------");
+        JsonResult jsonResult = new JsonResult();
+        // 内部验证密码
+        String smsKey = sendParam.getSmsKey();
+        try {
+            AppSmsSend appSmsSend = new AppSmsSend();
+            // 判断密钥
+            if (!StringUtils.isEmpty(smsKey) && SMS_KEY.equals(smsKey)) {
+                // 设置短信内容
+                // 设置第三方短信模版id
+                appSmsSend.setThirdTemplateId("");
+                // 设置短信内容
+                appSmsSend.setSendContent(getSmsTemplateContent(sendParam));
+
+                // 设置短信发送类型
+                appSmsSend.setType(sendParam.getHrySmstype());
+
+                // 发送手机号
+                appSmsSend.setMobileNum(sendParam.getHrySmsPhoneNum());
+                System.out.println("----------发送短信----------");
+                boolean b = sendSmsHandler(appSmsSend, sendParam);
+                // 如果发送标记为成功,则标记为已发送
+                if (b) {
+                    System.out.println("----------发送成功----------");
+                    appSmsSend.setSendStatus("1");
+                    jsonResult.setSuccess(true);
+                } else {
+                    System.out.println("----------发送失败----------");
+                    jsonResult.setSuccess(false);
+                }
+            } else {
+                System.out.println("----------非法请求----------");
+                jsonResult.setSuccess(false);
+                jsonResult.setMsg("非法请求");
+            }
+            // 标记为已接收
+            appSmsSend.setReceiveStatus("1");
+            // 保存发送记录
+            appSmsSend.setModified(new Date());
+            System.out.println("----------保存发送记录----------");
+            appSmsSendService.save(appSmsSend);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResult;
+    }
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/3/24 10:19
+     *  @Description: 发送短信操作
+     */
+    private boolean sendSmsHandler (AppSmsSend appSmsSend, SmsSendParam param) {
+        //获取第三方短信开启状态
+        String smsOpen = appConfigService.getValueByKey("smsOpen");
+        // 接口是否开启
+        if (CONST_ZERO.equals(smsOpen)) {
+            // 获取短信内容
+            String sendContent = appSmsSend.getSendContent();
+
+            // 设置短信发送参数
+            appSmsSend.setPostParam(JSON.toJSONString(param));
+            if (StringUtils.isEmpty(sendContent)) {
+                appSmsSend.setReceiveStatus("0");
+                appSmsSend.setThirdPartyResult("短信模板未设置或未开启");
+                return false;
+            }
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("text", sendContent);
+            params.put("code", param.getHryCode());
+            params.put("mobile", param.getHryCountry() + param.getHrySmsPhoneNum());
+            HrySmsCallable hrySmsCallable = new HrySmsCallable(params);
+
+            Future<JsonResult> result = ThreadPoolUtils.submit(hrySmsCallable);
+            JsonResult jsonResult = new JsonResult();
+            try {
+                jsonResult = result.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //修改为您要发送的手机号
+            if (jsonResult != null) {
+                JSONObject myJsonObject = JSONObject.parseObject(jsonResult.getMsg());
+                String code = myJsonObject.getString("resultCode");
+                if (STATUS_CODE.equals(code)) {
+                    appSmsSend.setReceiveStatus("1");
+                    appSmsSend.setThirdPartyResult("发送成功！");
+                    System.out.println(myJsonObject.toString());
+                    return true;
+                } else {
+                    appSmsSend.setReceiveStatus("0");
+                    appSmsSend.setThirdPartyResult(myJsonObject.toString());
+                    return false;
+                }
+            } else {
+                appSmsSend.setThirdPartyResult("发送失败，调用接口异常！");
+                return false;
+            }
+        } else {
+            appSmsSend.setThirdPartyResult("系统短信功能未开启");
+            return false;
+        }
+    }
+
+    /**
+     * 获取短信内容
+     * @param smsSendParam
+     * @return
+     */
+    private String getSmsTemplateContent(SmsSendParam smsSendParam) {
+        String smsType = smsSendParam.getHrySmstype();
+        String smsLang = smsSendParam.getHrySmsLang();
+        String param = smsSendParam.getHryParams();
+        // 获取短信签名
+        StringBuilder sign = new StringBuilder();
+        Map<String, Object> smsConfig = BaseConfUtil.getConfigByKey("configCache:smsConfig");
+        if (smsConfig != null && !smsConfig.isEmpty()) {
+            if (ZH_CN.equals(smsLang)) {
+                sign.append(smsConfig.get("sms_sign_cn"));
+            } else {
+                sign.append(smsConfig.get("sms_sign_en"));
+            }
+        }
+        // 获取模板
+        AppSmsTemplate smsTemplate = appSmsTemplateService.getSmsTemplate(smsType, smsLang);
+        String content = "";
+        if (smsTemplate != null) {
+            content = sign.toString() + smsTemplate.getTempContent().substring(smsTemplate.getTempContent().indexOf("】") + 1);
+        }
+        content = SmsSendUtils.relaceContent("HRY_CODE", content, StringUtils.isEmpty(param) ? null : param.split(","));
+        return content;
+    }
+
+    /**
+     * 获取第三方短信内容
+     * @param smsSendParam
+     * @return
+     */
+    private String getThirdSmsTemplateContent(SmsSendParam smsSendParam) {
+        String smsType = smsSendParam.getHrySmstype();
+        String smsLang = smsSendParam.getHrySmsLang();
+        String param = smsSendParam.getHryParams();
+        // 获取短信签名
+        StringBuilder sign = new StringBuilder();
+        Map<String, Object> smsConfig = BaseConfUtil.getConfigByKey("configCache:smsConfig");
+        if (smsConfig != null && !smsConfig.isEmpty()) {
+            if ("zh_CN".equals(smsLang)) {
+                sign.append(smsConfig.get("sms_sign_cn"));
+            } else {
+                sign.append(smsConfig.get("sms_sign_en"));
+            }
+        }
+        // 获取模板
+        AppSmsTemplate smsTemplate = appSmsTemplateService.getSmsTemplate(smsType, smsLang);
+        String content = "";
+        String thirdTemplateId = "";
+        if (smsTemplate != null) {
+            content = smsTemplate.getTempContent();
+            thirdTemplateId = smsTemplate.getThirdTemplateId() == null ? "" : smsTemplate.getThirdTemplateId();
+        }
+        content = SmsSendUtils.relaceContent("@var(code)", content, StringUtils.isEmpty(param) ? null : param.split(","))+"-"+thirdTemplateId;
+        return content;
+    }
+
+
+}

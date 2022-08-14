@@ -1,0 +1,235 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-12 13:41:21
+ */
+package hry.activiti.process.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import hry.activiti.process.model.*;
+import hry.activiti.process.service.*;
+import hry.config.remote.AdminRemoteService;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.QueryFilter;
+import org.flowable.bpmn.model.FlowElement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p> ProDefineNodeService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-12 13:41:21
+ */
+@Service("proDefineNodeService")
+public class ProDefineNodeServiceImpl extends BaseServiceImpl<ProDefineNode, Long> implements ProDefineNodeService {
+
+	@Resource(name = "proDefineNodeDao")
+	@Override
+	public void setDao (BaseDao<ProDefineNode, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	ProDefineService proDefineService;
+
+	@Autowired
+	ProDefinePersonService proDefinePersonService;
+
+	@Autowired
+	ProDefineBtnService proDefineBtnService;
+
+	@Autowired
+	ProDefineNodeService proDefineNodeService;
+
+	@Autowired
+	ProDefineFormService proDefineFormService;
+
+	@Autowired
+	ProDefineNoticeService proDefineNoticeService;
+
+	@Autowired
+	AdminRemoteService adminRemoteService;
+
+	@Autowired
+	ProPersonGroupService proPersonGroupService;
+
+	@Autowired
+	ProMainFormService proMainFormService;
+
+	@Autowired
+	ProSonFormService proSonFormService;
+
+	@Autowired
+	ProDefineDocumentService proDefineDocumentService;
+
+	@Autowired
+	ProDocumentService proDocumentService;
+
+	@Autowired
+	ActivitiService activitiService;
+
+	@Override
+	public Map<String,Object> getConfig(String defineKey, String nodeKey) {
+
+
+		ProDefine proDefine = proDefineService.get(new QueryFilter(ProDefine.class).addFilter("defineKey=", defineKey));
+
+		if(proDefine!=null){
+			Map<String,Object> map = new HashMap();
+			//获取节点
+			ProDefineNode node = get(new QueryFilter(ProDefineNode.class).addFilter("defineKey=", defineKey).addFilter("nodeKey=", nodeKey).addFilter("version=", proDefine.getVersion()));
+
+			List<ProDefinePerson> personList = proDefinePersonService.find(new QueryFilter(ProDefinePerson.class).addFilter("nodeId=", node.getId()));
+			if(personList!=null&&personList.size()>0){
+				for(ProDefinePerson person: personList ){
+					//指定人
+					if(ProDefinePerson.PERSONTYPE_2==person.getPersonType()){
+						if(person.getPersonValue().contains(",")){
+							String[] split = person.getPersonValue().split(",");
+							String personName = "";
+							for(int i = 0; i<split.length;i++){
+								String appUserStr = adminRemoteService.getAppUser(Long.valueOf(split[i]));
+								if(!StringUtils.isEmpty(appUserStr)){
+									JSONObject appUser = JSON.parseObject(appUserStr);
+									personName +=appUser.getString("userName");
+									if(i!=split.length-1) {
+										personName += ",";
+									}
+								}
+							}
+							person.setPersonName(personName);
+
+						}else{
+							String appUserStr = adminRemoteService.getAppUser(Long.valueOf(person.getPersonValue()));
+							if(!StringUtils.isEmpty(appUserStr)){
+								JSONObject appUser = JSON.parseObject(appUserStr);
+								person.setPersonName(appUser.getString("userName"));
+							}
+						}
+					}
+					//人员组
+					if(ProDefinePerson.PERSONTYPE_3==person.getPersonType()){
+						if(person.getPersonValue().contains(",")){
+							String[] split = person.getPersonValue().split(",");
+							String personName = "";
+							for(int i = 0; i<split.length;i++){
+								ProPersonGroup proPersonGroup = proPersonGroupService.get(Long.valueOf(split[i]));
+								if(proPersonGroup!=null){
+									personName +=proPersonGroup.getName();
+									if(i!=split.length-1) {
+										personName += ",";
+									}
+								}
+							}
+							person.setPersonName(personName);
+
+						}else{
+							ProPersonGroup proPersonGroup = proPersonGroupService.get(Long.valueOf(person.getPersonValue()));
+							if(proPersonGroup!=null){
+								person.setPersonName(proPersonGroup.getName());
+							}
+						}
+					}
+				}
+			}
+
+			List<ProDefineBtn> btn = proDefineBtnService.find(new QueryFilter(ProDefineBtn.class).addFilter("nodeId=", node.getId()));
+
+			List<ProDefineForm> formList = proDefineFormService.find(new QueryFilter(ProDefineForm.class).addFilter("nodeId=", node.getId()).addFilter("type=",1));
+			if(formList!=null&&formList.size()>0){
+				for(ProDefineForm form : formList){
+					if(ProDefineForm.TYPE_1==form.getType()){
+
+						ProMainForm proMainForm = proMainFormService.get(form.getFormId());
+						if(proMainForm!=null) {
+							form.setFormName(proMainForm.getViewName());
+						}
+					}
+				}
+			}
+
+			List<ProDefineNotice> notice = proDefineNoticeService.find(new QueryFilter(ProDefineNotice.class).addFilter("nodeId=", node.getId()));
+
+
+			List<ProDefineDocument> documentList = proDefineDocumentService.find(new QueryFilter(ProDefineDocument.class).addFilter("nodeId=", node.getId()));
+
+
+			map.put("node",node);
+			map.put("person",personList);
+			map.put("btn",btn);
+			map.put("form",formList);
+			map.put("notice",notice);
+			map.put("document",documentList);
+			return map;
+		}
+
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getConfigByProcess(String taskId,String nodeKey,ProProcess proProcess) {
+
+
+		//获取节点
+		ProDefineNode node = get(new QueryFilter(ProDefineNode.class).addFilter("defineKey=", proProcess.getPdKey()).addFilter("nodeKey=", nodeKey).addFilter("version=", proProcess.getVersion()));
+
+		Map<String,Object> map = new HashMap();
+
+		List<ProDefineBtn> btn = proDefineBtnService.find(new QueryFilter(ProDefineBtn.class).addFilter("nodeId=", node.getId()));
+
+		List<ProDefineForm> formList = proDefineFormService.find(new QueryFilter(ProDefineForm.class).addFilter("nodeId=", node.getId()).addFilter("type=",ProDefineForm.TYPE_1));
+		if(formList!=null&&formList.size()>0){
+			for(ProDefineForm form : formList){
+				ProMainForm proMainForm = proMainFormService.get(form.getFormId());
+				if(proMainForm!=null) {
+					form.setFormName(proMainForm.getViewName());
+					form.setFormKey(proMainForm.getFormKey());
+				}
+
+				//查询子表单
+				List<ProDefineForm> sonFormList = proDefineFormService.find(new QueryFilter(ProDefineForm.class).addFilter("nodeId=", node.getId()).addFilter("type=",ProDefineForm.TYPE_2));
+				if(sonFormList!=null&&sonFormList.size()>0) {
+					for (ProDefineForm sonForm : sonFormList) {
+						ProSonForm proSonForm = proSonFormService.get(sonForm.getFormId());
+						if (proSonForm != null) {
+							sonForm.setFormName(proSonForm.getViewName());
+							sonForm.setFormKey(proSonForm.getFormKey());
+						}
+					}
+				}
+				form.setSonFormList(sonFormList);
+			}
+		}
+
+		List<ProDefineDocument> documentList = proDefineDocumentService.find(new QueryFilter(ProDefineDocument.class).addFilter("nodeId=", node.getId()));
+		if(documentList!=null&&documentList.size()>0){
+			map.put("document",documentList);
+			map.put("hasDocument",true);
+		}
+		map.put("node",node);
+		map.put("btn",btn);
+		map.put("form",formList);
+
+
+		List<FlowElement> allNode = activitiService.findAllNode(taskId);
+		map.put("allNode",allNode);
+
+
+
+		return map;
+
+	}
+
+
+}

@@ -1,0 +1,74 @@
+package hry.controller.auth;
+
+import hry.bean.JsonResult;
+import hry.business.cu.model.CuCustomer;
+import hry.business.cu.service.CuCustomerService;
+import hry.core.mvc.controller.BaseController;
+import hry.redis.RedisService;
+import hry.security.jwt.LoginService;
+import hry.security.jwt.annotation.UnAuthentication;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @ClassName RegisterController
+ * @Description: TODO
+ * @Author yaozhuo
+ * @Date 2020/4/27
+ * @Version V1.0
+ **/
+@RestController
+@RequestMapping("/reg")
+@Api(value = "注册认证类", description = "注册认证类", tags = "注册认证类")
+public class RegisterController extends BaseController {
+
+    @Resource
+    private CuCustomerService cuCustomerService;
+
+
+    @ApiOperation(value = "注册方法", notes = "注册方法")
+    @PostMapping("/regist")
+    @UnAuthentication
+    public JsonResult regist(
+            @ApiParam(name = "regCode", value = "图形验证码", required = true) @RequestParam String regCode,
+            @ApiParam(name = "userName", value = "用户名", required = true) @RequestParam String userName,
+            @ApiParam(name = "nickName", value = "用户昵称", required = false) @RequestParam String nickName,
+            @ApiParam(name = "passWord", value = "密码", required = true) @RequestParam String passWord,
+            @ApiParam(name = "repeatpassWord", value = "重复密码", required = true) @RequestParam String repeatpassWord,
+            @ApiParam(name = "email", value = "邮箱", required = false) @RequestParam String email,
+            @ApiParam(name = "mobile", value = "手机", required = false) @RequestParam String mobile,
+            HttpServletRequest request, HttpServletResponse response){
+        JsonResult jsonResult = new JsonResult();
+        // 用户名不能为空
+        if (StringUtils.isEmpty(userName)) {
+            jsonResult.setMsg("用户名不能为空");
+            return jsonResult;
+        }
+        // 用户名不能为空
+        if (StringUtils.isEmpty(passWord)) {
+            jsonResult.setMsg("密码不能为空");
+            return jsonResult;
+        }
+        if(!passWord.equals(repeatpassWord)){
+            jsonResult.setMsg("两次密码不一致");
+            return jsonResult;
+        }
+
+        jsonResult = cuCustomerService.regist(nickName,userName,passWord,email,mobile);
+
+        return jsonResult;
+    }
+
+
+
+}

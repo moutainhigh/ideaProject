@@ -1,0 +1,374 @@
+package hry.activiti.process.service.impl;
+
+import com.google.common.collect.Maps;
+import hry.activiti.process.model.ProDefine;
+import hry.activiti.process.model.ProProcess;
+import hry.activiti.process.model.vo.HryTask;
+import hry.activiti.process.service.ActivitiService;
+import hry.activiti.process.service.ProDefineNodeService;
+import hry.activiti.process.service.ProDefineService;
+import hry.activiti.process.service.ProProcessService;
+import hry.core.util.QueryFilter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.FlowElement;
+import org.flowable.bpmn.model.FlowNode;
+import org.flowable.bpmn.model.SequenceFlow;
+import org.flowable.engine.*;
+import org.flowable.engine.history.HistoricActivityInstance;
+import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.DeploymentBuilder;
+import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+@Service
+@Slf4j
+public class ActivitiServiceImpl implements ActivitiService {
+
+
+    @Autowired
+    RepositoryService repositoryService;
+
+    @Autowired
+    TaskService taskService;
+
+
+    @Autowired
+    RuntimeService runtimeService;
+
+    @Autowired
+    HistoryService historyService;
+
+    @Autowired
+    ProDefineService proDefineService;
+
+    @Autowired
+    ProProcessService proProcessService;
+
+    @Autowired
+    ProDefineNodeService proDefineNodeService;
+
+    @Autowired
+    ProcessEngine processEngine;
+
+    @Autowired
+    IdentityService identityService;
+
+
+    @Override
+    public ProcessDefinition deploy(ProDefine proDefine) {
+
+        //发布
+        DeploymentBuilder builder = repositoryService.createDeployment();
+        //名称+.bpmn
+        builder.name(proDefine.getName() + ".bpmn");
+        builder.key(proDefine.getDefineKey());
+        //taks转userTask
+        String flowText = HtmlUtils.htmlUnescape(proDefine.getDefineText()).replaceAll("<task", "<userTask").replaceAll("task>", "userTask>");
+
+        builder.addString(proDefine.getName() + ".bpmn", flowText);
+        Deployment deploy = builder.deploy();
+
+        //保存流程定义信息
+        ProcessDefinition pd = repositoryService.createProcessDefinitionQuery().deploymentId(deploy.getId()).latestVersion().singleResult();
+        proDefine.setVersion(pd.getVersion());
+        proDefine.setPdId(pd.getId());
+        proDefine.setPdKey(pd.getKey());
+        proDefine.setIsDeploy(1);//标记已部署
+        proDefineService.update(proDefine);
+
+
+        return pd;
+    }
+
+    @Override
+    public void start(Long startUserId, String pdKey) {
+
+        //流程参数
+        Map<String, Object> map = Maps.newHashMap();
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(pdKey, map);
+
+        if (processInstance != null) {
+            //设置第一个任务为发起人
+            String assignee = "1";
+            if (startUserId != null) {
+                assignee = startUserId.toString();
+            }
+
+            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).orderByTaskCreateTime().desc().singleResult();
+            taskService.setAssignee(task.getId(), assignee);
+
+            //查询流程定义
+            ProDefine proDefine = proDefineService.get(new QueryFilter(ProDefine.class).addFilter("pdKey=", pdKey));
+            //保存流程实例
+            ProProcess proProcess = new ProProcess();
+            proProcess.setPdKey(proDefine.getPdKey());
+            proProcess.setVersion(proDefine.getVersion());
+            proProcess.setDefineId(proDefine.getId());
+            proProcess.setPiId(processInstance.getProcessInstanceId());
+            proProcess.setName(proDefine.getName());
+            proProcess.setState(1);//运行中
+            proProcessService.save(proProcess);
+        }
+
+    }
+
+
+    public boolean isFinished(String processInstanceId) {
+        return historyService.createHistoricProcessInstanceQuery().finished().processInstanceId(processInstanceId).count() > 0;
+    }
+
+
+    @Override
+    public void genProcessDiagram(HttpServletResponse httpServletResponse, String processId) {
+
+        /**
+         * 获得当前活动的节点
+         */
+        String processDefinitionId = "";
+        if (this.isFinished(processId)) {// 如果流程已经结束，则得到结束节点
+            HistoricProcessInstance pi = historyService.createHistoricProcessInstanceQuery().processInstanceId(processId).singleResult();
+
+            processDefinitionId = pi.getProcessDefinitionId();
+        } else {// 如果流程没有结束，则取当前活动节点
+            // 根据流程实例ID获得当前处于活动状态的ActivityId合集
+            ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+            processDefinitionId = pi.getProcessDefinitionId();
+        }
+        List<String> highLightedActivitis = new ArrayList<String>();
+
+        /**
+         * 获得活动的节点
+         */
+        List<HistoricActivityInstance> highLightedActivitList = historyService.createHistoricActivityInstanceQuery().processInstanceId(processId).orderByHistoricActivityInstanceStartTime().asc().list();
+
+        for (HistoricActivityInstance tempActivity : highLightedActivitList) {
+            String activityId = tempActivity.getActivityId();
+            highLightedActivitis.add(activityId);
+        }
+
+        List<String> flows = new ArrayList<>();
+        //获取流程图
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+        ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
+
+        ProcessDiagramGenerator diagramGenerator = engconf.getProcessDiagramGenerator();
+//        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis, flows, engconf.getActivityFontName(), engconf.getLabelFontName(), engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, true);
+        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis, flows, "宋体","宋体","宋体", engconf.getClassLoader(), 1.0, false);
+
+
+        OutputStream out = null;
+        byte[] buf = new byte[1024];
+        int legth = 0;
+        try {
+            httpServletResponse.setContentType("image/png;charset=UTF-8");
+            out = httpServletResponse.getOutputStream();
+            while ((legth = in.read(buf)) != -1) {
+                out.write(buf, 0, legth);
+            }
+        } catch (IOException e) {
+            log.error("操作异常", e);
+        } finally {
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+    @Override
+    public void completeTask(String taskId) {
+        taskService.complete(taskId);
+    }
+
+    @Override
+    public List<HryTask> findMyTask(Integer page, Integer pageSize, String assigneeId) {
+
+
+        List<Task> list = taskService//与正在执行的任务管理相关的Service
+                .createTaskQuery()//创建任务查询对象
+                /**查询条件（where部分）*/
+                .taskAssignee(assigneeId)//指定个人任务查询，指定办理人
+//						.taskCandidateUser(candidateUser)//组任务的办理人查询
+
+//						.executionId(executionId)//使用执行对象ID查询
+                /**排序*/
+                .orderByTaskCreateTime().asc()//使用创建时间的升序排列
+                /**返回结果集*/
+//						.singleResult()//返回惟一结果集
+//						.count()//返回结果集的数量
+                .listPage(((page - 1) * pageSize), pageSize);//分页查询
+//                .list();//返回列表
+        if (list != null && list.size() > 0) {
+
+            List<HryTask> resultList = new ArrayList<>();
+
+            for (Task task : list) {
+                HryTask hryTask = new HryTask();
+                hryTask.setTaskId(task.getId());
+                hryTask.setTaskName(task.getName());
+                hryTask.setCreateTime(task.getCreateTime());
+                hryTask.setAssigneeId(task.getAssignee());
+                hryTask.setAssigneeName(task.getAssignee());
+                hryTask.setPdId(task.getProcessDefinitionId());
+                hryTask.setPiId(task.getProcessInstanceId());
+                hryTask.setExecutionId(task.getExecutionId());
+                hryTask.setNodeKey(task.getTaskDefinitionKey());
+                resultList.add(hryTask);
+            }
+
+            return resultList;
+        }
+
+        return null;
+
+    }
+
+    @Override
+    public Long findMyTaskCount(String assigneeId) {
+        return taskService//与正在执行的任务管理相关的Service
+                .createTaskQuery()//创建任务查询对象
+                /**查询条件（where部分）*/
+                .taskAssignee(assigneeId)//指定个人任务查询，指定办理人
+                /**排序*/
+                .orderByTaskCreateTime().asc()//使用创建时间的升序排列
+                /**返回结果集*/
+//						.singleResult()//返回惟一结果集
+                .count();//返回结果集的数量
+    }
+
+    @Override
+    public List<HryTask> finaAllTask(Integer page, Integer pageSize) {
+        List<Task> list = taskService//与正在执行的任务管理相关的Service
+                .createTaskQuery()//创建任务查询对象
+                .orderByTaskCreateTime().asc()//使用创建时间的升序排列
+                /**返回结果集*/
+//						.singleResult()//返回惟一结果集
+//						.count()//返回结果集的数量
+                .listPage(((page - 1) * pageSize), pageSize);//分页查询
+//                .list();//返回列表
+        if (list != null && list.size() > 0) {
+            List<HryTask> resultList = new ArrayList<>();
+
+            for (Task task : list) {
+                HryTask hryTask = new HryTask();
+                hryTask.setTaskId(task.getId());
+                hryTask.setTaskName(task.getName());
+                hryTask.setCreateTime(task.getCreateTime());
+                hryTask.setAssigneeId(task.getAssignee());
+                hryTask.setAssigneeName(task.getAssignee());
+                hryTask.setPdId(task.getProcessDefinitionId());
+                hryTask.setPiId(task.getProcessInstanceId());
+                hryTask.setExecutionId(task.getExecutionId());
+                hryTask.setNodeKey(task.getTaskDefinitionKey());
+                resultList.add(hryTask);
+            }
+
+            return resultList;
+        }
+
+        return null;
+    }
+
+    @Override
+    public Long finaAllTaskCount() {
+        return taskService//与正在执行的任务管理相关的Service
+                .createTaskQuery()//创建任务查询对象
+                .orderByTaskCreateTime().asc()//使用创建时间的升序排列
+                .count();//返回结果集的数量
+    }
+
+    @Override
+    public List<HryTask> findMyHisTask(Integer page, Integer pageSize, String assigneeId) {
+
+        List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
+                .taskAssignee(assigneeId)
+                .finished()
+                .orderByTaskCreateTime().desc()
+                .listPage(((page - 1) * pageSize), pageSize);
+
+        if (list != null && list.size() > 0) {
+
+            List<HryTask> resultList = new ArrayList<>();
+
+            for (HistoricTaskInstance task : list) {
+                HryTask hryTask = new HryTask();
+                hryTask.setTaskId(task.getId());
+                hryTask.setTaskName(task.getName());
+                hryTask.setCreateTime(task.getCreateTime());
+                hryTask.setAssigneeId(task.getAssignee());
+                hryTask.setAssigneeName(task.getAssignee());
+                hryTask.setPdId(task.getProcessDefinitionId());
+                hryTask.setPiId(task.getProcessInstanceId());
+                hryTask.setExecutionId(task.getExecutionId());
+                hryTask.setNodeKey(task.getTaskDefinitionKey());
+                resultList.add(hryTask);
+
+
+            }
+
+            return resultList;
+        }
+
+        return null;
+    }
+
+    @Override
+    public Long findMyHisTaskCount(String assigneeId) {
+        return historyService.createHistoricTaskInstanceQuery()
+                .taskAssignee(assigneeId)
+                .finished()
+                .count();
+    }
+
+    @Override
+    public void stop(String taskId) {
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        runtimeService.deleteProcessInstance(task.getProcessInstanceId(), "");
+    }
+
+    @Override
+    public void skipLast(String taskId) {
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
+        FlowNode flowNode = (FlowNode) bpmnModel.getFlowElement(task.getTaskDefinitionKey());
+        SequenceFlow sequenceFlow = flowNode.getIncomingFlows().get(0);
+        // 获取上一个节点的activityId
+        String sourceRef = sequenceFlow.getSourceRef();
+        if (sourceRef.contains("Gateway")) {//如果上一节点是网关
+            FlowNode gatewayNode = (FlowNode) sequenceFlow.getSourceFlowElement();
+            sourceRef = gatewayNode.getIncomingFlows().get(0).getSourceRef();
+        }
+        System.out.println("跳转节点" + sourceRef);
+
+        runtimeService.createChangeActivityStateBuilder().processInstanceId(task.getProcessInstanceId()).moveActivityIdTo(task.getTaskDefinitionKey(), sourceRef).changeState();
+    }
+
+    @Override
+    public List<FlowElement> findAllNode(String taskId) {
+
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
+        Collection<FlowElement> flowElements = bpmnModel.getMainProcess().getFlowElements();
+        List<FlowElement> list = new ArrayList(flowElements);
+        return list;
+
+    }
+
+}

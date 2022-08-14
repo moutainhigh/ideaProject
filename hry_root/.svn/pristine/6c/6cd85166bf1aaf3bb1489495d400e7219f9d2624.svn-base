@@ -1,0 +1,33 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: zhouming
+ * @version: V1.0
+ * @Date: 2020-08-19 11:26:51 
+ */
+package hry.platform.config.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.platform.config.model.AppHolidaysInfo;
+import hry.platform.config.service.AppHolidaysInfoService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> AppHolidaysInfoService </p>
+ *
+ * @author: zhouming
+ * @Date: 2020-08-19 11:26:51 
+ */
+@Service("appHolidaysInfoService")
+public class AppHolidaysInfoServiceImpl extends BaseServiceImpl<AppHolidaysInfo, Long> implements AppHolidaysInfoService {
+
+	@Resource(name = "appHolidaysInfoDao")
+	@Override
+	public void setDao (BaseDao<AppHolidaysInfo, Long> dao) {
+		super.dao = dao;
+	}
+
+}

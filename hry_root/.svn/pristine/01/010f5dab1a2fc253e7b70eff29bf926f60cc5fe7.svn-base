@@ -1,0 +1,30 @@
+package hry.business.fa.model;
+
+import io.swagger.annotations.ApiModel;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+ *
+ * 还款集合返回实体
+ * @author zhouming
+ * @date 2020/7/20 11:11
+ * @Version 1.0
+ */
+@Data
+@ApiModel(value = "还款集合返回实体")
+public class FaFundIntent {
+    private String fundType; //资金类型
+    private String fundTypeName; //资金类型名称
+    private Integer payintentPeriod; //期数
+    private Date interestStarTime; //计息开始日
+    private Date interestEndTime; //计息截止日
+    private Integer interestDays; //计息天数
+    private Date intentDate; //计划到账日
+    private BigDecimal incomeMoney; //计划收入金额
+    private BigDecimal payMoney; //计划支出金额
+    private BigDecimal principalRepayment; //本金
+    private Integer repaythree = 0; // 是否抵扣 0 收取 1 抵扣
+}

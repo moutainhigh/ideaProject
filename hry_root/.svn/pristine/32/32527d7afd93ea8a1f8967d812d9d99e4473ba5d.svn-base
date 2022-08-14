@@ -1,0 +1,273 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:36:21 
+ */
+package hry.business.cu.controller;
+
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.business.cu.model.CuCustomer;
+import hry.business.cu.model.CuEnterprise;
+import hry.business.cu.service.CuIntentionUserService;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.business.cu.model.CuIntention;
+import hry.business.cu.service.CuIntentionService;
+import hry.platform.newuser.model.NewAppUser;
+import hry.redis.RedisService;
+import hry.security.jwt.JWTContext;
+import hry.security.jwt.annotation.UnAuthentication;
+import hry.security.logger.ControllerLogger;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * <p> CuIntentionController </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:36:21 
+ */
+@Api(value = "意向客户信息", tags = "意向客户信息", description = "意向客户信息")
+@RestController
+@RequestMapping("/cu/cuintention")
+public class CuIntentionController extends BaseController {
+
+	@Autowired
+	private CuIntentionService cuIntentionService;
+	@Autowired
+	private CuIntentionUserService cuIntentionUserService;
+	@Autowired
+	private RedisService redisService;
+
+	private static final String CUSTOMER_LABEL_PRE = "intention:customerLabel:";
+	private static final String CUSTOMER_LABEL_ALL_PRE = "intention:customerLabel:all";
+
+	/**
+     * <p> 意向客户信息-id查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:36:21 
+     */
+    @ApiOperation(value = "意向客户信息-id查询", notes = "意向客户信息-id查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/get/{id}")
+    public JsonResult get (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+		CuIntention cuIntention = cuIntentionService.get(id);
+        if (cuIntention != null) {
+            jsonResult.setObj(cuIntention);
+            return jsonResult.setSuccess(true);
+        }
+        return jsonResult.setSuccess(false);
+    }
+
+	/**
+     * <p> 意向客户信息-添加 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:36:21 
+     */
+    @ApiOperation(value = "意向客户信息-添加", notes = "意向客户信息-添加")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/add")
+    public JsonResult add (CuIntention cuIntention) {
+        JsonResult jsonResult = new JsonResult();
+        NewAppUser user = (NewAppUser) JWTContext.getUser(NewAppUser.class);
+        if(user!=null){
+            cuIntention.setUserId(user.getId());
+        }else{
+            jsonResult.setSuccess(false).setMsg("登陆用户异常");
+        }
+        cuIntentionService.save(cuIntention);
+        cuIntentionUserService.add(cuIntention.getId(),user.getId().toString());
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向客户信息-修改 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:36:21 
+     */
+    @ApiOperation(value = "意向客户信息-修改", notes = "意向客户信息-修改")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/modify")
+    public JsonResult modify (CuIntention cuIntention) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionService.update(cuIntention);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向客户信息-id删除 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:36:21 
+     */
+    @ApiOperation(value = "意向客户信息-id删除", notes = "意向客户信息-id删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/remove/{id}")
+    public JsonResult remove (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionService.delete(id);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向客户信息-分页查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:36:21 
+     */
+    @ApiOperation(value = "意向客户信息-分页查询", notes = "意向客户信息-分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/list")
+    public PageResult list (
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            @ApiParam(name = "status", value = "客户状态 1.正式 2.意向 3.排除 4.拉黑 5.跟进中", required = false) @RequestParam String status,
+            @ApiParam(name = "intentionCode", value = "客户编码", required = false) @RequestParam String intentionCode,
+            @ApiParam(name = "type", value = "客户类型 1.个人 2.企业", required = false) @RequestParam String type,
+            @ApiParam(name = "enterpriseContacts", value = "企业联系人", required = false) @RequestParam String enterpriseContacts,
+            @ApiParam(name = "movePhone", value = "移动电话", required = false) @RequestParam String movePhone,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(CuIntention.class, request);
+        //return cuIntentionService.findPageResult(filter);
+        return cuIntentionService.findPageBySql(filter);
+    }
+
+
+
+    @ApiOperation(value = "修改意向客户状态", notes = "修改意向客户状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping(value="/updateStatus")
+    public JsonResult updateStatus(
+            @ApiParam(name = "id", value = "用户id", required = true) @RequestParam Long id,
+            @ApiParam(name = "status", value = "客户状态 1.正式 2.意向 3.排除 4.拉黑", required = true) @RequestParam Integer status,
+            @ApiParam(name = "statusRemark", value = "状态变更说明", required = false) @RequestParam String statusRemark
+    ){
+        JsonResult jsonResult = new JsonResult();
+        if(StringUtils.isEmpty(status)){
+            jsonResult.setMsg("不能为空");
+            return  jsonResult;
+        }
+        if(status==1){
+            cuIntentionService.updateStatusFormal(id);
+        }
+
+        CuIntention cuEnterprise = cuIntentionService.get(id);
+        if (cuEnterprise != null) {
+            CuIntention cuIntentionNew = new CuIntention();
+            cuIntentionNew.setStatus(status);
+            cuIntentionNew.setId(cuEnterprise.getId());
+            if(!StringUtils.isEmpty(statusRemark)){
+                cuIntentionNew.setStatusRemark(statusRemark);
+            }
+            cuIntentionService.update(cuIntentionNew);
+            return jsonResult.setSuccess(true).setMsg("成功");
+        }
+
+        return jsonResult.setSuccess(false).setMsg("失败");
+    }
+
+    /**
+     * <p> 查询客户画像列表 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:36:21
+     */
+    @ApiOperation(value = "查询客户画像列表", notes = "查询客户画像列表")
+    @UnAuthentication
+    @GetMapping(value = "/selectCustomerLabel")
+    public Set<String> selectCustomerLabel (
+            @ApiParam(name = "id", value = "用户id", required = false) @RequestParam Long id
+            ) {
+        Set<String> labelAll;
+        if (StringUtils.isEmpty(id)) {
+            labelAll = redisService.smembers(CUSTOMER_LABEL_ALL_PRE);
+        } else {
+            labelAll = redisService.smembers(CUSTOMER_LABEL_PRE+id);
+        }
+        return labelAll;
+    }
+
+    /**
+     * <p> 新增客户画像标签 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:36:21
+     */
+    @ApiOperation(value = "新增客户画像标签", notes = "新增客户画像标签")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping(value = "/addCustomerLabel")
+    public JsonResult addCustomerLabel (
+            @ApiParam(name = "id", value = "用户id", required = false) @RequestParam Long id,
+            @ApiParam(name = "label", value = "标签数组，使用逗号分隔", required = true) @RequestParam String labels
+    ) {
+        JsonResult jsonResult = new JsonResult();
+        String[] labelArray = labels.split(",");
+        for (String label:labelArray) {
+            if (StringUtils.isEmpty(id)) {
+                redisService.sadd(CUSTOMER_LABEL_ALL_PRE,label);
+            } else {
+                redisService.sadd(CUSTOMER_LABEL_PRE+id,label);
+            }
+        }
+
+        return jsonResult.setSuccess(true);
+    }
+    /**
+     * <p> 删除客户画像标签 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:36:21
+     */
+    @ApiOperation(value = "删除客户画像标签", notes = "删除客户画像标签")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping(value = "/deleteCustomerLabel")
+    public JsonResult deleteCustomerLabel (
+            @ApiParam(name = "id", value = "用户id", required = false) @RequestParam Long id,
+            @ApiParam(name = "label", value = "标签", required = true) @RequestParam String label
+    ) {
+        JsonResult jsonResult = new JsonResult();
+
+        if (StringUtils.isEmpty(id)) {
+            redisService.srem(CUSTOMER_LABEL_ALL_PRE,label);
+        } else {
+            redisService.srem(CUSTOMER_LABEL_PRE+id,label);
+        }
+        return jsonResult.setSuccess(true);
+    }
+
+
+}

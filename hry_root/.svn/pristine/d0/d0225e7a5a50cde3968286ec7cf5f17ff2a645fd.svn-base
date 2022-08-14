@@ -1,0 +1,187 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: huanggh
+ * @version: V1.0
+ * @Date: 2020-07-08 17:35:56 
+ */
+package hry.user.scm.enterprise;
+
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.business.cu.model.CuCustomer;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.scm.enterprise.model.ScmEnterprise;
+import hry.scm.enterprise.model.UserRelation;
+import hry.scm.enterprise.service.ScmEnterpriseService;
+import hry.scm.file.model.ScmFile;
+import hry.scm.file.service.ScmFileService;
+import hry.security.jwt.JWTContext;
+import hry.security.logger.ControllerLogger;
+import hry.user.scm.access.RoleAccess;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * <p> ScmEnterpriseController </p>
+ *
+ * @author: huanggh
+ * @Date: 2020-07-08 17:35:56 
+ */
+@Api(value = "供应链企业信息管理", tags = "供应链企业信息管理", description = "供应链企业信息管理")
+@RestController
+@RequestMapping("/enterprise/scmenterprise")
+public class ScmEnterpriseController extends BaseController {
+
+	@Autowired
+	private ScmEnterpriseService scmEnterpriseService;
+	@Autowired
+    private ScmFileService scmFileService;
+
+	/**
+     * <p> 供应链企业信息管理-id查询 </p>
+     *
+     * @author: huanggh
+     * @Date: 2020-07-08 17:35:56 
+     */
+    @ApiOperation(value = "供应链企业信息管理-id查询", notes = "供应链企业信息管理-id查询",response = ScmEnterprise.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/get/{id}")
+    public JsonResult get (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+		ScmEnterprise scmEnterprise = scmEnterpriseService.get(id);
+        if (scmEnterprise != null) {
+            //查询补充文件，资质或荣誉证书
+            List<ScmFile> list = scmFileService.findList(scmEnterprise.getHonorFile());
+            scmEnterprise.setHonorFileChildren(list);
+
+            //查询补充文件，近期财务报表
+            List<ScmFile> list2 = scmFileService.findList(scmEnterprise.getFinanceFile());
+            scmEnterprise.setFinanceFileChildren(list2);
+
+            jsonResult.setObj(scmEnterprise);
+            return jsonResult.setSuccess(true);
+        }
+        return jsonResult.setSuccess(false);
+    }
+
+	/**
+     * <p> 供应链企业信息管理-添加 </p>
+     *
+     * @author: huanggh
+     * @Date: 2020-07-08 17:35:56 
+     */
+    @ApiOperation(value = "供应链企业信息管理-添加", notes = "供应链企业信息管理-添加",response = ScmEnterprise.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/addEnterprise")
+    public JsonResult addEnterprise (@ApiParam(name = "jsonStr", value = "对象json包含（enterprise，customer）", required = true) @RequestParam String jsonStr,
+                           HttpServletRequest request, HttpServletResponse response) {
+        CuCustomer user = (CuCustomer) JWTContext.getUser(CuCustomer.class);
+        JsonResult jsonResult = new JsonResult();
+        scmEnterpriseService.addEnterprise(request,jsonStr,user);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 供应链企业信息管理-修改 </p>
+     *
+     * @author: huanggh
+     * @Date: 2020-07-08 17:35:56 
+     */
+    @ApiOperation(value = "供应链企业信息管理-修改", notes = "供应链企业信息管理-修改",response = ScmEnterprise.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @RoleAccess(roleType= "enterprise")
+    @PostMapping(value = "/updateEnterprise")
+    public JsonResult updateEnterprise (
+            @ApiParam(name = "jsonStr", value = "对象json包含（enterprise,honorFile,financeFile,customer）", required = true) @RequestParam String jsonStr,
+            @ApiParam(name = "enterpriseId", value = "企业Id", required = true) @RequestParam String enterpriseId,
+            HttpServletRequest request, HttpServletResponse response
+    ) {
+        CuCustomer user = (CuCustomer) JWTContext.getUser(CuCustomer.class);
+        JsonResult jsonResult = new JsonResult();
+        scmEnterpriseService.updateEnterprise(request,jsonStr,user);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 供应链企业信息管理-id删除 </p>
+     *
+     * @author: huanggh
+     * @Date: 2020-07-08 17:35:56 
+     */
+    /*@ApiOperation(value = "供应链企业信息管理-id删除", notes = "供应链企业信息管理-id删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/remove/{id}")
+    public JsonResult remove (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        scmEnterpriseService.delete(id);
+        return jsonResult.setSuccess(true);
+    }*/
+
+    /**
+     * <p> 供应链企业信息管理-分页查询 </p>
+     *
+     * @author: huanggh
+     * @Date: 2020-07-08 17:35:56 
+     */
+    /*@ApiOperation(value = "供应链企业信息管理-分页查询", notes = "供应链企业信息管理-分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/list")
+    public PageResult list (
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(ScmEnterprise.class, request);
+        return scmEnterpriseService.findPageResult(filter);
+    }*/
+
+
+    /**
+     * <p> 供应链企业信息管理-查询关联企业列表 </p>
+     *
+     * @author: huanggh
+     * @Date: 2020-07-08 17:35:56
+     */
+    @ApiOperation(value = "供应链企业信息管理-查询关联企业列表", notes = "供应链企业信息管理-查询关联企业列表",response = ScmEnterprise.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/getAll")
+    public JsonResult getAll ( HttpServletRequest request) {
+        CuCustomer user = (CuCustomer) JWTContext.getUser(CuCustomer.class);
+        List<ScmEnterprise> list = new ArrayList<>();
+        for(UserRelation userRelation : user.getChildren()){
+            QueryFilter filter = new QueryFilter(ScmEnterprise.class);
+            filter.addFilter("id=",userRelation.getInfoId());
+            list = scmEnterpriseService.find(filter);
+            for(ScmEnterprise scmEnterprise : list){
+                scmEnterprise.setRole(userRelation.getRole());
+            }
+        }
+        return new JsonResult().setSuccess(true).setObj(list);
+    }
+
+}

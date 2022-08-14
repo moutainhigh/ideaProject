@@ -1,0 +1,123 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-21 13:57:47 
+ */
+package hry.business.qcc.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import hry.bean.JsonResult;
+import hry.business.cu.service.CuEnterpriseService;
+import hry.business.qcc.api.EnterpriseSearchApi;
+import hry.business.qcc.model.QccEnterprisePartner;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.business.qcc.model.QccEnterpriseEmployee;
+import hry.business.qcc.service.QccEnterpriseEmployeeService;
+import hry.core.util.QueryFilter;
+import hry.platform.config.service.AppConfigService;
+import hry.util.StringUtil;
+import hry.util.UUIDUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p> QccEnterpriseEmployeeService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-21 13:57:47 
+ */
+@Service("qccEnterpriseEmployeeService")
+public class QccEnterpriseEmployeeServiceImpl extends BaseServiceImpl<QccEnterpriseEmployee, Long> implements QccEnterpriseEmployeeService {
+
+	@Resource(name = "qccEnterpriseEmployeeDao")
+	@Override
+	public void setDao (BaseDao<QccEnterpriseEmployee, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	private AppConfigService appConfigService;
+
+	@Override
+	public JsonResult selectAndAdd(Long enterpriseId, String creditCode) {
+		JsonResult jsonResult = new JsonResult();
+
+		//查询数据库中是否存在信息
+		QueryFilter queryFilter = new QueryFilter(QccEnterpriseEmployee.class);
+		queryFilter.addFilter("enterpriseId=",enterpriseId);
+		QccEnterpriseEmployee qccE = super.get(queryFilter);
+		if(qccE!=null){
+			return jsonResult.setSuccess(false).setMsg("信息已存在！");
+		}
+
+		List<QccEnterpriseEmployee> list = null;
+		String ordernumber = UUIDUtil.getUUID();
+		try {
+			list = this.getQccEnterpriseEmployee(creditCode,ordernumber);
+			if (list == null) {
+				return jsonResult.setSuccess(false).setMsg("未查询到信息！");
+			}
+		} catch (Exception e) {
+			return jsonResult.setSuccess(false).setMsg(e.getLocalizedMessage());
+		}
+
+		for (QccEnterpriseEmployee qccEnterpriseEmployee : list) {
+			qccEnterpriseEmployee.setEnterpriseId(enterpriseId.toString());
+			qccEnterpriseEmployee.setUuid(ordernumber);
+		}
+		//保存
+		super.saveAll(list);
+		return jsonResult.setSuccess(true).setMsg("成功");
+	}
+
+	/**
+	 * @param creditCode 信用代码
+	 * @Author: yaozh
+	 * @Description: 获取企查查中的企业基本信息
+	 */
+	private List<QccEnterpriseEmployee> getQccEnterpriseEmployee(String creditCode, String ordernumber) {
+		/**
+		 * 企查查查询信息
+		 */
+		//根据信用码查询企业信息
+		String url = appConfigService.getValueByKey("qccIpAdrees");
+		String uri = appConfigService.getValueByKey("getECIEmployeeListUri");
+		//公钥
+		String publicKeyUrl = appConfigService.getValueByKey("qccPublicKeyUrl");
+		//公钥
+		String privateKeyUrl = appConfigService.getValueByKey("qccPrivateKeyUrl");
+		//商户号
+		String companyCode = appConfigService.getValueByKey("qccCompanyCode");
+		//所属平台
+		String belonged = appConfigService.getValueByKey("qccbelonged");
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("ordernumber", ordernumber);
+		map.put("searchKey", creditCode);
+		map.put("belonged", belonged);
+		map.put("pageSize", "20");
+		map.put("pageIndex", "1");
+		EnterpriseSearchApi enterpriseSearchApi = new EnterpriseSearchApi();
+		JsonResult jsonResult = enterpriseSearchApi.getEnterpriseInfo(map, publicKeyUrl, privateKeyUrl, companyCode, url + uri);
+		if (!jsonResult.getSuccess()) {
+			throw new RuntimeException(jsonResult.getMsg());
+		}
+		String result = (String) jsonResult.getObj();
+		if (!StringUtil.isNull(result)) {
+			return null;
+		}
+		//将返回结果转为实体
+		List<QccEnterpriseEmployee> list = JSON.parseArray(result, QccEnterpriseEmployee.class);
+		return list;
+	}
+
+
+}

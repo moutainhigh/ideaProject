@@ -1,0 +1,33 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-12 18:33:52 
+ */
+package hry.activiti.process.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.activiti.process.model.ProMainForm;
+import hry.activiti.process.service.ProMainFormService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> ProMainFormService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-12 18:33:52 
+ */
+@Service("proMainFormService")
+public class ProMainFormServiceImpl extends BaseServiceImpl<ProMainForm, Long> implements ProMainFormService {
+
+	@Resource(name = "proMainFormDao")
+	@Override
+	public void setDao (BaseDao<ProMainForm, Long> dao) {
+		super.dao = dao;
+	}
+
+}

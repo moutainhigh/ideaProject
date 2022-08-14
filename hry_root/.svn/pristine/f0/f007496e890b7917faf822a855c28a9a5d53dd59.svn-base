@@ -1,0 +1,18 @@
+package hry.platform.flow.service;
+
+import hry.util.flowModel.FlowParams;
+import hry.util.flowModel.FlowResult;
+
+/**
+ * 流程操作接口
+ */
+public interface CommonFlowService {
+
+    /**
+     * 启动流程
+     */
+    FlowResult start(FlowParams flowParams);
+
+
+
+}

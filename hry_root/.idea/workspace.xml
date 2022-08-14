@@ -1,0 +1,770 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f306fd96-f9d5-4a2c-933f-428cbe664dc0" name="Default Changelist" comment="保利业务---产品创建相关">
+      <change afterPath="$PROJECT_DIR$/.idea" afterDir="true" />
+      <change beforePath="$PROJECT_DIR$/hry_application/hry_admin/src/main/java/hry/platform/login/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/hry_application/hry_admin/src/main/java/hry/platform/login/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hry_application/hry_admin/src/main/resources/code.properties" beforeDir="false" afterPath="$PROJECT_DIR$/hry_application/hry_admin/src/main/resources/code.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hry_application/hry_eureka/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/hry_application/hry_eureka/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hry_application/hry_service/src/main/resources/code.properties" beforeDir="false" afterPath="$PROJECT_DIR$/hry_application/hry_service/src/main/resources/code.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hry_application/hry_timer/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/hry_application/hry_timer/src/main/resources/application.yml" afterDir="false" />
+    </list>
+    <list id="f82b2b6f-b41c-4f8f-9b26-083d044e291c" name="其它文件" comment="">
+      <change afterPath="$PROJECT_DIR$/hry_boot/hry_common/hry_common_security/hry_common_security.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hry_boot/hry_common/hry_common_utils/hry_common_utils.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <list id="1d2b429e-3a15-49e6-a59c-4fe2f3868295" name="暂时不更新文件" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="hry_root" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindBugs-IDEA-Workspace">
+    <toolWindowEditorPreview>false</toolWindowEditorPreview>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_eureka/src/main/java/EurekaApplication.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/business/fa/service/impl/FaProductContractServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/website/service/impl/AppUserStationServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/website/service/impl/AppArticleContentServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/business/fa/service/impl/FaProductServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/business/fa/service/impl/FaFundIntentServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/website/service/impl/AppArticleCategoryServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_admin/src/main/java/hry/platform/newuser/controller/NewAppUserController.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_admin/src/main/java/hry/platform/newuser/controller/NewAppRoleController.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/newuser/service/impl/AppLoginLogServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/newuser/service/impl/NewAppUserUpordownServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/newuser/service/impl/NewAppUserServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_admin/src/main/java/hry/platform/newuser/controller/NewAppUserUpordownController.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/newuser/service/impl/NewAppUserRoleServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/newuser/service/impl/NewAppUserOrganizationServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/newuser/service/impl/NewAppRoleServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_boot/hry_common/hry_common_utils/src/main/java/hry/util/rmq/RabbitMQProducer.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/newuser/service/impl/NewAppMenuServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_admin/src/main/java/hry/business/fa/controller/FaFundIntentController.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/newuser/service/impl/NewAppUserPostServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/config/service/impl/AppHolidaysInfoServiceImpl.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/hry_application/hry_service/src/main/java/hry/platform/rmq/MsgReceiverRunner.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="F:/dow/maven3.2.5" />
+        <option name="userSettingsFile" value="F:\dow\maven3.2.5\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1c4pCLs1ZcpMmWxYP4RhzixfXM7" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder0" value="0" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder1" value="1" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder2" value="2" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder3" value="3" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder4" value="4" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder5" value="5" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth0" value="129" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth1" value="129" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth2" value="130" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth3" value="128" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth4" value="128" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth5" value="214" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder0" value="0" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder1" value="1" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder2" value="2" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder3" value="3" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder4" value="4" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder5" value="5" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth0" value="129" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth1" value="129" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth2" value="130" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth3" value="128" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth4" value="128" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth5" value="216" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.20281994" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\ideaProject\hry_root\hry_application\hry_timer\src" />
+      <recent name="F:\ideaProject\hry_root\hry_application\hry_zuul\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Maven.adminCode">
+    <configuration name="FundIntentDemo2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.loanTrial.FundIntentDemo2" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.loanTrial.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MsgReceiverRunner" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="hry.platform.rmq.MsgReceiverRunner" />
+      <module name="hry_service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="hry.platform.rmq.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NewAppRoleServiceImpl" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="hry.platform.newuser.service.impl.NewAppRoleServiceImpl" />
+      <module name="hry_service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="hry.platform.newuser.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="adminCode" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="hry__code:code2020" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/hry_application/hry_admin" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="serviceCode" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="hry__code:code2020" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/hry_application/hry_service" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="ActivitiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="hry_activiti" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="hry.ActivitiApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AdminApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="hry_admin" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="hry.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="hry.AdminApplication" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ApiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="hry_api" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="hry.ApiApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EurekaApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="hry_eureka" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="EurekaApplication" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EurekaApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true">
+      <module name="hry_eureka" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="EurekaApplication" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TimerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="hry_timer" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="hry.TimerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.MsgReceiverRunner" />
+      <item itemvalue="Application.NewAppRoleServiceImpl" />
+      <item itemvalue="Application.FundIntentDemo2" />
+      <item itemvalue="Maven.adminCode" />
+      <item itemvalue="Maven.serviceCode" />
+      <item itemvalue="Spring Boot.ActivitiApplication" />
+      <item itemvalue="Spring Boot.ApiApplication" />
+      <item itemvalue="Spring Boot.TimerApplication" />
+      <item itemvalue="Spring Boot.EurekaApplication" />
+      <item itemvalue="Spring Boot.AdminApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.AdminApplication" />
+        <item itemvalue="Application.FundIntentDemo2" />
+        <item itemvalue="Application.NewAppRoleServiceImpl" />
+        <item itemvalue="Application.MsgReceiverRunner" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
+    <configuration>C:\Users\Administrator\AppData\Roaming\Subversion</configuration>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f306fd96-f9d5-4a2c-933f-428cbe664dc0" name="Default Changelist" comment="" />
+      <changelist id="f82b2b6f-b41c-4f8f-9b26-083d044e291c" name="其它文件" comment="" />
+      <changelist id="1d2b429e-3a15-49e6-a59c-4fe2f3868295" name="暂时不更新文件" comment="" />
+      <created>1589797591344</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1589797591344</updated>
+      <workItem from="1589797594903" duration="105000" />
+      <workItem from="1589797702153" duration="37298000" />
+      <workItem from="1590024495146" duration="51807000" />
+      <workItem from="1590370134857" duration="26216000" />
+      <workItem from="1590458718102" duration="38779000" />
+      <workItem from="1590716752981" duration="13089000" />
+      <workItem from="1590977030121" duration="4712000" />
+      <workItem from="1592289907804" duration="5109000" />
+      <workItem from="1592881135231" duration="21144000" />
+      <workItem from="1593308888974" duration="96844000" />
+      <workItem from="1593764864008" duration="60810000" />
+      <workItem from="1594632126982" duration="11375000" />
+      <workItem from="1594865639326" duration="55595000" />
+      <workItem from="1595316428520" duration="67374000" />
+      <workItem from="1595812896703" duration="23155000" />
+      <workItem from="1596417894368" duration="25771000" />
+      <workItem from="1596593605109" duration="96008000" />
+      <workItem from="1597800634865" duration="53474000" />
+      <workItem from="1600242886329" duration="1973000" />
+      <workItem from="1603359008417" duration="71000" />
+      <workItem from="1603436128272" duration="1319000" />
+      <workItem from="1604293343418" duration="1710000" />
+      <workItem from="1604296362069" duration="3237000" />
+      <workItem from="1614588430867" duration="61000" />
+      <workItem from="1615971014387" duration="954000" />
+      <workItem from="1652864603413" duration="61000" />
+    </task>
+    <task id="LOCAL-00093">
+      <created>1596530718521</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1596530718521</updated>
+    </task>
+    <task id="LOCAL-00094">
+      <created>1596531422536</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1596531422536</updated>
+    </task>
+    <task id="LOCAL-00095">
+      <created>1596531648384</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1596531648384</updated>
+    </task>
+    <task id="LOCAL-00096">
+      <created>1596532845976</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1596532845976</updated>
+    </task>
+    <task id="LOCAL-00097">
+      <created>1596533494196</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1596533494196</updated>
+    </task>
+    <task id="LOCAL-00098">
+      <created>1596533842312</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1596533842312</updated>
+    </task>
+    <task id="LOCAL-00099">
+      <created>1596534006760</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1596534006760</updated>
+    </task>
+    <task id="LOCAL-00100">
+      <created>1596535534922</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1596535534922</updated>
+    </task>
+    <task id="LOCAL-00101">
+      <created>1596610681882</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1596610681883</updated>
+    </task>
+    <task id="LOCAL-00102">
+      <created>1596619262551</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1596619262551</updated>
+    </task>
+    <task id="LOCAL-00103">
+      <created>1596772919091</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1596772919091</updated>
+    </task>
+    <task id="LOCAL-00104">
+      <created>1597029988506</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1597029988506</updated>
+    </task>
+    <task id="LOCAL-00105">
+      <created>1597030091181</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1597030091181</updated>
+    </task>
+    <task id="LOCAL-00106">
+      <created>1597038721380</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1597038721380</updated>
+    </task>
+    <task id="LOCAL-00107">
+      <created>1597038933727</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1597038933727</updated>
+    </task>
+    <task id="LOCAL-00108" summary="视频上传配置">
+      <created>1597133970857</created>
+      <option name="number" value="00108" />
+      <option name="presentableId" value="LOCAL-00108" />
+      <option name="project" value="LOCAL" />
+      <updated>1597133970858</updated>
+    </task>
+    <task id="LOCAL-00109">
+      <created>1597286488427</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1597286488428</updated>
+    </task>
+    <task id="LOCAL-00110">
+      <created>1597286536262</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1597286536262</updated>
+    </task>
+    <task id="LOCAL-00111" summary="站内信查询">
+      <created>1597306270854</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1597306270854</updated>
+    </task>
+    <task id="LOCAL-00112" summary="站内信查询">
+      <created>1597306308497</created>
+      <option name="number" value="00112" />
+      <option name="presentableId" value="LOCAL-00112" />
+      <option name="project" value="LOCAL" />
+      <updated>1597306308497</updated>
+    </task>
+    <task id="LOCAL-00113">
+      <created>1597306902556</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1597306902556</updated>
+    </task>
+    <task id="LOCAL-00114">
+      <created>1597390084431</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1597390084431</updated>
+    </task>
+    <task id="LOCAL-00115" summary="登录日志">
+      <created>1597650455889</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1597650455889</updated>
+    </task>
+    <task id="LOCAL-00116">
+      <created>1597653255706</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1597653255706</updated>
+    </task>
+    <task id="LOCAL-00117">
+      <created>1597657631154</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1597657631155</updated>
+    </task>
+    <task id="LOCAL-00118">
+      <created>1597657786058</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1597657786058</updated>
+    </task>
+    <task id="LOCAL-00119">
+      <created>1597658968757</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1597658968757</updated>
+    </task>
+    <task id="LOCAL-00120">
+      <created>1597661162074</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1597661162074</updated>
+    </task>
+    <task id="LOCAL-00121">
+      <created>1597720218491</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1597720218492</updated>
+    </task>
+    <task id="LOCAL-00122">
+      <created>1597738334537</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1597738334537</updated>
+    </task>
+    <task id="LOCAL-00123">
+      <created>1597738854282</created>
+      <option name="number" value="00123" />
+      <option name="presentableId" value="LOCAL-00123" />
+      <option name="project" value="LOCAL" />
+      <updated>1597738854282</updated>
+    </task>
+    <task id="LOCAL-00124">
+      <created>1597739851431</created>
+      <option name="number" value="00124" />
+      <option name="presentableId" value="LOCAL-00124" />
+      <option name="project" value="LOCAL" />
+      <updated>1597739851431</updated>
+    </task>
+    <task id="LOCAL-00125">
+      <created>1597740203997</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1597740203998</updated>
+    </task>
+    <task id="LOCAL-00126">
+      <created>1597741562774</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1597741562774</updated>
+    </task>
+    <task id="LOCAL-00127">
+      <created>1597743212636</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1597743212636</updated>
+    </task>
+    <task id="LOCAL-00128">
+      <created>1597743693922</created>
+      <option name="number" value="00128" />
+      <option name="presentableId" value="LOCAL-00128" />
+      <option name="project" value="LOCAL" />
+      <updated>1597743693922</updated>
+    </task>
+    <task id="LOCAL-00129">
+      <created>1597747863471</created>
+      <option name="number" value="00129" />
+      <option name="presentableId" value="LOCAL-00129" />
+      <option name="project" value="LOCAL" />
+      <updated>1597747863471</updated>
+    </task>
+    <task id="LOCAL-00130">
+      <created>1597747916000</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1597747916001</updated>
+    </task>
+    <task id="LOCAL-00131">
+      <created>1597749723274</created>
+      <option name="number" value="00131" />
+      <option name="presentableId" value="LOCAL-00131" />
+      <option name="project" value="LOCAL" />
+      <updated>1597749723274</updated>
+    </task>
+    <task id="LOCAL-00132">
+      <created>1597750275701</created>
+      <option name="number" value="00132" />
+      <option name="presentableId" value="LOCAL-00132" />
+      <option name="project" value="LOCAL" />
+      <updated>1597750275701</updated>
+    </task>
+    <task id="LOCAL-00133">
+      <created>1597806603991</created>
+      <option name="number" value="00133" />
+      <option name="presentableId" value="LOCAL-00133" />
+      <option name="project" value="LOCAL" />
+      <updated>1597806603992</updated>
+    </task>
+    <task id="LOCAL-00134" summary="添加节假日设置">
+      <created>1597807806152</created>
+      <option name="number" value="00134" />
+      <option name="presentableId" value="LOCAL-00134" />
+      <option name="project" value="LOCAL" />
+      <updated>1597807806152</updated>
+    </task>
+    <task id="LOCAL-00135" summary="添加节假日设置">
+      <created>1597808624596</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1597808624596</updated>
+    </task>
+    <task id="LOCAL-00136">
+      <created>1597911014242</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1597911014242</updated>
+    </task>
+    <task id="LOCAL-00137">
+      <created>1597922801799</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1597922801800</updated>
+    </task>
+    <task id="LOCAL-00138">
+      <created>1597975665257</created>
+      <option name="number" value="00138" />
+      <option name="presentableId" value="LOCAL-00138" />
+      <option name="project" value="LOCAL" />
+      <updated>1597975665257</updated>
+    </task>
+    <task id="LOCAL-00139">
+      <created>1597978096361</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1597978096361</updated>
+    </task>
+    <task id="LOCAL-00140">
+      <created>1597980606640</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1597980606640</updated>
+    </task>
+    <task id="LOCAL-00141">
+      <created>1597982074856</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1597982074856</updated>
+    </task>
+    <option name="localTasksCounter" value="142" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="用户组织修改" />
+    <MESSAGE value="树结构添加节点删除限制" />
+    <MESSAGE value="添加别名限制" />
+    <MESSAGE value="添加未加入组织人员查询" />
+    <MESSAGE value="保利业务---产品还款计划相关" />
+    <MESSAGE value="保利业务---产品关联合同" />
+    <MESSAGE value="保利业务---产品创建相关" />
+    <MESSAGE value="视频上传配置" />
+    <MESSAGE value="站内信查询" />
+    <MESSAGE value="登录日志" />
+    <MESSAGE value="添加节假日设置" />
+    <option name="LAST_COMMIT_MESSAGE" value="" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="0" y="19" width="1366" height="690" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1614588489914">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="0" y="19" width="1366" height="690" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1614588489914" />
+    <state x="462" y="119" key="FileChooserDialogImpl" timestamp="1615971120202">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="462" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1615971120202" />
+    <state x="206" y="6" key="SettingsEditor" timestamp="1615971123635">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="206" y="6" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1615971123635" />
+    <state x="456" y="209" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1615972570864">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="456" y="209" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1366.728@0.0.1366.728" timestamp="1615972570864" />
+  </component>
+  <component name="ideajad">
+    <property name="annotate" value="false" />
+    <property name="annotateFully" value="false" />
+    <property name="braces" value="false" />
+    <property name="clear" value="false" />
+    <property name="confirmNavigationTriggeredDecompile" value="true" />
+    <property name="dead" value="true" />
+    <property name="defaultInitializers" value="false" />
+    <property name="dissassemblerOnly" value="false" />
+    <property name="fieldsFirst" value="true" />
+    <property name="fileExtension" value="java" />
+    <property name="fullyQualifiedNames" value="false" />
+    <property name="indentation" value="4" />
+    <property name="intRadix" value="10" />
+    <property name="lineNumbersAsComments" value="true" />
+    <property name="longRadix" value="10" />
+    <property name="maxStringLength" value="64" />
+    <property name="nocast" value="false" />
+    <property name="noclass" value="false" />
+    <property name="nocode" value="false" />
+    <property name="noconv" value="false" />
+    <property name="noctor" value="false" />
+    <property name="nodos" value="false" />
+    <property name="nofd" value="false" />
+    <property name="noinner" value="false" />
+    <property name="nolvt" value="false" />
+    <property name="nonlb" value="false" />
+    <property name="outputDirectory" value="" />
+    <property name="packFields" value="3" />
+    <property name="packImports" value="7" />
+    <property name="prefixNumericalClasses" value="_cls" />
+    <property name="prefixNumericalFields" value="_fld" />
+    <property name="prefixNumericalLocals" value="_lcl" />
+    <property name="prefixNumericalMethods" value="_mth" />
+    <property name="prefixNumericalParameters" value="_prm" />
+    <property name="prefixUnusedExceptions" value="_ex" />
+    <property name="readonly" value="false" />
+    <property name="safe" value="false" />
+    <property name="sort" value="false" />
+    <property name="spaceAfterKeyword" value="false" />
+    <property name="splitStringsAtNewline" value="false" />
+    <property name="useTabs" value="false" />
+  </component>
+</project>

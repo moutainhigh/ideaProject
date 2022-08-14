@@ -1,0 +1,10 @@
+HRY_COMPANY=互融云
+HRY_FUNCTION_DESC=企查查
+HRY_TABLE_NAME=企查查企业裁判文书信息
+HRY_PACKAGE=hry.business.qcc
+HRY_TABLE=qcc_enterprise_judgmentdoc
+HRY_MODEL=QccEnterpriseJudgmentdoc
+HRY_AUTH=yaoz
+mysql_url=jdbc:mysql://localhost:3306/hry_boot?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+mysql_user=root
+mysql_password=root

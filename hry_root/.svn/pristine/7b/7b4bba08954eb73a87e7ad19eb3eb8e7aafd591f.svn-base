@@ -1,0 +1,26 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-04-14 14:55:47
+ */
+package hry.activiti.process.service;
+
+import hry.core.mvc.service.BaseService;
+import hry.activiti.process.model.ProProcess;
+
+/**
+ * <p> ProProcessService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-04-14 14:55:47
+ */
+public interface ProProcessService extends BaseService<ProProcess, Long> {
+
+    /**
+     * 启动流程
+     * @param defineKey
+     */
+    void start(String defineKey);
+}

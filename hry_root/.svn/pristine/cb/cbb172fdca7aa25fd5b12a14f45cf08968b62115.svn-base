@@ -1,0 +1,133 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-28 10:04:39 
+ */
+package hry.business.cu.controller;
+
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.business.cu.model.CuIntentionFollowComment;
+import hry.business.cu.service.CuIntentionFollowCommentService;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.security.logger.ControllerLogger;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * <p> CuIntentionFollowCommentController </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-28 10:04:39 
+ */
+@Api(value = "意向跟进信息评论", tags = "意向跟进信息评论", description = "意向跟进信息评论")
+@RestController
+@RequestMapping("/cu/cuintentionfollowcomment")
+public class CuIntentionFollowCommentController extends BaseController {
+
+	@Autowired
+	private CuIntentionFollowCommentService cuIntentionFollowCommentService;
+
+	/**
+     * <p> 意向跟进信息评论-id查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-28 10:04:39 
+     */
+    @ApiOperation(value = "意向跟进信息评论-id查询", notes = "意向跟进信息评论-id查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/get/{id}")
+    public JsonResult get (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+		CuIntentionFollowComment cuIntentionFollowComment = cuIntentionFollowCommentService.get(id);
+        if (cuIntentionFollowComment != null) {
+            jsonResult.setObj(cuIntentionFollowComment);
+            return jsonResult.setSuccess(true);
+        }
+        return jsonResult.setSuccess(false);
+    }
+
+	/**
+     * <p> 意向跟进信息评论-添加 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-28 10:04:39 
+     */
+    @ApiOperation(value = "意向跟进信息评论-添加", notes = "意向跟进信息评论-添加")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/add")
+    public JsonResult add (CuIntentionFollowComment cuIntentionFollowComment) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionFollowCommentService.save(cuIntentionFollowComment);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向跟进信息评论-修改 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-28 10:04:39 
+     */
+    @ApiOperation(value = "意向跟进信息评论-修改", notes = "意向跟进信息评论-修改")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/modify")
+    public JsonResult modify (CuIntentionFollowComment cuIntentionFollowComment) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionFollowCommentService.update(cuIntentionFollowComment);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向跟进信息评论-id删除 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-28 10:04:39 
+     */
+    @ApiOperation(value = "意向跟进信息评论-id删除", notes = "意向跟进信息评论-id删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/remove/{id}")
+    public JsonResult remove (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionFollowCommentService.delete(id);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向跟进信息评论-分页查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-28 10:04:39 
+     */
+    @ApiOperation(value = "意向跟进信息评论-分页查询", notes = "意向跟进信息评论-分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/list")
+    public PageResult list (
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(CuIntentionFollowComment.class, request);
+        return cuIntentionFollowCommentService.findPageResult(filter);
+    }
+
+}

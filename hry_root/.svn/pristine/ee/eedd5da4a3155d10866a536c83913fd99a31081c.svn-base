@@ -1,0 +1,3 @@
+
+alter table fa_factoring_flow modify column projectCode varchar(255);
+alter table fa_factoring_flow add projectName varchar(255) default  '' null comment '项目名称';

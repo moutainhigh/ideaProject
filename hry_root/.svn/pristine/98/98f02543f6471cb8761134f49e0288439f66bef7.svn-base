@@ -1,0 +1,202 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: zhouming
+ * @version: V1.0
+ * @Date: 2020-07-17 14:23:46 
+ */
+package hry.business.fa.controller;
+
+import com.alibaba.fastjson.JSONArray;
+import com.google.gson.JsonArray;
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.business.fa.model.*;
+import hry.business.fa.service.FaProductRateService;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.business.fa.service.FaProductService;
+import hry.security.logger.ControllerLogger;
+import hry.util.StringUtil;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.JarEntry;
+
+/**
+ * <p> FaProductController </p>
+ *
+ * @author: zhouming
+ * @Date: 2020-07-17 14:23:46 
+ */
+@Api(value = "产品表 ", tags = "产品表 ", description = "产品表 ")
+@RestController
+@RequestMapping("/fa/faproduct")
+public class FaProductController extends BaseController {
+
+	@Autowired
+	private FaProductService faProductService;
+	@Autowired
+    private FaProductRateService faProductRateService;
+
+	/**
+     * <p> 产品表 -id查询 </p>
+     *
+     * @author: zhouming
+     * @Date: 2020-07-17 14:23:46 
+     */
+    @ApiOperation(value = "产品表 -id查询", notes = "产品表 -id查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/get/{id}")
+    public JsonResult get (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+		FaProduct faProduct = faProductService.get(id);
+        if (faProduct != null) {
+            // 获取产品的费率集合
+            QueryFilter filter = new QueryFilter(FaProductRate.class);
+            filter.addFilter("productid=", id);
+            List<FaProductRate> rateList = faProductRateService.find(filter);
+            if (rateList != null && rateList.size() > 0) {
+                String productRateJson = JSONArray.toJSONString(rateList);
+                faProduct.setProductRateJson(productRateJson);
+            }
+            jsonResult.setObj(faProduct);
+            return jsonResult.setSuccess(true);
+        }
+        return jsonResult.setSuccess(false);
+    }
+
+	/**
+     * <p> 产品表 -创建产品 </p>
+     *
+     * @author: zhouming
+     * @Date: 2020-07-17 14:23:46 
+     */
+    @ApiOperation(value = "产品表 -创建产品", notes = "产品表 -创建产品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/createProduct")
+    public JsonResult createProduct (FaProduct faProduct,
+                                     HttpServletRequest request) {
+        if (faProduct.getStatus() == null) {
+            return new JsonResult(false).setObj("创建产品步骤不正确");
+        }
+        return faProductService.createProduct(faProduct);
+    }
+
+    /**
+     * <p> 产品表 -上一步</p>
+     *
+     * @author: zhouming
+     * @Date: 2020-07-17 14:23:46
+     */
+    @ApiOperation(value = "产品表 -上一步", notes = "产品表 -上一步")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/backStep")
+    public JsonResult backStep (@ApiParam(name = "productId", value = "产品Id", required = true) @RequestParam String productId,
+                                @ApiParam(name = "status", value = "当前步骤，1: 产品基础信息 2: 配置计息模型 3: 选择附加费用 4: 创建完成", required = true) @RequestParam String status,
+                                HttpServletRequest request) {
+        if ("1".equals(status)) {
+            return new JsonResult(false).setObj("当前步骤没有上一步");
+        }
+        FaProduct faProduct = faProductService.get(Long.parseLong(productId));
+        faProduct.setStatus(Integer.parseInt(status) - 1);
+        faProductService.update(faProduct);
+        return new JsonResult(true).setObj(faProduct);
+    }
+
+    /**
+     * <p> 产品表 -id删除 </p>
+     *
+     * @author: zhouming
+     * @Date: 2020-07-17 14:23:46 
+     */
+    @ApiOperation(value = "产品表 -id删除", notes = "产品表 -id删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/remove/{id}")
+    public JsonResult remove (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        // 删除产品相关费率信息
+        QueryFilter filter = new QueryFilter(FaProductRate.class);
+        filter.addFilter("productid=", id);
+        faProductRateService.delete(filter);
+        faProductService.delete(id);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 产品表 -分页查询 </p>
+     *
+     * @author: zhouming
+     * @Date: 2020-07-17 14:23:46 
+     */
+    @ApiOperation(value = "产品表 -分页查询", notes = "产品表 -分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/list")
+    public PageResult list (
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            @ApiParam(name = "status", value = "status 4 已完成 非4 草稿箱", required = true) @RequestParam String status,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(FaProduct.class, request);
+        if ("4".equals(status)) {
+            filter.addFilter("status=", 4);
+        } else {
+            filter.addFilter("status_in", "1,2,3");
+        }
+        return faProductService.findPageResult(filter);
+    }
+
+    @ApiOperation(value = "分录生成还款记录", notes = "分录生成还款记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/createFundList")
+    public JsonResult createFundList(FaFundInitParam param,
+                                    HttpServletRequest request) {
+       /* List<FaProductRate> rateList = new ArrayList<>();
+        FaProductRate rate = new FaProductRate();
+        rate.setRatename("贷款利息收取");
+        rate.setYearratio(new BigDecimal("240"));
+        rate.setMonthratio(new BigDecimal("20"));
+        rate.setDayratio(new BigDecimal("0.6667"));
+        rate.setRepayone(1);
+        rate.setRepaytwo(1);
+        rate.setRepaythree(1);
+        FaProductRate rate2 = new FaProductRate();
+        rate2.setRatename("担保费");
+        rate2.setYearratio(new BigDecimal("240"));
+        rate2.setMonthratio(new BigDecimal("20"));
+        rate2.setDayratio(new BigDecimal("0.6667"));
+        rate2.setRepayone(1);
+        rate2.setRepaytwo(1);
+        rate2.setRepaythree(1);
+
+        rateList.add(rate);
+        rateList.add(rate2);
+        String productRateJson = JSONArray.toJSONString(rateList);
+        param.setProductRateJson(productRateJson);*/
+        return faProductService.createFundList(param);
+    }
+
+}

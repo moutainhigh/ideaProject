@@ -1,0 +1,120 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-04-14 14:55:47
+ */
+package hry.activiti.process.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import hry.activiti.process.model.ProBusTable;
+import hry.activiti.process.model.ProDefine;
+import hry.activiti.process.model.ProProcess;
+import hry.activiti.process.model.vo.HryTask;
+import hry.activiti.process.service.ActivitiService;
+import hry.activiti.process.service.ProBusTableService;
+import hry.activiti.process.service.ProDefineService;
+import hry.activiti.process.service.ProProcessService;
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.config.remote.AdminRemoteService;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.QueryFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+/**
+ * <p> ProProcessService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-04-14 14:55:47
+ */
+@Service("proProcessService")
+public class ProProcessServiceImpl extends BaseServiceImpl<ProProcess, Long> implements ProProcessService {
+
+	@Resource(name = "proProcessDao")
+	@Override
+	public void setDao (BaseDao<ProProcess, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	ActivitiService activitiService;
+
+	@Autowired
+	AdminRemoteService adminRemoteService;
+
+	@Autowired
+	ProDefineService proDefineService;
+
+	@Autowired
+	ProBusTableService proBusTableService;
+
+
+	@Override
+	public JsonResult start(String defineKey) {
+
+		ProDefine prodefine = proDefineService.getByDefineKey(defineKey);
+		if(prodefine==null){
+			return new JsonResult().setMsg("流程定义不存在");
+		}
+		ProBusTable proBusTable = proBusTableService.get(prodefine.getBusTableId());
+		if(proBusTable==null){
+			return new JsonResult().setMsg("流程业务主表不存在");
+		}
+
+		String resutlStr = adminRemoteService.startFlow(proBusTable.getJavaName(),defineKey,prodefine.getName());
+		if(StringUtils.isEmpty(resutlStr)){
+			return new JsonResult().setMsg("admin接口错误");
+		}else{
+			JsonResult jsonResult = JSON.parseObject(resutlStr, JsonResult.class);
+			if(!jsonResult.getSuccess()){
+				return new JsonResult().setMsg(jsonResult.getMsg());
+			}
+		}
+
+		//启动流程
+		activitiService.start(prodefine.getPdKey());
+
+		return new JsonResult().setSuccess(true);
+
+	}
+
+	@Override
+	public PageResult findMyTask(Integer page, Integer pageSize, Long userId) {
+		List<HryTask> taskList = activitiService.findMyTask(page,pageSize,userId.toString());
+		if(taskList!=null&&taskList.size()>0){
+			for(HryTask hryTask : taskList){
+				ProProcess proProcess = get(new QueryFilter(ProDefine.class).addFilter("piId=", hryTask.getPiId()));
+				hryTask.setFlowName(proProcess.getName());
+			}
+		}
+		Long count = activitiService.findMyTaskCount(userId.toString());
+		return new PageResult(taskList,count,page,pageSize);
+	}
+
+	@Override
+	public PageResult findAllTask(Integer page, Integer pageSize) {
+		List<HryTask> taskList = activitiService.finaAllTask(page,pageSize);
+		if(taskList!=null&&taskList.size()>0){
+			for(HryTask hryTask : taskList){
+				ProProcess proProcess = get(new QueryFilter(ProDefine.class).addFilter("piId=", hryTask.getPiId()));
+				hryTask.setFlowName(proProcess.getName());
+			}
+		}
+		Long count = activitiService.finaAllTaskCount();
+		return new PageResult(taskList,count,page,pageSize);
+	}
+
+	@Override
+	public JsonResult completeTask(String taskId) {
+		activitiService.completeTask(taskId);
+		return new JsonResult().setSuccess(true);
+	}
+}

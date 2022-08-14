@@ -1,0 +1,99 @@
+server:
+  port: 7710
+#设置超级管理员
+system:
+  admin: admin
+
+# spring配置
+spring:
+  application:
+    name: hry-application-admin
+  # 数据源配置
+  datasource:
+    url: jdbc:mysql://192.168.0.52:3306/hry_boot?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: Credit_2016Admin
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      test-on-borrow: true
+  rabbitmq:
+    host: 192.168.0.51
+    port: 5672
+    username: qq
+    password: 1234
+    virtual-host: /qq
+    exchangeName: finance.direct.exchange
+    # 重试机制
+    listener:
+      simple:
+        retry:
+          #是否开启消费者重试（为false时关闭消费者重试）
+          enabled: true
+          #最大重试次数
+          max-attempts: 5
+          #最大间隔时间
+          max-interval: 20000ms
+          #重试间隔时间 3秒
+          initial-interval: 3000ms
+          #乘子  重试间隔*乘子得出下次重试间隔  3s  6s  12s  24s  此处24s>20s  走20s
+          multiplier: 2
+        #重试次数超过上面的设置之后是否丢弃（false不丢弃时需要写相应代码将该消息加入死信队列）
+        default-requeue-rejected: true
+# mybatis配置
+mybatis:
+  mapper-locations: classpath*:hry/**/mapper/*.xml
+  configuration:
+    default-fetch-size: 100
+    #mybatis日志
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 通用mapper配置
+mapper:
+  mappers:
+    - hry.core.mvc.dao.BaseDao
+  not-empty: false
+  identity: MYSQL
+  #    before: true
+
+# 分页配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+# redis配置
+redis:
+  url: 192.168.0.52
+  port: 6379
+  password: Credit2016Admin
+  maxTotal: 500
+
+# 业务配置
+# oss
+app:
+  oss:
+    open: true
+    endpoint: http://oss-cn-beijing.aliyuncs.com
+    accessKeyId: LTAIy0JoG8UwjD89
+    accessKeySecret: IlxRvELEysGMpOA3dWVqxKG8B6yVFf
+    privateBucketName: hry-exchange-private
+    publicBucketName: hry-exchange-public
+  oauthKey: c268c4ce22b34efeb699c9d8f38d0824
+  oauthIp: 192.168.0.52
+
+# UKey配置
+ukey:
+  # 用户名
+  username: leijinrong-cs
+  # windows下ini配置文件相对路径
+  winIniPath: ukey/ini/JCryptoWrapperWin.ini
+  # Linux下ini配置文件相对路径
+  linuxIniPath: ukey/ini/JCryptoWrapperLinux.ini
+  # 密钥文件相对路径配置
+  bsidkeyPath: ukey/bsidkey/Agent.bsidkey
+
+elasticsearch:
+  host: 127.0.0.1:9200

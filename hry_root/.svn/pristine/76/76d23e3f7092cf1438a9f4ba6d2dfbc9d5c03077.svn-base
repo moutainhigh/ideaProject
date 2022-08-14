@@ -1,0 +1,33 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:36:21 
+ */
+package hry.business.cu.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.business.cu.model.CuIntention;
+import hry.business.cu.service.CuIntentionService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> CuIntentionService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:36:21 
+ */
+@Service("cuIntentionService")
+public class CuIntentionServiceImpl extends BaseServiceImpl<CuIntention, Long> implements CuIntentionService {
+
+	@Resource(name = "cuIntentionDao")
+	@Override
+	public void setDao (BaseDao<CuIntention, Long> dao) {
+		super.dao = dao;
+	}
+
+}

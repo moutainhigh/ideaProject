@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="hry_activiti" />
+        <module name="hry_common_security" />
+        <module name="hry_common_utils" />
+        <module name="hry_service" />
+        <module name="hry_admin" />
+        <module name="hry_api" />
+        <module name="hry_eureka" />
+        <module name="hry_plugin_code" />
+        <module name="hry_common_redis" />
+        <module name="hry_timer" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="hry_activiti" target="1.8" />
+      <module name="hry_admin" target="1.8" />
+      <module name="hry_api" target="1.8" />
+      <module name="hry_application" target="1.8" />
+      <module name="hry_boot" target="1.8" />
+      <module name="hry_common" target="1.8" />
+      <module name="hry_common_redis" target="1.8" />
+      <module name="hry_common_security" target="1.8" />
+      <module name="hry_common_utils" target="1.8" />
+      <module name="hry_eureka" target="1.8" />
+      <module name="hry_plugin" target="1.8" />
+      <module name="hry_plugin_code" target="1.8" />
+      <module name="hry_service" target="1.8" />
+      <module name="hry_timer" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="hry_activiti" options="-parameters" />
+      <module name="hry_admin" options="-parameters" />
+      <module name="hry_api" options="-parameters" />
+      <module name="hry_common_redis" options="-parameters" />
+      <module name="hry_common_security" options="-parameters" />
+      <module name="hry_common_utils" options="-parameters" />
+      <module name="hry_eureka" options="-parameters" />
+      <module name="hry_plugin_code" options="-parameters" />
+      <module name="hry_service" options="-parameters" />
+      <module name="hry_timer" options="-parameters" />
+    </option>
+  </component>
+</project>

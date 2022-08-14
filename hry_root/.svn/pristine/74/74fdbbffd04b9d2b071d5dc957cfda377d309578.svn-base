@@ -1,0 +1,33 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-12 18:34:06 
+ */
+package hry.activiti.process.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.activiti.process.model.ProSonForm;
+import hry.activiti.process.service.ProSonFormService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> ProSonFormService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-12 18:34:06 
+ */
+@Service("proSonFormService")
+public class ProSonFormServiceImpl extends BaseServiceImpl<ProSonForm, Long> implements ProSonFormService {
+
+	@Resource(name = "proSonFormDao")
+	@Override
+	public void setDao (BaseDao<ProSonForm, Long> dao) {
+		super.dao = dao;
+	}
+
+}

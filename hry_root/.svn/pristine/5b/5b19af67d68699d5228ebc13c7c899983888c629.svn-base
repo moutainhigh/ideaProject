@@ -1,0 +1,84 @@
+package hry.util.flowModel;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class FlowParams  implements Serializable {
+
+    private Long startUserId; //启动人ID
+
+    private String defineKey; //流程定义key
+
+    private String taskId; //任务ID
+
+    private String nodeKey; //节点key
+
+    private String controlName;//控制器名称  示例:appFlowService.start
+
+    private String flowName;//流程名称
+
+    private Map<String,Object> params;
+
+
+    public Long getStartUserId() {
+        return startUserId;
+    }
+
+    public void setStartUserId(Long startUserId) {
+        this.startUserId = startUserId;
+    }
+
+    public String getDefineKey() {
+        return defineKey;
+    }
+
+    public void setDefineKey(String defineKey) {
+        this.defineKey = defineKey;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getNodeKey() {
+        return nodeKey;
+    }
+
+    public void setNodeKey(String nodeKey) {
+        this.nodeKey = nodeKey;
+    }
+
+    public String getControlName() {
+        return controlName;
+    }
+
+    public void setControlName(String controlName) {
+        this.controlName = controlName;
+    }
+
+    public Map<String, Object> getParams() {
+        if(params==null){
+            synchronized (FlowParams.class){
+                this.params = new HashMap<>();
+            }
+        }
+        return params;
+    }
+
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
+    }
+
+    public String getFlowName() {
+        return flowName;
+    }
+
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
+    }
+}

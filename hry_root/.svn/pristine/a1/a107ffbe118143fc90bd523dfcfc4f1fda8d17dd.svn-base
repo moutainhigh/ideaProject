@@ -1,0 +1,229 @@
+package hry;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.deepoove.poi.data.PictureRenderData;
+import hry.security.jwt.annotation.UnAuthentication;
+import hry.util.email.EmailParam;
+import hry.util.email.EmailUtils;
+import hry.util.excel.ExcelUtil;
+import hry.util.httpRequest.IpUtil;
+import hry.util.httpRequest.UserAgentUtils;
+import hry.util.poi.PoiUtil;
+import hry.util.rmq.RabbitMQProducer;
+import hry.util.sms.SmsSendParam;
+import hry.util.sms.SmsSendUtils;
+import hry.util.sms.SmsSendVo;
+import hry.util.ukey.UkeyUtil;
+import hry.util.upload.FileUploadContext;
+import hry.util.upload.FileUploadUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import sun.net.www.content.image.png;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
+import java.util.List;
+
+/**
+ *  @author: liuchenghui
+ *  @Date: 2020/3/26 18:31
+ *  @Description: 测试类
+ */
+@RestController
+@RequestMapping("/test")
+public class TestController {
+
+    @Autowired
+    private RabbitMQProducer rabbitMQProducer;
+    @Autowired
+    private FileUploadContext fileUploadContext;
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/4/22 17:22
+     *  @Description: 测试MQ
+     */
+    @RequestMapping("/testMQ")
+    @UnAuthentication
+    public void test() {
+       rabbitMQProducer.sendMsgByQueue("test", "HELLO MQ");
+    }
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/3/24 17:42
+     *  @Description: 短信测试
+     */
+    @PostMapping("/sendSms")
+    @UnAuthentication
+    public void sendSmsTest(String mobilePhone) {
+        SmsSendVo smsSendParam = new SmsSendVo(mobilePhone, "", "1", null);
+        String sendSmsCode = SmsSendUtils.sendSms(smsSendParam);
+    }
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/3/26 18:31
+     *  @Description: 测试发送邮件
+     */
+    @PostMapping("/sendEmail")
+    @UnAuthentication
+    public void sendEmailTest (String email, String token, HttpServletRequest request) {
+        List<String> toList = new ArrayList<>();
+        EmailParam param = new EmailParam();
+        if (StringUtils.isNotEmpty(email)) {
+            String[] tos = email.split(",");
+            for (String to : tos) {
+                toList.add(to);
+            }
+        }
+        param.setToEmails(toList);
+        param.setLangCode("zh_CN");
+        param.setType("1");
+        param.setFishingCode("910208");
+        param.setEmailClassName("hryEmailServiceImpl");
+        param.setNewForgetEmail(false);
+        // 获取设备类型传递参数
+        if ("4".equals(param)) {
+            param.setToken(token);
+            param.setUrl("");
+            // 获取ip
+            param.setIp(IpUtil.getIp());
+            // 获取设备类型
+            String deviceType = UserAgentUtils.getDevicetype(request);
+            param.setDeviceType(deviceType);
+            // 获取系统类型
+            String osType = UserAgentUtils.getOsName(request);
+            param.setOsType(osType);
+            // 获取浏览器类型
+            String browserType = UserAgentUtils.getBrowserName(request);
+            param.setBrowserType(browserType);
+        }
+        // 发送邮件
+        EmailUtils.sendEmailByThread(param);
+    }
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/3/27 10:40
+     *  @Description: 上传文件测试
+     */
+    @PostMapping("/uploadFile")
+    @UnAuthentication
+    public void uploadFileTest(@RequestParam("file") MultipartFile[] files) {
+        List<String> pathImg = FileUploadUtil.uploadFile(fileUploadContext, files, "ossFileUploadStrategy", false);
+        System.out.println(StringUtils.join(pathImg, ","));
+    }
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/3/27 10:40
+     *  @Description: 导入excel
+     */
+    @PostMapping("/importExcel")
+    @UnAuthentication
+    public void importExcel(@RequestParam("file") MultipartFile file) {
+        try {
+            // 获取的信息包括列名和值
+            List<List<Object>> lists = ExcelUtil.importExcel(file);
+            System.out.println(JSON.toJSONString(lists));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/3/27 10:40
+     *  @Description: 导出excel
+     */
+    @GetMapping("/exportExcel")
+    @UnAuthentication
+    public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            // 获得输出流
+            OutputStream output = response.getOutputStream();
+            // 头部数据
+            List<LinkedHashMap> topList = new ArrayList<>();
+            // 标题
+            LinkedHashMap<String, String> titleMap = new LinkedHashMap<>();
+            // title 设置标题，key固定
+            titleMap.put("title", "测试导出表");
+            // 表头信息
+            LinkedHashMap<String, String> headMap = new LinkedHashMap<String, String>();
+            headMap.put("name", "姓名");
+            headMap.put("sex", "性别");
+            headMap.put("subject", "科目");
+            headMap.put("score", "分数");
+            topList.add(titleMap);
+            topList.add(headMap);
+
+            // 数据集合，下面的字段名必须和上面的map对象key或者数据实体类参数保持一致
+            List<JSONObject> objects = new ArrayList<>();
+            for (int i = 0; i < 1000000; i++) {
+                JSONObject result = new JSONObject();
+                result.put("name", "张三"+i);
+                result.put("sex", "男");
+                result.put("subject", "数学");
+                result.put("score", 1 + i);
+                objects.add(result);
+            }
+            JSONArray objectsList = JSONArray.parseArray(objects.toString());
+            // 设置应用类型，以及编码
+            response.setContentType("application/msexcel;charset=utf-8");
+            response.setHeader("Content-Disposition",
+                    "filename=" + new String("测试导出表.xlsx/测试导出表.xls".getBytes("gb2312"), "iso8859-1"));
+            ExcelUtil.exportExcel(topList, objectsList, output);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/4/23 17:56
+     *  @Description: ukey测试方法
+     */
+    @GetMapping("/testUkey")
+    @UnAuthentication
+    public void testUkey(String pass) {
+        boolean b = UkeyUtil.validDynamicPass("leijinrong-cs", "2345" + pass);
+        if (b) {
+            System.out.println("验证成功");
+        } else {
+            System.out.println("验证失败");
+        }
+
+    }
+
+    /**
+     * 功能描述: 测试POI打印word
+     * @param null
+     * @return:
+     * @auther: yaozh
+     * @date: 2020/4/26 16:53
+     */
+    @GetMapping("getDoc")
+    @UnAuthentication
+    public void getDoc(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Map<String,Object> dataMap = new HashMap<String,Object>();
+        dataMap.put("银行", "中国人民银行");
+        dataMap.put("姓名", "姚卓");
+        dataMap.put("img", new PictureRenderData(120, 120, "C:\\Users\\lenovo\\Desktop\\11.png "));
+        String newWordName = "信息.doc";
+        String path = "C:\\Users\\lenovo\\Desktop\\test01.docx";
+        //调用打印word的函数
+        PoiUtil.docDownload(request,response,newWordName, dataMap,path);
+
+    }
+
+}

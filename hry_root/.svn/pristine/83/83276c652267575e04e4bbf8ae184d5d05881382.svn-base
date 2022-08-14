@@ -1,0 +1,94 @@
+package hry.util.sms;
+
+
+import hry.core.thread.ThreadPoolUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * @author: liuchenghui
+ * @Date: 2020/3/23 18:15
+ * @Description: 发送短信工具
+ */
+public class SmsSendUtils {
+    private static Logger logger= LoggerFactory.getLogger(SmsSendUtils.class);
+
+    /**
+     * @Description: 发送验证码
+     */
+    private final static String TYPE_ONE = "1";
+
+    /**
+     * @Description: 发送短信功能
+     * @Author: liuchenghui
+     * @Date: 2020/3/23 14:45
+     * @Param:
+     * @Return:
+     */
+    public static String sendSms (SmsSendParam smsSendParam) {
+        logger.info("----------开始发送短信，封装参数---------");
+        // 短信参数封装
+        StringBuilder hryParam = new StringBuilder();
+        String hryCode="";
+        String hrySmsCall = smsSendParam.getHrySmsCall();
+        // 如果短信类型是验证码，
+        if (TYPE_ONE.equals(smsSendParam.getHrySmstype())) {
+            //6位短信验证码
+            int length = 6;
+            //生成随机码
+            hryCode = RandomStringUtils.random(length, false, true);
+            hryParam.append(",").append(hryCode);
+            smsSendParam.setHryCode(hryCode);
+        } else {
+            String param = smsSendParam.getHryParams();
+            if (!StringUtils.isEmpty(param)) {
+                hryParam.append(",").append(smsSendParam.getHryParams());
+            }
+        }
+        if (!StringUtils.isEmpty(hrySmsCall)) {
+            hryParam.append(",").append(smsSendParam.getHrySmsCall());
+        }
+        smsSendParam.setHryParams(hryParam.substring(1));
+        logger.info("----------调用线程发送短信---------");
+        SmsSendRunable smsSendRunable = new SmsSendRunable(smsSendParam);
+        ThreadPoolUtils.execute(smsSendRunable);
+
+        return hryCode;
+    }
+
+    /**
+     * 替换内容
+     * @param target 替换目标内容
+     * @param content 替换内容
+     * @param replaceVal 替换值
+     * @return
+     */
+    public static String relaceContent (String target, String content, String... replaceVal) {
+        try {
+            if (StringUtils.isEmpty(target)) {
+                return content;
+            }
+            if (replaceVal == null) {
+                return content;
+            }
+            Pattern p = Pattern.compile(target);
+            Matcher m = p.matcher(content);
+            StringBuffer sb = new StringBuffer();
+            int n = 0;
+            while (m.find()) {
+                m.appendReplacement(sb, replaceVal[n]);
+                n++;
+            }
+            m.appendTail(sb);
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+}

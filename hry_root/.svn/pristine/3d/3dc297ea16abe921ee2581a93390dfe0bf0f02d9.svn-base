@@ -1,0 +1,98 @@
+package hry.business.qcc.controller;
+
+import hry.bean.JsonResult;
+import hry.business.cu.model.CuEnterprise;
+import hry.business.cu.service.CuEnterpriseService;
+import hry.business.qcc.model.QccEnterpriseBasicDetails;
+import hry.business.qcc.model.QccEnterpriseException;
+import hry.business.qcc.service.*;
+import hry.core.mvc.controller.BaseController;
+import hry.platform.config.service.AppConfigService;
+import hry.security.logger.ControllerLogger;
+import hry.util.StringUtil;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * @Author: yaozh
+ * @Description:
+ * @Date:
+ */
+
+@Api(value = "企查查API", tags = "企查查API", description = "企查查API")
+@RestController
+@RequestMapping("/qcc/qccapi")
+public class QccController extends BaseController {
+
+    @Autowired
+    private CuEnterpriseService enterpriseService;
+
+    @Autowired
+    private QccEnterpriseBasicDetailsService qccEnterpriseBasicDetailsService;
+    @Autowired
+    private QccEnterpriseExceptionService qccEnterpriseExceptionService;
+    @Autowired
+    private QccEnterprisePartnerService qccEnterprisePartnerService;
+    @Autowired
+    private QccEnterpriseEmployeeService qccEnterpriseEmployeeService;
+    @Autowired
+    private QccEnterpriseInvestmentService qccEnterpriseInvestmentService;
+    @Autowired
+    private QccEnterpriseBranchService qccEnterpriseBranchService;
+    @Autowired
+    private QccEnterpriseChangeService qccEnterpriseChangeService;
+    @Autowired
+    private QccEnterpriseCourtnoticeService qccEnterpriseCourtnoticeService;
+
+    @Autowired
+    private AppConfigService appConfigService;
+
+    @ApiOperation(value = "企查查-工商信息查询", notes = "企查查-工商信息查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/getQccInfo/{enterpriseId}")
+    public JsonResult get (@ApiParam(name = "enterpriseId", value = "enterpriseId", required = true) @PathVariable Long enterpriseId) {
+        JsonResult jsonResult = new JsonResult();
+
+        //根据enterpriseId 查询录入的企业信息
+        CuEnterprise cuEnterprise = enterpriseService.get(enterpriseId);
+        if (cuEnterprise == null) {
+            return jsonResult.setSuccess(false).setMsg("录入企业信息不存在!");
+        }
+        if (!StringUtil.isNull(cuEnterprise.getCreditCode())) {
+            return jsonResult.setSuccess(false).setMsg("企业社会统一信用代码不能为空！");
+        }
+
+        //企业工商数据查询
+        //jsonResult = qccEnterpriseBasicDetailsService.selectAndAdd(enterpriseId,cuEnterprise.getCreditCode());
+
+        //企业经营异常信息
+        //jsonResult = qccEnterpriseExceptionService.selectAndAdd(enterpriseId,cuEnterprise.getCreditCode());
+
+        //股东信息
+        //jsonResult = qccEnterprisePartnerService.selectAndAdd(enterpriseId,cuEnterprise.getCreditCode());
+
+        //主要人员
+        //jsonResult = qccEnterpriseEmployeeService.selectAndAdd(enterpriseId,cuEnterprise.getCreditCode());
+
+        //对外投资
+        //jsonResult = qccEnterpriseInvestmentService.selectAndAdd(enterpriseId,cuEnterprise.getCreditCode());
+
+        //分支机构
+        //jsonResult = qccEnterpriseBranchService.selectAndAdd(enterpriseId,cuEnterprise.getCreditCode());
+
+        //变更内容
+        //jsonResult = qccEnterpriseChangeService.selectAndAdd(enterpriseId,cuEnterprise.getCreditCode());
+
+        return jsonResult;
+    }
+
+
+
+}

@@ -1,0 +1,20 @@
+package hry.util.sms;
+
+import hry.bean.JsonResult;
+
+/**
+ *  @author: liuchenghui
+ *  @Date: 2020/3/23 17:48
+ *  @Description: Strategy
+ */
+public interface SmsStrategy {
+    /**
+    * @Description: 发送短信
+    * @Author: liuchenghui
+    * @Date: 2020/3/23 17:48
+    * @Param:
+    * @Return:
+    *
+    */
+    JsonResult smsSend (SmsSendParam smsSendParam);
+}

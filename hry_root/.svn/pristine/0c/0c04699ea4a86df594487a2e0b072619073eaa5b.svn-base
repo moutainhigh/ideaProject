@@ -1,0 +1,124 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-20 18:55:10
+ */
+package hry.business.qcc.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import hry.bean.JsonResult;
+import hry.business.cu.model.CuEnterprise;
+import hry.business.cu.service.CuEnterpriseService;
+import hry.business.qcc.api.EnterpriseSearchApi;
+import hry.business.qcc.model.QccEnterpriseBasicDetails;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.business.qcc.model.QccEnterpriseException;
+import hry.business.qcc.service.QccEnterpriseExceptionService;
+import hry.core.util.QueryFilter;
+import hry.platform.config.service.AppConfigService;
+import hry.util.StringUtil;
+import hry.util.UUIDUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.*;
+
+/**
+ * <p> QccEnterpriseExceptionService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-20 18:55:10
+ */
+@Service("qccEnterpriseExceptionService")
+public class QccEnterpriseExceptionServiceImpl extends BaseServiceImpl<QccEnterpriseException, Long> implements QccEnterpriseExceptionService {
+
+    @Resource(name = "qccEnterpriseExceptionDao")
+    @Override
+    public void setDao(BaseDao<QccEnterpriseException, Long> dao) {
+        super.dao = dao;
+    }
+
+
+    @Autowired
+    private AppConfigService appConfigService;
+
+    @Override
+    public JsonResult selectAndAdd(Long enterpriseId,String creditCode) {
+        JsonResult jsonResult = new JsonResult();
+
+        //查询数据库中是否存在信息
+        QueryFilter queryFilter = new QueryFilter(QccEnterpriseException.class);
+        queryFilter.addFilter("enterpriseId=",enterpriseId);
+        QccEnterpriseException qccE = super.get(queryFilter);
+        if(qccE!=null){
+            return jsonResult.setSuccess(false).setMsg("信息已存在！");
+        }
+
+        List<QccEnterpriseException> list = null;
+        String ordernumber = UUIDUtil.getUUID();
+        try {
+            list = this.getQccEnterpriseException(creditCode,ordernumber);
+            if (list == null) {
+                return jsonResult.setSuccess(false).setMsg("未查询到信息！");
+            }
+        } catch (Exception e) {
+            return jsonResult.setSuccess(false).setMsg(e.getLocalizedMessage());
+        }
+
+        for (QccEnterpriseException qccEnterpriseException : list) {
+            qccEnterpriseException.setEnterpriseId(enterpriseId.toString());
+            qccEnterpriseException.setUuid(ordernumber);
+        }
+        //保存
+        super.saveAll(list);
+        return jsonResult.setSuccess(true).setMsg("成功");
+
+    }
+
+
+    /**
+     * @param creditCode 信用代码
+     * @Author: yaozh
+     * @Description: 获取企查查中的企业基本信息
+     */
+    private List<QccEnterpriseException> getQccEnterpriseException(String creditCode,String ordernumber) {
+        /**
+         * 企查查查询信息
+         */
+        //根据信用码查询企业信息
+        String url = appConfigService.getValueByKey("qccIpAdrees");
+        String uri = appConfigService.getValueByKey("getOpExceptionUri");
+        //公钥
+        String publicKeyUrl = appConfigService.getValueByKey("qccPublicKeyUrl");
+        //公钥
+        String privateKeyUrl = appConfigService.getValueByKey("qccPrivateKeyUrl");
+        //商户号
+        String companyCode = appConfigService.getValueByKey("qccCompanyCode");
+        //所属平台
+        String belonged = appConfigService.getValueByKey("qccbelonged");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("ordernumber", ordernumber);
+        map.put("keyNo", creditCode);
+        //map.put("keyNo", "ac66f9d18c12d884e23b7c83bbad1c6b");
+        map.put("belonged", belonged);
+        EnterpriseSearchApi enterpriseSearchApi = new EnterpriseSearchApi();
+        JsonResult jsonResult = enterpriseSearchApi.getEnterpriseInfo(map, publicKeyUrl, privateKeyUrl, companyCode, url + uri);
+        if (!jsonResult.getSuccess()) {
+            throw new RuntimeException(jsonResult.getMsg());
+        }
+        String result = (String) jsonResult.getObj();
+        if (!StringUtil.isNull(result)) {
+            return null;
+        }
+        //将返回结果转为实体
+        List<QccEnterpriseException> list = JSON.parseArray(result, QccEnterpriseException.class);
+        return list;
+    }
+
+
+}

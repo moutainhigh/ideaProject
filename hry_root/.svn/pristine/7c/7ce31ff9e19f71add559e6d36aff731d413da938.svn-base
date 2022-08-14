@@ -1,0 +1,58 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-06-16 16:17:44
+ */
+package hry.business.cf.service;
+
+import hry.bean.PageResult;
+import hry.core.mvc.service.BaseService;
+import hry.business.cf.model.CfFacilityFlow;
+import hry.core.util.QueryFilter;
+import hry.util.flowModel.FlowParams;
+import hry.util.flowModel.FlowResult;
+
+/**
+ * <p> CfFacilityFlowService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-06-16 16:17:44
+ */
+public interface CfFacilityFlowService extends BaseService<CfFacilityFlow, Long> {
+    /**
+     * 根据条件查询信息
+     * @param filter
+     * @return
+     */
+    PageResult findPageBySql(QueryFilter filter);
+
+    /**
+     * 尽职调查
+     * @param flowParams
+     * @return
+     */
+    FlowResult jzdc(FlowParams flowParams);
+
+    /**
+     * 风险审核
+     * @param flowParams
+     * @return
+     */
+    FlowResult fxsh(FlowParams flowParams);
+
+    /**
+     * 制做合同
+     * @param flowParams
+     * @return
+     */
+    FlowResult zzht(FlowParams flowParams);
+
+    /**
+     * 项目归档
+     * @param flowParams
+     * @return
+     */
+    FlowResult xmgd(FlowParams flowParams);
+}

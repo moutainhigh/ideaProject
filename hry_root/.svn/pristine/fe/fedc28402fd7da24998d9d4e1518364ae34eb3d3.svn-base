@@ -1,0 +1,12 @@
+package hry.security.jwt;
+
+public interface LoginService {
+
+    /**
+     * 通用登录接口
+     * @param token
+     * @return
+     */
+    JWTToken login(JWTToken token);
+
+}

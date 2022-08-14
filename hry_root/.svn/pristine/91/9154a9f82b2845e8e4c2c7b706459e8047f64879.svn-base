@@ -1,0 +1,120 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-20 15:54:35 
+ */
+package hry.business.qcc.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import hry.bean.JsonResult;
+import hry.business.cu.model.CuEnterprise;
+import hry.business.cu.service.CuEnterpriseService;
+import hry.business.qcc.api.EnterpriseSearchApi;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.business.qcc.model.QccEnterpriseBasicDetails;
+import hry.business.qcc.service.QccEnterpriseBasicDetailsService;
+import hry.core.util.QueryFilter;
+import hry.platform.config.service.AppConfigService;
+import hry.util.StringUtil;
+import hry.util.UUIDUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * <p> QccEnterpriseBasicDetailsService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-20 15:54:35 
+ */
+@Service("qccEnterpriseBasicDetailsService")
+public class QccEnterpriseBasicDetailsServiceImpl extends BaseServiceImpl<QccEnterpriseBasicDetails, Long> implements QccEnterpriseBasicDetailsService {
+
+	@Resource(name = "qccEnterpriseBasicDetailsDao")
+	@Override
+	public void setDao (BaseDao<QccEnterpriseBasicDetails, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	private CuEnterpriseService enterpriseService;
+
+	@Autowired
+	private AppConfigService appConfigService;
+
+	@Override
+	public JsonResult selectAndAdd(Long enterpriseId,String creditCode) {
+		JsonResult jsonResult = new JsonResult();
+
+		//根据信用代码查询数据库中是否存在信息
+		QueryFilter queryFilter = new QueryFilter(QccEnterpriseBasicDetails.class);
+		queryFilter.addFilter("CreditCode=",creditCode);
+		QccEnterpriseBasicDetails qccE = super.get(queryFilter);
+		if(qccE!=null){
+			return jsonResult.setSuccess(false).setMsg("企业信息已存在！");
+		}
+
+		QccEnterpriseBasicDetails qccEnterpriseBasicDetails = new QccEnterpriseBasicDetails();
+		qccEnterpriseBasicDetails = this.getQccEnterpriseBasicDetails(creditCode);
+		if (qccEnterpriseBasicDetails==null) {
+			return jsonResult.setSuccess(false).setMsg("未查询到信息！");
+		}
+
+		qccEnterpriseBasicDetails.setEnterpriseId(enterpriseId.toString());
+
+		//保存
+		super.save(qccEnterpriseBasicDetails);
+
+		return jsonResult.setSuccess(true).setMsg("成功");
+
+	}
+
+	/**
+	 * @Author: yaozh
+	 * @Description: 获取企查查中的企业基本信息
+	 * @param creditCode 信用代码
+	 */
+	private QccEnterpriseBasicDetails getQccEnterpriseBasicDetails(String creditCode){
+		/**
+		 * 企查查查询信息
+		 */
+		//根据信用码查询企业信息
+		String url = appConfigService.getValueByKey("qccIpAdrees");
+		String uri = appConfigService.getValueByKey("getBasicDetailsByNameUri");
+		//公钥
+		String publicKeyUrl = appConfigService.getValueByKey("qccPublicKeyUrl");
+		//公钥
+		String privateKeyUrl = appConfigService.getValueByKey("qccPrivateKeyUrl");
+		//商户号
+		String companyCode = appConfigService.getValueByKey("qccCompanyCode");
+		//所属平台
+		String belonged = appConfigService.getValueByKey("qccbelonged");
+		String ordernumber = UUIDUtil.getUUID();
+		Map<String, Object> map = new HashMap<>();
+		map.put("ordernumber", ordernumber);
+		map.put("keyword", creditCode);
+		map.put("belonged", belonged);
+		EnterpriseSearchApi enterpriseSearchApi = new EnterpriseSearchApi();
+
+		JsonResult jsonResult = enterpriseSearchApi.getEnterpriseInfo(map,publicKeyUrl,privateKeyUrl,companyCode,url+uri);
+		if (!jsonResult.getSuccess()){
+			throw new RuntimeException(jsonResult.getMsg());
+		}
+		String result = (String) jsonResult.getObj();
+		if(!StringUtil.isNull(result)){
+			return null;
+		}
+		//将返回结果转为实体
+		QccEnterpriseBasicDetails qccEnterpriseBasicDetails = JSON.parseObject(result,QccEnterpriseBasicDetails.class);
+		qccEnterpriseBasicDetails.setUuid(ordernumber);
+		return qccEnterpriseBasicDetails;
+	}
+
+
+}

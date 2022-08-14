@@ -1,0 +1,32 @@
+package hry.util.sms;
+
+import hry.util.SpringUtil;
+
+/**
+ *  @author: liuchenghui
+ *  @Date: 2020/3/24 18:10
+ *  @Description: 发送短信线程
+ *  SmsContext使用了策略设计模式
+ */
+public class SmsSendRunable implements Runnable {
+
+    /**
+     * @Description: 请求短信参数
+     */
+    private SmsSendParam smsSendParam;
+
+    public SmsSendRunable (SmsSendParam smsSendParam) {
+        this.smsSendParam = smsSendParam;
+    }
+
+    @Override
+    public void run () {
+        try {
+            System.out.println("----------调用发送短信的实现类" + smsSendParam.getHrySmsClassName() + "----------");
+            SmsContext smsContext = SpringUtil.getBean("smsContext");
+            smsContext.getResource(smsSendParam.getHrySmsClassName(), smsSendParam);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

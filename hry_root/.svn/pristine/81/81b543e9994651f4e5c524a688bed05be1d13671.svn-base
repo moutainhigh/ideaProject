@@ -1,0 +1,147 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-07-17 17:01:01 
+ */
+package hry.business.fa.service.impl;
+
+import com.netflix.discovery.converters.Auto;
+import hry.bean.JsonResult;
+import hry.business.cu.model.CuBank;
+import hry.business.cu.model.CuEnterprise;
+import hry.business.cu.model.CuPerson;
+import hry.business.cu.service.CuBankService;
+import hry.business.cu.service.CuEnterprisePersonService;
+import hry.business.cu.service.CuEnterpriseService;
+import hry.business.fa.dao.FaFactoringCostDao;
+import hry.business.fa.model.*;
+import hry.business.fa.service.*;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.QueryFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+/**
+ * <p> FaFactoringFlowService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-07-17 17:01:01 
+ */
+@Service("faFactoringFlowService")
+public class FaFactoringFlowServiceImpl extends BaseServiceImpl<FaFactoringFlow, Long> implements FaFactoringFlowService {
+
+	@Resource(name = "faFactoringFlowDao")
+	@Override
+	public void setDao (BaseDao<FaFactoringFlow, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	private CuEnterpriseService cuEnterpriseService;
+	@Autowired
+	private FaFactoringCostService faFactoringCostService;
+	@Autowired
+	private FaFactoringRateService faFactoringRateService;
+	@Autowired
+	private FaBillService faBillService;
+	@Autowired
+	private CuBankService cuBankService;
+	@Autowired
+	private FaFactoringContractService faFactoringContractService;
+	@Autowired
+	private CuEnterprisePersonService cuEnterprisePersonService;
+	@Autowired
+	private FaProductService faProductService;
+
+	private ExecutorService executor = Executors.newFixedThreadPool(10);
+
+	@Override
+	public JsonResult getFaFactoringFlowInfo(Long id) {
+		JsonResult jsonResult = new JsonResult();
+		FaFactoringFlow faFactoringFlow = get(id);
+		if (faFactoringFlow==null) return jsonResult.setMsg("为查询到信息！");
+		CountDownLatch latch = new CountDownLatch(8);
+
+		//1查询卖方企业
+		executor.execute(() -> {
+			if (!StringUtils.isEmpty(faFactoringFlow.getSellEnterpriseId())){
+				CuEnterprise cuEnterprise = cuEnterpriseService.get(faFactoringFlow.getSellEnterpriseId());
+				//联系人
+				CuPerson lianxiren = cuEnterprisePersonService.getCuEnterprisePersonByEnterpriseIdAndType(faFactoringFlow.getSellEnterpriseId(), 3);
+				cuEnterprise.setContacts(lianxiren);
+				faFactoringFlow.setSellEnterprise(cuEnterprise);
+			}
+			latch.countDown();
+		});
+
+		//2查询买方企业
+		executor.execute(() -> {
+			if (!StringUtils.isEmpty(faFactoringFlow.getBuyEnterpriseId())){
+				faFactoringFlow.setBuyEnterprise(cuEnterpriseService.get(faFactoringFlow.getBuyEnterpriseId()));
+			}
+			latch.countDown();
+		});
+
+		//3查询费用明细
+		executor.execute(() -> {
+			QueryFilter queryFilter = new QueryFilter(FaFactoringCost.class);
+			queryFilter.addFilter("factoringId=",faFactoringFlow.getId());
+			faFactoringFlow.setCostList(faFactoringCostService.find(queryFilter));
+			latch.countDown();
+		});
+
+		//4查询费率明细
+		executor.execute(() -> {
+			QueryFilter queryFilter = new QueryFilter(FaFactoringRate.class);
+			queryFilter.addFilter("factoringId=",faFactoringFlow.getId());
+			faFactoringFlow.setRateList(faFactoringRateService.find(queryFilter));
+			latch.countDown();
+		});
+
+		//5查询票据信息
+		executor.execute(() -> {
+			faFactoringFlow.setFaBillList(faBillService.findBillByFactoringId(faFactoringFlow.getId()));
+			latch.countDown();
+		});
+
+		//6查询银行信息
+		executor.execute(() -> {
+			if(!StringUtils.isEmpty(faFactoringFlow.getBankId())){
+				faFactoringFlow.setCuBank(cuBankService.get(faFactoringFlow.getBankId()));
+			}
+			latch.countDown();
+		});
+
+		//7查询合同签署信息
+		executor.execute(() -> {
+			QueryFilter filter = new QueryFilter(FaFactoringContract.class);
+			filter.addFilter("factoringId=",faFactoringFlow.getId());
+			faFactoringFlow.setContractList(faFactoringContractService.find(filter));
+			latch.countDown();
+		});
+
+		//8查询产品信息
+		executor.execute(() -> {
+			faFactoringFlow.setFaProduct(faProductService.get(faFactoringFlow.getProductId()));
+			latch.countDown();
+		});
+
+		try {
+			latch.await();
+			return jsonResult.setSuccess(true).setObj(faFactoringFlow);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return jsonResult;
+	}
+}

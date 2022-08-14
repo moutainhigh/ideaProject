@@ -1,0 +1,51 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: zhouming
+ * @version: V1.0
+ * @Date: 2020-08-14 14:18:11
+ */
+package hry.platform.newuser.service.impl;
+
+import hry.bean.JsonResult;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.platform.newuser.model.AppLoginLog;
+import hry.platform.newuser.model.NewAppUser;
+import hry.platform.newuser.service.AppLoginLogService;
+import hry.security.jwt.JWTContext;
+import hry.util.httpRequest.IpUtil;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
+/**
+ * <p> AppLoginLogService </p>
+ *
+ * @author: zhouming
+ * @Date: 2020-08-14 14:18:11
+ */
+@Service("appLoginLogService")
+public class AppLoginLogServiceImpl extends BaseServiceImpl<AppLoginLog, Long> implements AppLoginLogService {
+
+	@Resource(name = "appLoginLogDao")
+	@Override
+	public void setDao (BaseDao<AppLoginLog, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Override
+	public JsonResult saveLoginLog(HttpServletRequest request) {
+		NewAppUser user = (NewAppUser) JWTContext.getUser(NewAppUser.class);
+		String ip = IpUtil.getIp(request);
+		AppLoginLog log = new AppLoginLog();
+		log.setIp(ip);
+		log.setLoginTime(new Date());
+//		log.setUserId(user.getId());
+//		log.setUserName(user.getUserName());
+		super.save(log);
+		return new JsonResult(true);
+	}
+}

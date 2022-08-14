@@ -1,0 +1,34 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: zhouming
+ * @version: V1.0
+ * @Date: 2020-07-17 15:29:53 
+ */
+package hry.business.fa.service;
+
+import hry.bean.JsonResult;
+import hry.business.fa.model.FaFundInitParam;
+import hry.core.mvc.service.BaseService;
+import hry.business.fa.model.FaProduct;
+
+/**
+ * <p> FaProductService </p>
+ *
+ * @author: zhouming
+ * @Date: 2020-07-17 15:29:53 
+ */
+public interface FaProductService extends BaseService<FaProduct, Long> {
+
+    /**
+     * 创建产品
+     * */
+    public JsonResult createProduct(FaProduct product);
+
+    /**
+     * 创建还款周期
+     * */
+    public JsonResult createFundList(FaFundInitParam param);
+
+
+}

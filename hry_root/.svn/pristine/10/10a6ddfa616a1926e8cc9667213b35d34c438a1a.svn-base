@@ -1,0 +1,89 @@
+server:
+  port: 7070
+
+# spring配置
+spring:
+  application:
+    name: hry-application-api
+  # 数据源配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/hry_boot?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 1
+      min-idle: 1
+      max-active: 1000
+      test-on-borrow: true
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: qq
+    password: 1234
+    virtual-host: /qq
+    exchangeName: finance.direct.exchange
+
+# mybatis配置
+mybatis:
+  mapper-locations: classpath*:hry/**/mapper/*.xml
+  configuration:
+    default-fetch-size: 100
+    #mybatis日志
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 通用mapper配置
+mapper:
+  mappers:
+    - hry.core.mvc.dao.BaseDao
+  not-empty: false
+  identity: MYSQL
+  #    before: true
+
+# 分页配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+# dubbo配置
+dubbo:
+  name: ${spring.application.name}
+  port: 2${server.port}
+  cachepath: ./
+  host: 127.0.0.1
+  zookeeperurl: zookeeper://127.0.0.1:2181
+
+# redis配置
+redis:
+  url: 127.0.0.1
+  port: 6379
+  password: Credit2016Admin
+  maxTotal: 500
+
+# 业务配置
+# oss
+app:
+  oss:
+    open: true
+    endpoint: http://oss-cn-beijing.aliyuncs.com
+    accessKeyId: LTAIy0JoG8UwjD89
+    accessKeySecret: IlxRvELEysGMpOA3dWVqxKG8B6yVFf
+    privateBucketName: hry-exchange-private
+    publicBucketName: hry-exchange-public
+  oauthKey: 49e168f90a094588bc59bec9c4659eb1
+  oauthIp: 172.31.107.245
+
+# UKey配置
+ukey:
+  # 用户名
+  username: leijinrong-cs
+  # windows下ini配置文件相对路径
+  winIniPath: ukey/ini/JCryptoWrapperWin.ini
+  # Linux下ini配置文件相对路径
+  linuxIniPath: ukey/ini/JCryptoWrapperLinux.ini
+  # 密钥文件相对路径配置
+  bsidkeyPath: ukey/bsidkey/Agent.bsidkey
+
+
+

@@ -1,0 +1,385 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: luyue
+ * @version: V1.0
+ * @Date: 2020-07-13 19:03:52 
+ */
+package hry.scm.project.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import hry.bean.JsonResult;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.QueryFilter;
+import hry.platform.newuser.model.NewAppUser;
+import hry.scm.enterprise.model.ScmEnterprise;
+import hry.scm.enterprise.service.ScmEnterpriseService;
+import hry.scm.fundsupport.model.FundSupport;
+import hry.scm.fundsupport.model.FundSupportPlan;
+import hry.scm.fundsupport.service.FundSupportPlanService;
+import hry.scm.fundsupport.service.FundSupportService;
+import hry.scm.project.model.*;
+import hry.scm.project.service.*;
+import hry.security.jwt.JWTContext;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p> MortgageProjectService </p>
+ *
+ * @author: luyue
+ * @Date: 2020-07-13 19:03:52 
+ */
+@Service("mortgageProjectService")
+public class MortgageProjectServiceImpl extends BaseServiceImpl<MortgageProject, Long> implements MortgageProjectService {
+
+	@Resource(name = "mortgageProjectDao")
+	@Override
+	public void setDao (BaseDao<MortgageProject, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	public FundSupportService fundSupportService;
+	@Autowired
+	public FundSupportPlanService fundSupportPlanService;
+	@Autowired
+	public ScmEnterpriseService  scmEnterpriseService;
+	@Autowired
+	public MortgageTotalService mortgageTotalService;
+	@Autowired
+	public ProcessRecordService processRecordService;
+	@Autowired
+	public StorageService storageService;
+	@Autowired
+	public MortgageDetailService mortgageDetailService;
+
+	/**
+	 * 生成质押订单的订单编号
+	 * @return
+	 */
+	@Override
+	public String createNumber() {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
+		String newDate="ZY"+sdf.format(new Date());
+		QueryFilter filter=new QueryFilter(MortgageProject.class);
+		filter.addFilter("number_LIKE", "%"+newDate+"%");
+		filter.setOrderby("id desc");
+		List<MortgageProject> list=this.find(filter);
+		MortgageProject project=null;
+		if(null!=list && list.size()>0){
+			project=list.get(0);
+		}
+		String pnumber = new String(""); //订单编号
+		if(null!=project){
+			StringBuffer number = new StringBuffer("");
+			String proNum = project.getNumber();
+			String ss = proNum.substring(proNum.length()-4);
+			int num = new Integer(ss);
+			num+=1;
+			if(num<10){
+				number = number.append("000").append(num);
+			}else if(num>=10&&num<100){
+				number = number.append("00").append(num);
+			}else if(num>=100&&num<1000){
+				number = number.append("0").append(num);
+			}else {
+				number = number.append(num);
+			}
+			pnumber=newDate+number.toString();
+
+		}else{
+			pnumber=newDate+"0001";
+		}
+		return pnumber;
+	}
+
+	/**
+	 * 保存融资申请信息以及质押统计数据
+	 * @param map
+	 * @return
+	 */
+	@Override
+	public JsonResult apply(Map<String, String> map) {
+		JsonResult result=new JsonResult();
+		String jsonStr=map.get("jsonStr");
+		//1、解析json数据
+		//将参数转为json类型
+		JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+		//2、保存一些项目基本信息
+		String sproject = jsonObject.getString("project");
+		if(StringUtils.isEmpty(sproject)){
+			result.setSuccess(false).setMsg("申请信息不能为空!");
+			return result;
+		}
+		MortgageProject project=JSONObject.parseObject(sproject,MortgageProject.class);
+		if(null==project.getFundSupportId() || "".equals(project.getFundSupportId() )){
+			result.setSuccess(false).setMsg("请选择资金方!");
+			return result;
+		}
+		//查询资金方
+		FundSupport support=fundSupportService.get(project.getFundSupportId());
+		project.setFundSupportName(support.getFundSupportName());
+		//3、查询资金方案，保存服务费率等信息
+		if(null==project.getFundPlanId()|| "".equals(project.getFundPlanId() )){
+			result.setSuccess(false).setMsg("请选择资金方案!");
+			return result;
+		}
+		FundSupportPlan plan=fundSupportPlanService.get(project.getFundPlanId());
+		if(null==plan || "".equals(plan)){
+			result.setSuccess(false).setMsg("该方案存在，请重新选择!");
+			return result;
+		}
+		project.setFundPlanName(plan.getFundPlanName());//资金方案名称
+		project.setProportion(plan.getProportion());//放款比例
+		project.setPeriod(plan.getPeriod());//还款期限
+		project.setServiceRate(plan.getServiceRate());//服务费率
+		project.setOverRate(plan.getOverRate());//逾期费率
+        project.setPrincipalModel(plan.getPrincipalModel());//本金模型
+        project.setInterestModel(plan.getInterestModel());//利息模型
+		project.setApplyId(Long.valueOf(map.get("userId")));
+		project.setNumber(this.createNumber());//订单编号
+		project.setCreditCode(map.get("creditCode"));//企业社会信用代码
+        Long enterpriseId=Long.valueOf(map.get("enterpriseId"));
+		ScmEnterprise enterprise=scmEnterpriseService.get(enterpriseId);
+		project.setEnterpriseId(enterpriseId);//企业id
+		project.setEnterpriseName(enterprise.getEnterpriseName());//企业名称
+		//4、保存申请项目信息
+		this.save(project);
+		//5、解析抵制押物信息
+		JSONArray tarray = jsonObject.getJSONArray("storage");
+		BigDecimal money=new BigDecimal("0");
+		BigDecimal maxMoney=new BigDecimal("0");
+		if(!tarray.isEmpty() && tarray.size()>0){
+			for(int j=0;j<tarray.size();j++){
+				//6、保存抵质押物信息
+				JSONObject tobject = (JSONObject) tarray.get(j);
+				MortgageTotal total= JSON.parseObject(tobject.toString(),MortgageTotal.class);
+				total.setProjectId(project.getId());//申请id
+				total.setProjectNumber(project.getNumber());//订单编号
+				total.setEnterpriseId(project.getEnterpriseId());//企业id
+				total.setCreditCode(project.getCreditCode());//企业社会信用统一代码
+				money=money.add(total.getMortTotalPrice());
+				mortgageTotalService.save(total);
+			}
+			//计算最大借款金额 =质押物总价值*比例
+			maxMoney=money.multiply(project.getProportion()).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
+			project.setMortgageMoney(money);
+			project.setMaxLoanMoney(maxMoney);
+			this.update(project);
+			//6、保存处理业务记录数据
+			ProcessRecord record=new ProcessRecord();
+			record.setProjectId(project.getId());//订单id
+			record.setType("1");//流程类别1现货质押，2代采，3取件
+			record.setName("融资申请");//节点名称
+			record.setStep(1);//第几步
+			record.setHandelId(project.getApplyId());//申请账号id
+			record.setHandelName(map.get("username"));//申请账号username
+			record.setOpinion("0");//处理意见 0新申请 1同意2拒绝',
+			processRecordService.save(record);
+		}else{
+			result.setSuccess(false).setMsg("请选择质押物!");
+			return result;
+		}
+		result.setSuccess(true).setMsg("申请成功!");
+		return result;
+	}
+
+	/**
+	 * 现货质押处理下一步
+	 * @param map
+	 * @return
+	 */
+	@Override
+	public JsonResult nextStep(Map<String, String> map) {
+		JsonResult result=new JsonResult();
+		//1、获得申请项目信息
+		String projectId=map.get("projectId");
+		if(null==projectId || "".equals(projectId)){
+			result.setSuccess(false).setMsg("请先选择订单!");
+			return result;
+		}
+		MortgageProject project=this.get(Long.valueOf(projectId));
+		if(null==project || "".equals(project)){
+			result.setSuccess(false).setMsg("该订单不存在，请重新选择确认!");
+			return result;
+		}
+		int step=0;
+		String stepname="";
+		if(0==project.getStatus()){
+             step=2;
+             stepname="业务审核";
+		}else if(10==project.getStatus()){
+			step=3;
+			stepname="确认质押";
+		}else if(20==project.getStatus()){
+			step=4;
+			stepname="质押审批";
+		}else if(30==project.getStatus()){
+			step=5;
+			stepname="确认放款";
+		}
+		//2、根据处理意见保存信息
+		String opinion=map.get("opinion");
+		if(null==opinion || "".equals(opinion)){
+			result.setSuccess(false).setMsg("请选择处理意见!");
+			return result;
+		}
+		//3、获得当前处理新信息
+		Long handelId=null;
+		String handelName="";
+		if("2".equals(map.get("reType"))){//前台请求
+			handelId=Long.valueOf(map.get("userId"));
+			handelName=map.get("username");
+
+		}else{//后台请求
+			NewAppUser user = (NewAppUser) JWTContext.getUser(NewAppUser.class);
+			handelId=user.getId();
+			handelName=user.getName();
+
+		}
+		//4、如果处理意见是同意再业务逻辑，不然只保存处理意见即可
+		if("1".equals(opinion)){
+			if(0==project.getStatus()){//业务审批
+				project.setStatus(10);
+				project.setBusinessOpeId(handelId);
+				project.setBusinessOpeName(handelName);
+                this.update(project);
+			}else if(10==project.getStatus()){//确认质押
+			    BigDecimal loanMoney=new BigDecimal(map.get("loanMoney"));//借款金额
+				if(loanMoney.compareTo(project.getMaxLoanMoney())>0){
+					result.setSuccess(false).setMsg("借款金额大于最大借款金额，请重新输入!");
+					return result;
+				}
+				project.setLoanMoney(loanMoney);
+				project.setStatus(20);
+				this.update(project);
+			}else if(20==project.getStatus()){//质押审批通过
+				project.setStatus(30);
+				project.setMortgageOpeId(handelId);
+				project.setMortgageOpeName(handelName);
+				this.update(project);
+
+			}else if(30==project.getStatus()){//确认放款
+				project.setStatus(50);
+				project.setLoanImageUrl(map.get("loanImageUrl"));
+				this.update(project);
+
+			}
+		}else if(10==project.getStatus()){
+			project.setStatus(40);//取消申请
+			this.update(project);
+		}
+
+		//6、保存处理业务记录数据
+		ProcessRecord record=new ProcessRecord();
+		record.setProjectId(project.getId());//订单id
+		record.setType("1");//流程类别1现货质押，2代采，3取件
+		record.setName(stepname);//节点名称
+		record.setStep(step);//第几步
+		record.setHandelId(handelId);//处理人id
+		record.setHandelName(handelName);//处理人姓名
+		record.setOpinion(opinion);//处理意见 0新申请 1同意2拒绝',
+		processRecordService.save(record);
+		result.setSuccess(true).setMsg("处理成功!");
+		return result;
+	}
+	/**
+	 * 确认质押审批-保存质押物明细
+	 * @param map
+	 * @return
+	 */
+	@Override
+	public JsonResult confirmMortgage(Map<String, String> map) {
+		JsonResult result=new JsonResult();
+		String totalId=map.get("totalId");
+		String jsonStr=map.get("jsonStr");
+		//1、查询质押物汇总信息
+		MortgageTotal total=mortgageTotalService.get(Long.valueOf(totalId));
+		if(null==total || "".equals(total)){
+			result.setSuccess(false).setMsg("质押物信息不存在，请确认");
+			return result;
+		}
+       //2、解析json
+		JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+		JSONArray tarray = jsonObject.getJSONArray("storage");
+		BigDecimal mortWeight=new BigDecimal("0");//质押总重量
+		List<MortgageDetail> list=new ArrayList<MortgageDetail>();
+		if(!tarray.isEmpty() && tarray.size()>0){
+			for(int i=0;i<tarray.size();i++){
+				JSONObject tobject = (JSONObject) tarray.get(i);
+				MortgageDetail detail= JSON.parseObject(tobject.toString(),MortgageDetail.class);
+				mortWeight=mortWeight.add(detail.getMortWeight());
+				list.add(detail);
+			}
+			//3、选择的质押物是否大于质押总量
+			if(mortWeight.compareTo(total.getMortWeight())<0){
+				result.setSuccess(false).setMsg("选择的质押物重量之和小于质押总重量，请重新选择");
+				return result;
+			}
+			//4、根据选择的清单保存数据、冻结库存
+			int mortCount=0;//质押总件数
+			for(MortgageDetail detail:list){
+				//5、查询库存信息  --暂时没有考虑再提交质押时，已经被另一个申请质押的问题，这项目可能性应该不大
+				Storage storage=storageService.get(detail.getStorageId());
+				//6、计算质押件数=质押重量*库存件数/库存重量
+				int count=detail.getMortWeight().multiply(new BigDecimal(storage.getGoodsCount())).divide(storage.getWeight(),0,BigDecimal.ROUND_UP).intValue();
+				mortCount=mortCount+count;
+				//7、保存质押明细
+				detail.setNumber(storage.getNumber());
+				detail.setProjectId(total.getProjectId());
+				detail.setTotalId(total.getId());
+				detail.setProjectNumber(total.getProjectNumber());
+				detail.setGoodsName(storage.getGoodsName());
+				detail.setWeight(storage.getWeight());
+				detail.setInspectionNo(storage.getInspectionNo());
+				detail.setCaseNo(storage.getCaseNo());
+				detail.setLocation(storage.getLocation());
+				detail.setArea(storage.getArea());
+				detail.setLine(storage.getLine());
+				detail.setQueue(storage.getQueue());
+				detail.setLayer(storage.getLayer());
+				detail.setMortCount(count);
+				detail.setBackCount(0);
+				detail.setSurplusCount(count);
+				detail.setEnterpriseId(total.getEnterpriseId());
+				detail.setCreditCode(total.getCreditCode());
+				mortgageDetailService.save(detail);
+				//8、库存改为冻结状态
+				storage.setIsMortgage("1");
+				storageService.update(storage);
+			}
+			//9、更改质押物汇总信息
+			total.setActMortWeight(mortWeight);//实际抵押重量
+			total.setBackWeight(new BigDecimal("0"));//已赎回重量
+			total.setSurplusWeight(total.getMortWeight());//剩余重量
+			total.setMortCount(mortCount);
+			total.setBackCount(0);
+			total.setSurplusCount(new BigDecimal("0"));
+			//10、计算抵押中的每件的平均重量
+			BigDecimal avg=mortWeight.divide(new BigDecimal(mortCount),4,BigDecimal.ROUND_HALF_UP);
+			total.setAveWeight(avg);
+			mortgageTotalService.update(total);
+			result.setSuccess(true).setMsg("处理成功");
+
+		}else{
+			result.setSuccess(false).setMsg("请选择相应的抵押物明细！");
+			return result;
+		}
+		return result;
+	}
+
+
+}

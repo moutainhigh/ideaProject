@@ -1,0 +1,20 @@
+package hry.platform.flow.service;
+
+import hry.bean.JsonResult;
+
+/**
+ * 流程操作接口
+ */
+public interface FlowService {
+
+
+    /**
+     * 启动流程
+     * @param defineKey
+     * @param tableName
+     */
+    JsonResult startFlow(String modelName,String defineKey, String flowName);
+
+
+
+}

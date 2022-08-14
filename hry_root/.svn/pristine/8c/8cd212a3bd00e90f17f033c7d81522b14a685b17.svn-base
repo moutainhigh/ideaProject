@@ -1,0 +1,30 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-13 14:31:34 
+ */
+package hry.business.cu.service;
+
+import hry.bean.PageResult;
+import hry.core.mvc.service.BaseService;
+import hry.business.cu.model.CuEnterprisePerson;
+import hry.core.util.QueryFilter;
+
+/**
+ * <p> CuEnterprisePersonService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-13 14:31:34 
+ */
+public interface CuEnterprisePersonService extends BaseService<CuEnterprisePerson, Long> {
+
+    /**
+     * 根据条件查询企业关联人信息
+     * @param filter
+     * @return
+     */
+    PageResult findPageBySql(QueryFilter filter);
+
+}

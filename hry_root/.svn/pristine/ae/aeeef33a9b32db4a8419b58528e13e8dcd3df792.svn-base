@@ -1,0 +1,52 @@
+package hry.config.remote;
+
+import hry.bean.JsonResult;
+import hry.core.mvc.controller.BaseController;
+import hry.platform.flow.service.FlowService;
+import hry.platform.newuser.model.NewAppUser;
+import hry.platform.newuser.service.NewAppUserService;
+import hry.security.jwt.annotation.UnAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+
+@RestController
+@RequestMapping("/adminRemoteService")
+public class AdminRemoteServiceImpl extends BaseController {
+
+    @Autowired
+    NewAppUserService newAppUserService;
+
+    @Autowired
+    FlowService flowService;
+
+    /**
+     * 查询后台用户
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/getAppUser/{id}")
+    @UnAuthentication
+    @ResponseBody
+    public NewAppUser getAppUser(@PathVariable("id") Long id) {
+       return  newAppUserService.get(id);
+    }
+
+    /**
+     * 启动流程--设置流程业务表
+     * @param id
+     * @return
+     */
+    @PostMapping(value = "/startFlow")
+    @UnAuthentication
+    @ResponseBody
+    public JsonResult startFlow(
+            @RequestParam String modelName,//实体名称
+            @RequestParam String defineKey,//流程key
+            @RequestParam String flowName//流程名称
+
+    ) {
+        return flowService.startFlow(modelName,defineKey,flowName);
+    }
+
+}

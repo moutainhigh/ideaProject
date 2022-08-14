@@ -1,0 +1,33 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-12 13:41:07 
+ */
+package hry.activiti.process.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.activiti.process.model.ProDefineForm;
+import hry.activiti.process.service.ProDefineFormService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> ProDefineFormService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-12 13:41:07 
+ */
+@Service("proDefineFormService")
+public class ProDefineFormServiceImpl extends BaseServiceImpl<ProDefineForm, Long> implements ProDefineFormService {
+
+	@Resource(name = "proDefineFormDao")
+	@Override
+	public void setDao (BaseDao<ProDefineForm, Long> dao) {
+		super.dao = dao;
+	}
+
+}

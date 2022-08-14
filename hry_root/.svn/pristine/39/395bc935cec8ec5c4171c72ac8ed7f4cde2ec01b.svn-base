@@ -1,0 +1,44 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-04-14 14:55:47
+ */
+package hry.activiti.process.service.impl;
+
+import hry.activiti.process.model.ProProcess;
+import hry.activiti.process.service.ActivitiService;
+import hry.activiti.process.service.ProProcessService;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> ProProcessService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-04-14 14:55:47
+ */
+@Service("proProcessService")
+public class ProProcessServiceImpl extends BaseServiceImpl<ProProcess, Long> implements ProProcessService {
+
+	@Resource(name = "proProcessDao")
+	@Override
+	public void setDao (BaseDao<ProProcess, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	ActivitiService activitiService;
+
+	@Override
+	public void start(String defineKey) {
+
+		activitiService.start(defineKey);
+
+	}
+}

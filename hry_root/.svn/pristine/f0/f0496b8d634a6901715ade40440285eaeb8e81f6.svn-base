@@ -1,0 +1,16 @@
+server:
+  port: 7700
+
+eureka:
+   instance:
+     hostname: ${EUREKA_HOST}
+   client:
+     registerWithEureka: true
+     fetchRegistry: true
+     serviceUrl:
+       defaultZone: http://${EUREKA_HOST}:${EUREKA_PORT}/eureka/
+
+spring:
+  application:
+    name: hry-eureka
+

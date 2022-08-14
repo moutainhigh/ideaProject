@@ -1,0 +1,15 @@
+
+/*==============================================================*/
+/* Table: `app_user_station` 用户信件表	                  */
+/*==============================================================*/
+DROP TABLE IF EXISTS `app_user_station`;
+CREATE TABLE `app_user_station` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+	`userId` bigint(20) DEFAULT NULL COMMENT '用户ID',
+  `stationId` bigint(20) DEFAULT NULL COMMENT '信件ID',
+	`readTime` datetime DEFAULT NULL COMMENT '阅读时间',
+	`status` int(1) DEFAULT '0' COMMENT '状态 0 未阅读 1 已阅读 2 已删除',
+  `created` datetime DEFAULT NULL COMMENT '创建时间',
+  `modified` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户信件表';

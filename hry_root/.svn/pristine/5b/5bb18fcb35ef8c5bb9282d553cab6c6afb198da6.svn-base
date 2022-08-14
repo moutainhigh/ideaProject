@@ -1,0 +1,46 @@
+package hry.platform.flow.service.impl;
+
+import hry.bean.JsonResult;
+import hry.platform.flow.model.AppFlow;
+import hry.platform.flow.service.FlowService;
+import hry.util.SpringUtil;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
+@Service
+public class FlowServiceImpl  implements FlowService {
+
+
+    @Override
+    public JsonResult startFlow(String modelName,String defineKey, String flowName) {
+
+        String beanName = modelName+"Service";
+        Object bean = SpringUtil.getBean(beanName);
+
+        AppFlow appFlow = new AppFlow();
+
+        try {
+            String beanClassName = bean.getClass().getName().substring(0,bean.getClass().getName().indexOf("$"));
+            String modelClassName = beanClassName.replace("service.impl","model").replace("ServiceImpl","");
+            Object modelObj = Class.forName(modelClassName).newInstance();
+
+            Method method = modelObj.getClass().getMethod("setDefineKey",String.class);
+            method.invoke(modelObj,defineKey);
+            Class<?> beanClass = bean.getClass();
+            Method[] methods = beanClass.getMethods();
+            for (Method m : methods){
+                System.out.println(m.getName());
+            }
+            Method save = beanClass.getMethod("save", Serializable.class);
+            save.invoke(bean,modelObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JsonResult().setMsg("保存主表错误");
+        }
+
+        return new JsonResult().setSuccess(true);
+
+    }
+}

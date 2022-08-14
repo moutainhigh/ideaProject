@@ -1,0 +1,77 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: zhouming
+ * @version: V1.0
+ * @Date: 2020-08-14 14:18:11
+ */
+package hry.platform.newuser.service.impl;
+
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.QueryFilter;
+import hry.platform.config.model.RequestLogRecord;
+import hry.platform.elastic.service.ElasticSearchService;
+import hry.platform.newuser.model.AppLoginLog;
+import hry.platform.newuser.model.NewAppUser;
+import hry.platform.newuser.service.AppLoginLogService;
+import hry.security.jwt.JWTContext;
+import hry.util.StringUtil;
+import hry.util.httpRequest.IpUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.zxp.esclientrhl.repository.PageList;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
+/**
+ * <p> AppLoginLogService </p>
+ *
+ * @author: zhouming
+ * @Date: 2020-08-14 14:18:11
+ */
+@Service("appLoginLogService")
+public class AppLoginLogServiceImpl extends BaseServiceImpl<AppLoginLog, Long> implements AppLoginLogService {
+
+	@Autowired
+	private ElasticSearchService elasticSearchService;
+
+
+	@Resource(name = "appLoginLogDao")
+	@Override
+	public void setDao (BaseDao<AppLoginLog, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Override
+	public JsonResult saveLoginLog(HttpServletRequest request) {
+		NewAppUser user = (NewAppUser) JWTContext.getUser(NewAppUser.class);
+		String ip = IpUtil.getIp(request);
+		AppLoginLog log = new AppLoginLog();
+		log.setIp(ip);
+		log.setLoginTime(new Date());
+//		log.setUserId(user.getId());
+//		log.setUserName(user.getUserName());
+		super.save(log);
+		// 向ES中添加登录日志
+		log.setLoginDate(new Date().getTime());
+		elasticSearchService.saveToEs(log);
+		return new JsonResult(true);
+	}
+
+	@Override
+	public PageResult findLoginLogPageToES(QueryFilter filter) {
+		String userId = filter.getRequest().getParameter("userId");
+		PageResult pageResult = new PageResult();
+		if (StringUtil.isNull(userId)) {
+			filter.addFilter("userId=", userId);
+		}
+		filter.setOrderby("loginDate desc");
+		PageList<AppLoginLog> listToEs = elasticSearchService.findPageListToEs(filter);
+		return new PageResult(listToEs.getList(), listToEs.getTotalElements(), listToEs.getCurrentPage(), listToEs.getPageSize());
+	}
+}

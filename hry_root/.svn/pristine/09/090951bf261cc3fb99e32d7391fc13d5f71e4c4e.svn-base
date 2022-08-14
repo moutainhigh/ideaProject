@@ -1,0 +1,23 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:12:26 
+ */
+package hry.business.cu.dao;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.business.cu.model.CuCustomer;
+import org.apache.ibatis.annotations.Mapper;
+
+/**
+ * <p> CuCustomerDao </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:12:26 
+ */
+@Mapper
+public interface CuCustomerDao extends BaseDao<CuCustomer, Long> {
+
+}

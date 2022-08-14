@@ -1,0 +1,136 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-13 16:04:23 
+ */
+package hry.business.cu.controller;
+
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.business.cu.model.CuIntentionUser;
+import hry.business.cu.service.CuIntentionUserService;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.security.logger.ControllerLogger;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * <p> CuIntentionUserController </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-13 16:04:23 
+ */
+@Api(value = "意向客户分配中间表", tags = "意向客户分配中间表", description = "意向客户分配中间表")
+@RestController
+@RequestMapping("/cu/cuintentionuser")
+public class CuIntentionUserController extends BaseController {
+
+	@Autowired
+	private CuIntentionUserService cuIntentionUserService;
+
+	/**
+     * <p> 意向客户分配中间表-id查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-13 16:04:23 
+     */
+    @ApiOperation(value = "意向客户分配中间表-id查询", notes = "意向客户分配中间表-id查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/get/{id}")
+    public JsonResult get (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+		CuIntentionUser cuIntentionUser = cuIntentionUserService.get(id);
+        if (cuIntentionUser != null) {
+            jsonResult.setObj(cuIntentionUser);
+            return jsonResult.setSuccess(true);
+        }
+        return jsonResult.setSuccess(false);
+    }
+
+	/**
+     * <p> 意向客户分配中间表-添加 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-13 16:04:23 
+     */
+    @ApiOperation(value = "意向客户分配中间表-添加", notes = "意向客户分配中间表-添加")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/add")
+    public JsonResult add (@ApiParam(name = "intentionId", value = "意向客户id", required = true) @RequestParam String intentionId,
+                           @ApiParam(name = "userIds", value = "选中用户id，逗号隔开", required = true) @RequestParam String userIds) {
+        JsonResult jsonResult = new JsonResult();
+        //cuIntentionUserService.save(cuIntentionUser);
+        return cuIntentionUserService.add(Long.valueOf(intentionId),userIds);
+    }
+
+    /**
+     * <p> 意向客户分配中间表-修改 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-13 16:04:23 
+     */
+    @ApiOperation(value = "意向客户分配中间表-修改", notes = "意向客户分配中间表-修改")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/modify")
+    public JsonResult modify (CuIntentionUser cuIntentionUser) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionUserService.update(cuIntentionUser);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向客户分配中间表-id删除 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-13 16:04:23 
+     */
+    @ApiOperation(value = "意向客户分配中间表-id删除", notes = "意向客户分配中间表-id删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/remove/{id}")
+    public JsonResult remove (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionUserService.delete(id);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向客户分配中间表-分页查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-05-13 16:04:23 
+     */
+    @ApiOperation(value = "意向客户分配中间表-分页查询", notes = "意向客户分配中间表-分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/list")
+    public PageResult list (
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(CuIntentionUser.class, request);
+        return cuIntentionUserService.findPageResult(filter);
+    }
+
+
+
+}

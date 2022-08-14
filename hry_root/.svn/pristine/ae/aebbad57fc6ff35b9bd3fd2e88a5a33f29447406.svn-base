@@ -1,0 +1,96 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-12 13:41:21
+ */
+package hry.activiti.process.service.impl;
+
+import hry.activiti.process.model.*;
+import hry.activiti.process.service.*;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.QueryFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p> ProDefineNodeService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-12 13:41:21
+ */
+@Service("proDefineNodeService")
+public class ProDefineNodeServiceImpl extends BaseServiceImpl<ProDefineNode, Long> implements ProDefineNodeService {
+
+	@Resource(name = "proDefineNodeDao")
+	@Override
+	public void setDao (BaseDao<ProDefineNode, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	ProDefineService proDefineService;
+
+	@Autowired
+	ProDefinePersonService proDefinePersonService;
+
+	@Autowired
+	ProDefineBtnService proDefineBtnService;
+
+	@Autowired
+	ProDefineNodeService proDefineNodeService;
+
+	@Autowired
+	ProDefineFormService proDefineFormService;
+
+	@Autowired
+	ProDefineNoticeService proDefineNoticeService;
+
+	@Override
+	public Map<String,Object> getConfig(String defineKey, String nodeKey) {
+
+
+		ProDefine proDefine = proDefineService.get(new QueryFilter(ProDefine.class).addFilter("defineKey=", defineKey));
+
+		if(proDefine!=null){
+			Map<String,Object> map = new HashMap();
+			//获取节点
+			ProDefineNode node = get(new QueryFilter(ProDefineNode.class).addFilter("defineKey=", defineKey).addFilter("version=", proDefine.getVersion()));
+
+			List<ProDefinePerson> personn = proDefinePersonService.find(new QueryFilter(ProDefinePerson.class).addFilter("nodeId=", node.getId()));
+
+			List<ProDefineBtn> btn = proDefineBtnService.find(new QueryFilter(ProDefineBtn.class).addFilter("nodeId=", node.getId()));
+
+			List<ProDefineForm> form = proDefineFormService.find(new QueryFilter(ProDefineForm.class).addFilter("nodeId=", node.getId()).addFilter("type=",1));
+
+			List<ProDefineNotice> notice = proDefineNoticeService.find(new QueryFilter(ProDefineNotice.class).addFilter("nodeId=", node.getId()));
+
+
+			map.put("node",node);
+			map.put("person",personn);
+			map.put("btn",btn);
+			map.put("form",form);
+			map.put("notice",notice);
+		}
+
+		return null;
+	}
+
+
+
+
+
+
+
+
+
+
+
+}

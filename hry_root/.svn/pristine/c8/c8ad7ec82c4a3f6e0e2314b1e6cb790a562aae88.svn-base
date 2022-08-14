@@ -1,0 +1,38 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-12 13:41:21
+ */
+package hry.activiti.process.service;
+
+import hry.activiti.process.model.ProDefineNode;
+import hry.activiti.process.model.ProProcess;
+import hry.core.mvc.service.BaseService;
+
+import java.util.Map;
+
+/**
+ * <p> ProDefineNodeService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-12 13:41:21
+ */
+public interface ProDefineNodeService extends BaseService<ProDefineNode, Long> {
+
+    /**
+     * 查询节点配置
+     * @param defineKey
+     * @param nodeKey
+     * @return
+     */
+    Map<String,Object> getConfig(String defineKey, String nodeKey);
+
+    /**
+     * 查询节点配置，通过流程
+     * @param proProcess
+     * @return
+     */
+    Map<String,Object>  getConfigByProcess(String taskId,String nodeKey,ProProcess proProcess);
+}

@@ -1,0 +1,52 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-04-14 14:55:47
+ */
+package hry.activiti.process.service;
+
+import hry.activiti.process.model.ProProcess;
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.core.mvc.service.BaseService;
+
+/**
+ * <p> ProProcessService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-04-14 14:55:47
+ */
+public interface ProProcessService extends BaseService<ProProcess, Long> {
+
+    /**
+     * 启动流程
+     * @param defineKey
+     */
+    JsonResult start(String defineKey);
+
+    /**
+     * 我的任务
+     * @param page
+     * @param pageSize
+     * @param userId
+     * @return
+     */
+    PageResult findMyTask(Integer page, Integer pageSize, Long userId);
+
+    /**
+     * 全部任务
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PageResult findAllTask(Integer page, Integer pageSize);
+
+    /**
+     * 完成一个任务
+     * @param taskId
+     * @return
+     */
+    JsonResult completeTask(String taskId);
+}

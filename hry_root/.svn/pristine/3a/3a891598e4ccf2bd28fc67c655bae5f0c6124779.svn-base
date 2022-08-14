@@ -1,0 +1,118 @@
+/**
+ * Copyright:   北京互融时代软件有限公司
+ *
+ * @author: Liu Shilei
+ * @version: V1.0
+ * @Date: 2015年9月18日 上午10:32:03
+ */
+package hry.platform.newuser.controller;
+
+import hry.bean.JsonResult;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.platform.newuser.model.NewAppOrganization;
+import hry.platform.newuser.service.NewAppOrganizationService;
+import io.swagger.annotations.*;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+/**
+ * <p> TODO</p>
+ *
+ * @author: Liu   Shilei
+ * @Date :          2015年9月18日 上午10:32:03
+ */
+@Api(value = "用户部门", tags = "用户部门", description = "用户部门")
+@RestController
+@RequestMapping("/user/newapporganization")
+public class NewAppOrganizationController extends BaseController {
+
+    @Autowired
+    private NewAppOrganizationService newAppOrganizationService;
+
+
+    @ApiOperation(value = "添加", notes = "添加")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping("/add")
+    public JsonResult add(HttpServletRequest request, NewAppOrganization appOrganization) {
+        appOrganization.setType("department");
+        newAppOrganizationService.save(appOrganization);
+        return new JsonResult().setSuccess(true);
+    }
+
+
+    @ApiOperation(value = "查询", notes = "查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping(value = "/get/{id}")
+    public NewAppOrganization get(@PathVariable Long id) {
+        return newAppOrganizationService.get(id);
+    }
+
+
+    @ApiOperation(value = "修改", notes = "修改")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping("/modify")
+    public JsonResult modify(HttpServletRequest request, NewAppOrganization appOrganization) {
+        NewAppOrganization organization = newAppOrganizationService.get(appOrganization.getId());
+        BeanUtils.copyProperties(appOrganization, organization);
+        newAppOrganizationService.update(organization);
+        return new JsonResult().setSuccess(true);
+    }
+
+
+    @ApiOperation(value = "删除", notes = "删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping(value = "/remove")
+    public JsonResult remove(@ApiParam(name = "id", value = "id", required = true) @RequestParam Long id) {
+        return newAppOrganizationService.remove(id);
+    }
+
+    @ApiOperation(value = "查询树结构", notes = "查询树结构")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping("/loadRoot")
+    public List<NewAppOrganization> loadRoot() {
+        QueryFilter filter = new QueryFilter(NewAppOrganization.class);
+        filter.addFilter("type=", "root");
+        List<NewAppOrganization> organizations = newAppOrganizationService.find(filter);
+        if (organizations != null && organizations.size() > 0) {
+            organizations.stream().forEach(org -> {
+                org.setPkey("root");
+                createTreeData(org);
+            });
+        }
+        return organizations;
+    }
+
+    /**
+     *  @author: liuchenghui
+     *  @Date: 2020/4/16 10:05
+     *  @Description: 递归创建组织树
+     */
+    private void createTreeData (NewAppOrganization org) {
+        QueryFilter org_filter = new QueryFilter(NewAppOrganization.class);
+        org_filter.addFilter("pid=", org.getId());
+        List<NewAppOrganization> organizationList = newAppOrganizationService.find(org_filter);
+        if (organizationList != null && organizationList.size() > 0) {
+            org.setChildren(organizationList);
+            organizationList.stream().forEach(orgs -> {
+                createTreeData(orgs);
+            });
+        }
+    }
+
+
+}

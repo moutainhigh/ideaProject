@@ -1,0 +1,36 @@
+package hry.platform;
+
+import hry.bean.JsonResult;
+import hry.business.cu.model.*;
+import hry.business.cu.service.*;
+import hry.core.mvc.controller.BaseController;
+import hry.security.jwt.annotation.UnAuthentication;
+import hry.security.logger.ControllerLogger;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+/**
+ * @Author: yaozh
+ * @Description:意向客户
+ * @Date:
+ */
+@Api(value = "意向客户管理", tags = "意向客户管理", description = "意向客户管理")
+@RestController
+@RequestMapping("/manage/intention")
+public class IntentionController extends BaseController {
+
+    @Autowired
+    private CuIntentionService cuIntentionService;
+
+
+    @ApiOperation(value = "添加意向客户信息", notes = "添加意向客户信息")
+    @ControllerLogger
+    @PostMapping(value = "/addIntention")
+    @UnAuthentication
+    public JsonResult addIntention(CuIntention cuIntention) {
+        cuIntention.setSource(2);//默认网站
+        cuIntention.setType(2);//默认企业
+        return cuIntentionService.addIntention(cuIntention);
+    }
+
+}

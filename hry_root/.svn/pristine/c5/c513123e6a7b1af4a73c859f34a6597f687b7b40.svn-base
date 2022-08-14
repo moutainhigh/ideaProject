@@ -1,0 +1,21 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-22 16:16:44 
+ */
+package hry.business.cu.service;
+
+import hry.core.mvc.service.BaseService;
+import hry.business.cu.model.CuIntentionContacts;
+
+/**
+ * <p> CuIntentionContactsService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-22 16:16:44 
+ */
+public interface CuIntentionContactsService extends BaseService<CuIntentionContacts, Long> {
+
+}

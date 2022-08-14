@@ -1,0 +1,276 @@
+package hry.controller.sms;
+
+import hry.bean.JsonResult;
+import hry.business.cu.model.CuCustomer;
+import hry.business.cu.service.CuCustomerService;
+import hry.redis.RedisService;
+import hry.security.jwt.JWTContext;
+import hry.security.jwt.annotation.UnAuthentication;
+import hry.util.PasswordHelper;
+import hry.util.SpringUtil;
+import hry.util.httpRequest.IpUtil;
+import hry.util.properties.PropertiesUtils;
+import hry.util.sms.SmsSendParam;
+import hry.util.sms.SmsSendUtils;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+/**
+ * @ClassName SmsController
+ * @Description: TODO
+ * @Author yaozhuo
+ * @Date 2020/4/28
+ * @Version V1.0
+ **/
+@Api(value = "消息类", tags = "消息类", description = "消息类")
+@RestController
+@RequestMapping("/sms")
+public class SmsController {
+
+    @Autowired
+    private CuCustomerService cuCustomerService;
+
+    //短信限流次数
+    private static final Integer LIMIT_SMS = 3;
+
+    private String tel = "tel:";
+
+    /**
+     * 个人中心-安全设置-绑定手机-发送手机验证码
+     *
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "绑定手机-发送手机验证码", notes = "绑定手机-发送手机验证码")
+    @PostMapping("/user/sendPhoneValidCode")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ResponseBody
+    public JsonResult sendPhoneValidCode(
+            @ApiParam(name = "mobile", value = "手机号", required = true) @RequestParam("mobile") String mobile,
+            @ApiParam(name = "country", value = "国家", required = true) @RequestParam("country") String country,
+            HttpServletRequest request) {
+        //限流
+        JsonResult jsonResult = checkSmsSend(request);
+        if (jsonResult.getSuccess().equals(false)) {
+            return jsonResult;
+        }
+        if (!verificationOrder(request).getSuccess()) {
+            return verificationOrder(request);
+        }
+
+        if (StringUtils.isEmpty(mobile)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("电话号码不能为空");
+            return jsonResult;
+        }
+
+        CuCustomer user = (CuCustomer) JWTContext.getUser(CuCustomer.class);
+        if (user == null) {
+            return jsonResult.setSuccess(false).setMsg("用户不存在，请重新登陆");
+        }
+
+        RedisService redisService = SpringUtil.getBean("redisService");
+        // 发送短信验证码
+        Locale locale = LocaleContextHolder.getLocale();
+        SmsSendParam smsSendParam = new SmsSendParam();
+        smsSendParam.setHryCountry("");
+        smsSendParam.setHrySmsCall("8888-8888");
+        smsSendParam.setHrySmsClassName("hrySmsServiceImpl");
+        smsSendParam.setHrySmsLang("zh_CN");
+        smsSendParam.setHrySmsPhoneNum(mobile);
+        smsSendParam.setHrySmstype("1");
+        smsSendParam.setSmsKey("hurongyuseen");
+        String sendSmsCode = SmsSendUtils.sendSms(smsSendParam);
+        redisService.save("SMS:setPhone:" + mobile, sendSmsCode, 120);
+
+        jsonResult.setSuccess(true);
+        jsonResult.setMsg("短信发送成功");
+        return jsonResult;
+    }
+
+
+    /**
+     * 短信限流
+     *
+     * @param request
+     * @return
+     */
+    private static JsonResult checkSmsSend(HttpServletRequest request) {
+        JsonResult jsonResult = new JsonResult();
+        RedisService redisService = SpringUtil.getBean("redisService");
+        String ipAdrress = getIpAdrress(request);
+        SimpleDateFormat sp = new SimpleDateFormat("HHmm");
+        String fdate = sp.format(new Date());
+        String count = redisService.get("resetPwd:" + ipAdrress + ":" + fdate);
+        if (count == null) {
+            redisService.save("resetPwd:" + ipAdrress + ":" + fdate, "1", 60);
+        } else {
+            if (Integer.valueOf(count) > LIMIT_SMS) {
+                jsonResult.setSuccess(false);
+                jsonResult.setMsg("短信发送频繁");
+                return jsonResult;
+            } else {
+                redisService.save("resetPwd:" + ipAdrress + ":" + fdate, (Integer.valueOf(count) + 1) + "", 120);
+            }
+        }
+        jsonResult.setSuccess(true);
+        return jsonResult;
+    }
+
+    /**
+     * 获取Ip地址
+     *
+     * @param request
+     * @return
+     */
+    public static String getIpAdrress(HttpServletRequest request) {
+        String Xip = request.getHeader("X-Real-IP");
+        String XFor = request.getHeader("X-Forwarded-For");
+        if (com.alibaba.dubbo.common.utils.StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)) {
+            //多次反向代理后会有多个ip值，第一个ip才是真实ip
+            int index = XFor.indexOf(",");
+            if (index != -1) {
+                return XFor.substring(0, index);
+            } else {
+                return XFor;
+            }
+        }
+        XFor = Xip;
+        if (com.alibaba.dubbo.common.utils.StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)) {
+            return XFor;
+        }
+        if (com.alibaba.dubbo.common.utils.StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("Proxy-Client-IP");
+        }
+        if (com.alibaba.dubbo.common.utils.StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (com.alibaba.dubbo.common.utils.StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (com.alibaba.dubbo.common.utils.StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (com.alibaba.dubbo.common.utils.StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getRemoteAddr();
+        }
+        return XFor;
+    }
+
+    private JsonResult verificationOrder(HttpServletRequest request) {
+        JsonResult jsonResult = new JsonResult();
+        String ip = IpUtil.getIp(request);
+        RedisService redisService = SpringUtil.getBean("redisService");
+
+        Integer telTime = 5;
+        Integer telCount = 3;
+        String telValue = redisService.get(tel + ip);
+        if (telValue == null || "".equals(telValue)) {
+            redisService.save(tel + ip, "1", telTime);
+        } else {
+            Integer num = Integer.valueOf(telValue);
+            if (num >= telCount) {
+                jsonResult.setCode("0000");
+                jsonResult.setMsg("发送频繁");
+                jsonResult.setSuccess(false);
+                return jsonResult;
+            }
+            num++;
+            redisService.save(tel + ip, String.valueOf(num), telTime);
+        }
+        jsonResult.setSuccess(true);
+        return jsonResult;
+    }
+
+    /**
+     * 获得手机找回密码短信验证码
+     *
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "获得手机找回密码短信验证码", notes = "获得手机找回密码短信验证码")
+    @PostMapping("/smsForgetMobile")
+    @ResponseBody
+    @UnAuthentication
+    public JsonResult smsForgetMobile(
+            @ApiParam(name = "mobile", value = "手机号", required = true) @RequestParam("mobile") String mobile,
+            @ApiParam(name = "country", value = "国家", required = true) @RequestParam("country") String country,
+            @ApiParam(name = "forgetCode", value = "图形验证码", required = false) @RequestParam("forgetCode") String forgetCode,
+            HttpServletRequest request) {
+        JsonResult jsonResult = new JsonResult();
+
+        //查看手机号是否存在
+        Boolean b = cuCustomerService.getCustomerByMobile(mobile);
+        if (b) {
+            return jsonResult.setSuccess(false).setMsg("手机号不存在");
+        }
+
+        if (!verificationOrder(request).getSuccess()) {
+            return verificationOrder(request);
+        }
+
+        //手机号，国家不能为空
+        if (StringUtils.isEmpty(mobile)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("手机号码不能为空");
+            return jsonResult;
+        }
+
+        if (StringUtils.isEmpty(forgetCode)) {
+            jsonResult.setMsg("图形验证码不能为空");
+            return jsonResult;
+        } else {
+            Integer code1 = (Integer) request.getSession().getAttribute("forgetCode");
+            if (code1 == null || !forgetCode.equals(code1.toString())) {
+                jsonResult.setMsg("图形验证码错误");
+                return jsonResult;
+            }
+        }
+
+        RedisService redisService = SpringUtil.getBean("redisService");
+        String ip = IpUtil.getIp(request);
+        Integer resetPasswordCount = 0;
+        String i = redisService.get("SMS:smsForgetCount:" + ip);
+        if (!StringUtils.isEmpty(i)) {
+            resetPasswordCount = Integer.parseInt(i);
+        }
+        if (resetPasswordCount >= 5) {
+            redisService.setTime("SMS:smsForgetCount:" + ip, 1 * 60 * 60);
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("频繁发送短信");
+            return jsonResult;
+        }
+
+        Locale locale = LocaleContextHolder.getLocale();
+        // 发送短信验证码
+        SmsSendParam smsSendParam = new SmsSendParam();
+        smsSendParam.setHryCountry("");
+        smsSendParam.setHrySmsCall("8888-8888");
+        smsSendParam.setHrySmsClassName("hrySmsServiceImpl");
+        smsSendParam.setHrySmsLang("zh_CN");
+        smsSendParam.setHrySmsPhoneNum(mobile);
+        smsSendParam.setHrySmstype("1");
+        smsSendParam.setSmsKey("hurongyuseen");
+        String sendSmsCode = SmsSendUtils.sendSms(smsSendParam);
+        redisService.save("SMS:smsForgetMobile:" + mobile, sendSmsCode, 120);
+
+        resetPasswordCount++;
+        redisService.save("SMS:smsForgetCount:" + ip, String.valueOf(resetPasswordCount), 1 * 60 * 60);
+
+        jsonResult.setSuccess(true);
+        jsonResult.setMsg("发送成功");
+        return jsonResult;
+    }
+
+
+}

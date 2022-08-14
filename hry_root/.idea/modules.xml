@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/hry_boot/hry_activiti/hry_activiti.iml" filepath="$PROJECT_DIR$/hry_boot/hry_activiti/hry_activiti.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_application/hry_admin/hry_admin.iml" filepath="$PROJECT_DIR$/hry_application/hry_admin/hry_admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_application/hry_api/hry_api.iml" filepath="$PROJECT_DIR$/hry_application/hry_api/hry_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_application/hry_application.iml" filepath="$PROJECT_DIR$/hry_application/hry_application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_boot/hry_boot.iml" filepath="$PROJECT_DIR$/hry_boot/hry_boot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_boot/hry_common/hry_common.iml" filepath="$PROJECT_DIR$/hry_boot/hry_common/hry_common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_boot/hry_common/hry_common_redis/hry_common_redis.iml" filepath="$PROJECT_DIR$/hry_boot/hry_common/hry_common_redis/hry_common_redis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_boot/hry_common/hry_common_security/hry_common_security.iml" filepath="$PROJECT_DIR$/hry_boot/hry_common/hry_common_security/hry_common_security.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_boot/hry_common/hry_common_utils/hry_common_utils.iml" filepath="$PROJECT_DIR$/hry_boot/hry_common/hry_common_utils/hry_common_utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_application/hry_eureka/hry_eureka.iml" filepath="$PROJECT_DIR$/hry_application/hry_eureka/hry_eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_boot/hry_plugin/hry_plugin.iml" filepath="$PROJECT_DIR$/hry_boot/hry_plugin/hry_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_boot/hry_plugin/hry_plugin_code/hry_plugin_code.iml" filepath="$PROJECT_DIR$/hry_boot/hry_plugin/hry_plugin_code/hry_plugin_code.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/hry_root.iml" filepath="$PROJECT_DIR$/.idea/hry_root.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_application/hry_service/hry_service.iml" filepath="$PROJECT_DIR$/hry_application/hry_service/hry_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hry_application/hry_timer/hry_timer.iml" filepath="$PROJECT_DIR$/hry_application/hry_timer/hry_timer.iml" />
+    </modules>
+  </component>
+</project>

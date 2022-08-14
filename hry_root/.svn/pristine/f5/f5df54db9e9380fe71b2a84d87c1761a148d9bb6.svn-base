@@ -1,0 +1,235 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:18:39 
+ */
+package hry.business.cu.model;
+
+import hry.bean.BaseModel;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.*;
+
+import java.util.Date;
+
+/**
+ * <p> CuEnterprise </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:18:39 
+ */
+@Data
+@ApiModel(value = "企业信息实体类")
+@Table(name="cu_enterprise")
+public class CuEnterprise extends BaseModel {
+
+	/**
+	* 
+	*/
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", unique = true, nullable = false)
+    @ApiModelProperty(value = "")
+	private Long id;
+
+	/**
+	* 用户ID
+	*/
+	@Column(name= "customerId")
+    @ApiModelProperty(value = "用户ID")
+	private Long customerId;
+
+	/**
+	* 企业编码
+	*/
+	@Column(name= "enterpriseCode")
+    @ApiModelProperty(value = "企业编码")
+	private String enterpriseCode;
+
+	/**
+	* 企业名称
+	*/
+	@Column(name= "enterpriseName")
+    @ApiModelProperty(value = "企业名称")
+	private String enterpriseName;
+
+	/**
+	* 统一社会信用代码
+	*/
+	@Column(name= "creditCode")
+    @ApiModelProperty(value = "统一社会信用代码")
+	private String creditCode;
+
+	/**
+	* 企业性质
+	*/
+	@Column(name= "enterpriseNature")
+    @ApiModelProperty(value = "企业性质")
+	private Integer enterpriseNature;
+
+	/**
+	* 成立日期
+	*/
+	@Column(name= "establishDate")
+    @ApiModelProperty(value = "成立日期")
+	private Date establishDate;
+
+	/**
+	* 主营业务
+	*/
+	@Column(name= "mainBusiness")
+    @ApiModelProperty(value = "主营业务")
+	private String mainBusiness;
+
+	/**
+	* 行业类别
+	*/
+	@Column(name= "industryCategory")
+    @ApiModelProperty(value = "行业类别")
+	private Integer industryCategory;
+
+	/**
+	* 注册资本
+	*/
+	@Column(name= "registeredCapital")
+    @ApiModelProperty(value = "注册资本")
+	private String registeredCapital;
+
+	/**
+	* 注册币种
+	*/
+	@Column(name= "registeredCurrency")
+    @ApiModelProperty(value = "注册币种")
+	private String registeredCurrency;
+
+	/**
+	* 企业联系人
+	*/
+	@Column(name= "enterpriseContacts")
+    @ApiModelProperty(value = "企业联系人")
+	private String enterpriseContacts;
+
+	/**
+	* 移动电话
+	*/
+	@Column(name= "movePhone")
+    @ApiModelProperty(value = "移动电话")
+	private String movePhone;
+
+	/**
+	* 固定电话
+	*/
+	@Column(name= "fixedTelephone")
+    @ApiModelProperty(value = "固定电话")
+	private String fixedTelephone;
+
+	/**
+	* 邮箱
+	*/
+	@Column(name= "email")
+    @ApiModelProperty(value = "邮箱")
+	private String email;
+
+	/**
+	* 经营场所
+	*/
+	@Column(name= "managementPlace")
+    @ApiModelProperty(value = "经营场所")
+	private Integer managementPlace;
+
+	/**
+	* 职工人数
+	*/
+	@Column(name= "workersNumber")
+    @ApiModelProperty(value = "职工人数")
+	private Integer workersNumber;
+
+	/**
+	* 企业地址
+	*/
+	@Column(name= "detailedAddress")
+    @ApiModelProperty(value = "企业地址")
+	private String detailedAddress;
+
+	/**
+	* 注册地址
+	*/
+	@Column(name= "registeredAddress")
+    @ApiModelProperty(value = "注册地址")
+	private String registeredAddress;
+
+	/**
+	* 经营地址
+	*/
+	@Column(name= "managementAddress")
+    @ApiModelProperty(value = "经营地址")
+	private String managementAddress;
+
+	/**
+	* 来源：1.前端注册  2.后台录入
+	*/
+	@Column(name= "source")
+    @ApiModelProperty(value = "来源：1.前端注册  2.后台录入")
+	private Integer source;
+
+	/**
+	* 营业执照
+	*/
+	@Column(name= "businessLicenseUrl")
+    @ApiModelProperty(value = "营业执照")
+	private String businessLicenseUrl;
+
+	/**
+	* 统一社会信用代码证
+	*/
+	@Column(name= "creditCodeUrl")
+    @ApiModelProperty(value = "统一社会信用代码证")
+	private String creditCodeUrl;
+
+	/**
+	* 开户许可证
+	*/
+	@Column(name= "accountOpeningPermitUrl")
+    @ApiModelProperty(value = "开户许可证")
+	private String accountOpeningPermitUrl;
+
+	/**
+	* 状态 1.待审核 2.已通过 3.未通过
+	*/
+	@Column(name= "status")
+    @ApiModelProperty(value = "状态 1.待审核 2.已通过 3.未通过")
+	private Integer status;
+
+	/**
+	* 驳回原因
+	*/
+	@Column(name= "rejectRemark")
+    @ApiModelProperty(value = "驳回原因")
+	private String rejectRemark;
+
+	/**
+	* 客户类型转换备注
+	*/
+	@Column(name= "typeRemark")
+    @ApiModelProperty(value = "客户类型转换备注")
+	private String typeRemark;
+
+	/**
+	 * 用户名称
+	 */
+	@Transient
+	@ApiModelProperty(value = "用户名称")
+	private String username;
+
+	/**
+	 * 注册手机号
+	 */
+	@Transient
+	@ApiModelProperty(value = "注册手机号")
+	private String customerMobile;
+
+}

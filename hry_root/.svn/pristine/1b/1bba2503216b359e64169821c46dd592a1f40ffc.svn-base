@@ -1,0 +1,197 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-04-14 14:35:04
+ */
+package hry.activiti.process.service.impl;
+
+import hry.activiti.process.model.ProDefine;
+import hry.activiti.process.model.ProDefineNode;
+import hry.activiti.process.service.ActivitiService;
+import hry.activiti.process.service.ProDefineNodeService;
+import hry.activiti.process.service.ProDefineService;
+import hry.bean.JsonResult;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.QueryFilter;
+import lombok.extern.slf4j.Slf4j;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+import org.flowable.bpmn.converter.BpmnXMLConverter;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.FlowElement;
+import org.flowable.engine.repository.ProcessDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
+
+import javax.annotation.Resource;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Collection;
+
+/**
+ * <p> ProDefineService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-04-14 14:35:04
+ */
+@Service("proDefineService")
+@Slf4j
+public class ProDefineServiceImpl extends BaseServiceImpl<ProDefine, Long> implements ProDefineService {
+
+	@Resource(name = "proDefineDao")
+	@Override
+	public void setDao (BaseDao<ProDefine, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	private ProDefineNodeService proDefineNodeService;
+
+	@Autowired
+	private ActivitiService activitiService;
+
+	@Override
+	public JsonResult saveAndNode(ProDefine proDefine) {
+		try {
+
+			ProDefine define = get(new QueryFilter(ProDefine.class).addFilter("defineKey=", proDefine.getDefineKey()));
+			if(define!=null){
+				return new JsonResult().setMsg("流程key不能重复");
+			}
+
+
+			BpmnXMLConverter bpmnXMLConverter = new BpmnXMLConverter();
+
+			SAXReader reader = new SAXReader();
+			Document doc = reader.read(new ByteArrayInputStream(HtmlUtils.htmlUnescape(proDefine.getDefineText()).getBytes()));
+			Element rootElement = doc.getRootElement();
+			Element process = rootElement.element("process");
+			process.addAttribute("id",proDefine.getDefineKey());
+
+			StringWriter sw = new StringWriter();
+			OutputFormat format = OutputFormat.createPrettyPrint();
+			format.setEncoding("utf-8");
+			try {
+
+				XMLWriter xmlWriter = new XMLWriter(sw, format);
+				xmlWriter.write(doc);
+			} catch (IOException ex) {
+			}finally{
+				try {
+					sw.close();
+				} catch (IOException ex) {
+				}
+			}
+
+			log.info(sw.toString());
+
+			proDefine.setDefineText(sw.toString());
+
+
+			XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+			InputStream inputStream =new ByteArrayInputStream(HtmlUtils.htmlUnescape(proDefine.getDefineText()).getBytes());
+			XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(inputStream,"UTF-8");
+
+			BpmnModel bpmnModel = bpmnXMLConverter.convertToBpmnModel(xmlStreamReader);
+
+			//保存节点
+			if (bpmnModel != null) {
+				//新添加默认为一版本
+				proDefine.setVersion(1);
+				save(proDefine);
+
+				Collection<FlowElement> flowElements = bpmnModel.getMainProcess().getFlowElements();
+				for (FlowElement e : flowElements) {
+					ProDefineNode node = new ProDefineNode();
+					node.setDefineKey(proDefine.getDefineKey());
+					node.setNodeKey(e.getId());
+					node.setName(e.getName());
+					node.setVersion(proDefine.getVersion());
+					proDefineNodeService.save(node);
+				}
+			}
+			return new JsonResult().setSuccess(true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new JsonResult().setMsg("流程格式不正确");
+
+	}
+
+	@Override
+	public JsonResult updateAndNode(ProDefine proDefine,boolean isDelete) {
+
+		ProDefine proDefineDO = get(proDefine.getId());
+		if(proDefineDO==null){
+			return new JsonResult().setMsg("流程不存在");
+		}
+		proDefineDO.setPdId(proDefine.getPdId());
+		proDefineDO.setDefineText(proDefine.getDefineText());
+		proDefineDO.setName(proDefine.getName());
+
+		if(isDelete) {
+			//保存对应版本的node节点信息
+			proDefineNodeService.delete(new QueryFilter(ProDefineNode.class).addFilter("defineKey=", proDefineDO.getDefineKey()).addFilter("version=", proDefineDO.getVersion()));
+		}
+		try {
+
+			BpmnXMLConverter bpmnXMLConverter = new BpmnXMLConverter();
+
+			XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+
+			InputStream inputStream =new  ByteArrayInputStream(HtmlUtils.htmlUnescape(proDefineDO.getDefineText()).getBytes());
+
+			XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(inputStream,"UTF-8");
+			BpmnModel bpmnModel = bpmnXMLConverter.convertToBpmnModel(xmlStreamReader);
+
+			//保存节点
+			if (bpmnModel != null) {
+				update(proDefineDO);
+
+				Collection<FlowElement> flowElements = bpmnModel.getMainProcess().getFlowElements();
+				for (FlowElement e : flowElements) {
+					ProDefineNode node = new ProDefineNode();
+					node.setDefineKey(proDefineDO.getDefineKey());
+					node.setNodeKey(e.getId());
+					node.setName(e.getName());
+					node.setVersion(proDefineDO.getVersion());
+					proDefineNodeService.save(node);
+				}
+			}
+			return new JsonResult().setSuccess(true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new JsonResult().setMsg("流程格式不正确");
+	}
+
+	@Override
+	public ProDefine getByDefineKey(String defineKey) {
+		return  get(new QueryFilter(ProDefine.class).addFilter("defineKey=",defineKey));
+	}
+
+	@Override
+	public JsonResult deploy(ProDefine proDefine) {
+		ProcessDefinition deploy = activitiService.deploy(proDefine);
+		if(deploy!=null){//发布成功，更新节点
+			JsonResult jsonResult = updateAndNode(proDefine,false);
+			return jsonResult;
+		}
+
+		return new JsonResult();
+	}
+}

@@ -1,0 +1,49 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-28 12:05:59
+ */
+package hry.platform.flow.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.platform.flow.model.AppFlow;
+import hry.platform.flow.service.AppFlowService;
+import hry.platform.flow.service.CommonFlowService;
+import hry.util.flowModel.FlowParams;
+import hry.util.flowModel.FlowResult;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> AppFlowService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-28 12:05:59
+ */
+@Service("appFlowService")
+public class AppFlowServiceImpl extends BaseServiceImpl<AppFlow, Long> implements AppFlowService, CommonFlowService {
+
+	@Resource(name = "appFlowDao")
+	@Override
+	public void setDao (BaseDao<AppFlow, Long> dao) {
+		super.dao = dao;
+	}
+
+
+	@Override
+	public FlowResult start(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult();
+		flowResult.setSuccess(true);
+
+		System.out.println("流程启动了");
+
+		return flowResult;
+
+	}
+
+
+}

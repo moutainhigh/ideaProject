@@ -1,0 +1,44 @@
+package hry.business.qcc.service;
+
+import hry.bean.JsonResult;
+import hry.platform.config.service.AppConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+/**
+ * @Author: yaozh
+ * @Description:
+ * @Date:
+ */
+public class QccFactory {
+
+    @Autowired
+    private QccEnterpriseBasicDetailsService qccEnterpriseBasicDetailsService;
+    @Autowired
+    private QccEnterpriseExceptionService qccEnterpriseExceptionService;
+    @Autowired
+    private QccEnterprisePartnerService qccEnterprisePartnerService;
+    @Autowired
+    private QccEnterpriseEmployeeService qccEnterpriseEmployeeService;
+
+    @Autowired
+    private AppConfigService appConfigService;
+
+    public JsonResult qccFactory(Long enterpriseId,String uriStr,String creditCode){
+        JsonResult jsonResult = new JsonResult();
+        /*switch (uriStr){
+            case "getBasicDetailsByNameUri":
+                return qccEnterpriseBasicDetailsService.selectAndAdd(enterpriseId,appConfigService.getValueByKey(uriStr),creditCode);
+            case "getOpExceptionUri":
+                return qccEnterpriseExceptionService.selectAndAdd(enterpriseId,appConfigService.getValueByKey(uriStr),creditCode);
+            case "getECIPartnerListUri":
+                return qccEnterprisePartnerService.selectAndAdd(enterpriseId,appConfigService.getValueByKey(uriStr),creditCode);
+            case "getECIEmployeeListUri":
+                return qccEnterpriseEmployeeService.selectAndAdd(enterpriseId,appConfigService.getValueByKey(uriStr),creditCode);
+        }*/
+        return jsonResult;
+    }
+
+}

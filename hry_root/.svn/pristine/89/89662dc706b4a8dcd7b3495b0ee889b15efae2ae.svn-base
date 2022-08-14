@@ -1,0 +1,84 @@
+server:
+  port: 7300
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://192.168.0.52:7700/eureka/
+
+# spring配置
+spring:
+  application:
+    name: hry-activiti
+  # 数据源配置
+  datasource:
+    url: jdbc:mysql://192.168.0.52:3306/hry_activiti?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: Credit_2016Admin
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 1
+      min-idle: 1
+      max-active: 1000
+      test-on-borrow: true
+  rabbitmq:
+    host: 192.168.0.51
+    port: 5672
+    username: qq
+    password: 1234
+    virtual-host: /qq
+    exchangeName: finance.direct.exchange
+  liquibase:
+    enabled: false
+
+# mybatis配置
+mybatis:
+  mapper-locations: classpath*:hry/**/mapper/*.xml
+  configuration:
+    default-fetch-size: 100
+    #mybatis日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 通用mapper配置
+mapper:
+  mappers:
+    - hry.core.mvc.dao.BaseDao
+  not-empty: false
+  identity: MYSQL
+  #    before: true
+
+# 分页配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+# dubbo配置
+dubbo:
+  name: ${spring.application.name}
+  port: 2${server.port}
+  cachepath: ./
+  host: 192.168.0.52
+  zookeeperurl: zookeeper://192.168.0.52:2181
+
+# redis配置
+redis:
+  url: 192.168.0.52
+  port: 6379
+  password: Credit2016Admin
+  maxTotal: 500
+
+# 业务配置
+# oss
+app:
+  oss:
+    open: true
+    endpoint: http://oss-cn-beijing.aliyuncs.com
+    accessKeyId: LTAIy0JoG8UwjD89
+    accessKeySecret: IlxRvELEysGMpOA3dWVqxKG8B6yVFf
+    privateBucketName: hry-exchange-private
+    publicBucketName: hry-exchange-public
+  oauthKey: c268c4ce22b34efeb699c9d8f38d0824
+  oauthIp: 192.168.0.52

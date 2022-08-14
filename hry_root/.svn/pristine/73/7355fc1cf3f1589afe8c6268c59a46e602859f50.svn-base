@@ -1,0 +1,50 @@
+package hry.redis;
+
+import hry.redis.impl.RedissonDistributedLocker;
+import hry.redis.utils.LockUtil;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * @Author: yaozh
+ * @Description: redisson 配置类
+ * @slogan: 天下风云出我辈，一入代码岁月催！
+ * @Date:
+ */
+@Configuration
+public class RedissonConfiguration {
+
+    @Value("${redis.url}")
+    private String redisUrl;
+
+    @Value("${redis.port}")
+    private Integer redisPort;
+
+    @Value("${redis.password}")
+    private String redisPassword;
+
+    @Bean
+    public RedissonClient getRedisson() throws Exception{
+        RedissonClient redisson = null;
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("redis://"+redisUrl+":"+redisPort)
+                .setPassword(redisPassword);
+        redisson = Redisson.create(config);
+
+        System.out.println(redisson.getConfig().toJSON().toString());
+        return redisson;
+    }
+
+    @Bean
+    public RedissonDistributedLocker redissonLocker(RedissonClient redissonClient){
+        RedissonDistributedLocker locker = new RedissonDistributedLocker(redissonClient);
+        //设置LockUtil的锁处理对象
+        LockUtil.setLocker(locker);
+        return locker;
+    }
+}

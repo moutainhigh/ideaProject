@@ -1,0 +1,205 @@
+package hry.controller.user;
+
+import com.alibaba.fastjson.JSON;
+import hry.bean.JsonResult;
+import hry.business.cu.model.CuCustomer;
+import hry.business.cu.service.CuCustomerService;
+import hry.redis.RedisService;
+import hry.security.jwt.JWTContext;
+import hry.security.jwt.annotation.UnAuthentication;
+import hry.util.SpringUtil;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @ClassName UserController
+ * @Description: TODO
+ * @Author yaozhuo
+ * @Date 2020/4/28
+ * @Version V1.0
+ **/
+
+@Api(value = "用户信息类", tags = "用户信息类", description = "用户信息类")
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    @Autowired
+    private CuCustomerService cuCustomerService;
+
+    @ApiOperation(value = "获取当前登录用户", notes = "获取当前登录用户")
+    @PostMapping("/getcutomer")
+    public Map<String, Object> getCutomer(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> map = new HashMap<>();
+        CuCustomer user = (CuCustomer) JWTContext.getUser(CuCustomer.class);
+        map.put("user", user);
+        return map;
+    }
+
+    @PostMapping(value = "/updateNickName")
+    @ApiOperation(value = "昵称设置", httpMethod = "POST", notes = "nName：昵称")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ResponseBody
+    public JsonResult updateNickName(HttpServletRequest request, @RequestParam String nName) {
+        CuCustomer user = (CuCustomer) JWTContext.getUser(CuCustomer.class);
+        user.setNickname(nName);
+        CuCustomer cuUpdate = new CuCustomer();
+        cuUpdate.setId(user.getId());
+        cuUpdate.setNickname(nName);
+        cuCustomerService.update(cuUpdate);
+        JWTContext.updateUser(request, JSON.toJSONString(user));
+        return new JsonResult().setSuccess(true).setMsg("设置成功");
+    }
+
+    @PostMapping(value = "/updatePassword")
+    @ApiOperation(value = "修改登陆密码", httpMethod = "POST", notes = "修改登陆密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ResponseBody
+    public JsonResult updatePassword(
+            HttpServletRequest request,
+            @ApiParam(name = "oldPassWord", value = "原密码", required = true) @RequestParam String oldPassWord,
+            @ApiParam(name = "newPassWord", value = "新密码", required = true) @RequestParam String newPassWord,
+            @ApiParam(name = "reNewPassWord", value = "确认密码", required = true) @RequestParam String reNewPassWord) {
+        JsonResult jsonResult = new JsonResult();
+        if (StringUtils.isEmpty(oldPassWord)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("原密码不能为空");
+            return jsonResult;
+        }
+        if (StringUtils.isEmpty(newPassWord)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("新密码不能为空");
+            return jsonResult;
+        }
+        if (oldPassWord.equals(newPassWord)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("原密码与新密码不能相同");
+            return jsonResult;
+        }
+        if (StringUtils.isEmpty(reNewPassWord)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("确认密码不能为空");
+            return jsonResult;
+        }
+        if (!newPassWord.equals(reNewPassWord)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("两次密码不一致");
+            return jsonResult;
+        }
+        CuCustomer user = (CuCustomer) JWTContext.getUser(CuCustomer.class);
+        jsonResult = cuCustomerService.updatePassword(user.getId(), oldPassWord, newPassWord);
+
+        return jsonResult;
+    }
+
+    @PostMapping(value = "/updateMobile")
+    @ApiOperation(value = "修改手机号", httpMethod = "POST", notes = "修改手机号")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ResponseBody
+    public JsonResult updateMobile(
+            HttpServletRequest request,
+            @ApiParam(name = "mobile", value = "手机号", required = true) @RequestParam("mobile") String mobile,
+            @ApiParam(name = "country", value = "国家", required = true) @RequestParam("country") String country,
+            @ApiParam(name = "verifyCode", value = "短信验证码", required = true) @RequestParam("verifyCode") String verifyCode,
+            @ApiParam(name = "passWord", value = "登录密码", required = true) @RequestParam("passWord") String passWord) {
+
+        JsonResult jsonResult = new JsonResult();
+
+        //查看手机号是否存在
+        Boolean b = cuCustomerService.getCustomerByMobile(mobile);
+        if (!b) {
+            return jsonResult.setSuccess(false).setMsg("手机号已被绑定");
+        }
+
+        RedisService redisService = SpringUtil.getBean("redisService");
+        //获得手机验证码
+        String session_pwSmsCode = redisService.get("SMS:setPhone:" + mobile);
+        //判断验证码是否正确
+        if (!verifyCode.equals(session_pwSmsCode)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("验证码错误");
+            return jsonResult;
+        }
+        //更新手机号
+        CuCustomer user = (CuCustomer) JWTContext.getUser(CuCustomer.class);
+        if (user == null) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("请重新登陆");
+            return jsonResult;
+        }
+        user.setMobile(mobile);
+        CuCustomer cuUpdate = new CuCustomer();
+        cuUpdate.setId(user.getId());
+        cuUpdate.setMobile(mobile);
+        cuCustomerService.update(cuUpdate);
+        //刷新用户信息
+        JWTContext.updateUser(request, JSON.toJSONString(user));
+        return new JsonResult().setSuccess(true).setMsg("修改成功");
+    }
+
+
+    @PostMapping(value = "/findPassword")
+    @ApiOperation(value = "手机找回密码", notes = "手机找回密码")
+    @ResponseBody
+    @UnAuthentication
+    public JsonResult findPassword(
+            HttpServletRequest request,
+            @ApiParam(name = "mobile", value = "手机号", required = true) @RequestParam("mobile") String mobile,
+            @ApiParam(name = "country", value = "国家", required = true) @RequestParam("country") String country,
+            @ApiParam(name = "newPassWord", value = "新密码", required = true) @RequestParam String newPassWord,
+            @ApiParam(name = "reNewPassWord", value = "确认密码", required = true) @RequestParam String reNewPassWord,
+            @ApiParam(name = "verifyCode", value = "短信验证码", required = true) @RequestParam("verifyCode") String verifyCode) {
+
+        JsonResult jsonResult = new JsonResult();
+        //查看手机号是否存在
+        Boolean b = cuCustomerService.getCustomerByMobile(mobile);
+        if (b) {
+            return jsonResult.setSuccess(false).setMsg("手机号不存在");
+        }
+
+        if (StringUtils.isEmpty(newPassWord)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("新密码不能为空");
+            return jsonResult;
+        }
+        if (StringUtils.isEmpty(reNewPassWord)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("确认密码不能为空");
+            return jsonResult;
+        }
+        if (!newPassWord.equals(reNewPassWord)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("两次密码不一致");
+            return jsonResult;
+        }
+
+        RedisService redisService = SpringUtil.getBean("redisService");
+        //获得手机验证码
+        String session_pwSmsCode = redisService.get("SMS:smsForgetMobile:" + mobile);
+        //判断验证码是否正确
+        if (!verifyCode.equals(session_pwSmsCode)) {
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg("验证码错误");
+            return jsonResult;
+        }
+
+        jsonResult = cuCustomerService.updatePasswordByMobile(mobile,newPassWord);
+
+        return jsonResult;
+    }
+
+
+}

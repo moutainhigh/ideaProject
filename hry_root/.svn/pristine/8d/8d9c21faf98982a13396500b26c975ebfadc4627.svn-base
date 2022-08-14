@@ -1,0 +1,20 @@
+package hry.business.qcc.service;
+
+import hry.bean.JsonResult;
+
+/**
+ * @Author: yaozh
+ * @Description:
+ * @Date:
+ */
+public interface QccEnterpriseService {
+
+    /**
+     * @Author: yaozh
+     * @Description:企查查-查询信息并插入数据库
+     * @param enterpriseId 企业ID
+     * @param creditCode 信用代码
+     * @Date: 2020/5/20 15:58
+     */
+    JsonResult selectAndAdd(Long enterpriseId,String creditCode);
+}

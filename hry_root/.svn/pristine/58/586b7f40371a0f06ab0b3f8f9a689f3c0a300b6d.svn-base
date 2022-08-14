@@ -1,0 +1,299 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-06-16 16:17:44
+ */
+package hry.business.cf.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import hry.bean.PageResult;
+import hry.business.cf.dao.CfFacilityFlowDao;
+import hry.business.cf.model.CfFacilityAmount;
+import hry.business.cf.model.CfFacilityFlow;
+import hry.business.cf.service.CfFacilityAmountService;
+import hry.business.cf.service.CfFacilityFlowService;
+import hry.business.cu.model.CuEnterprise;
+import hry.business.cu.service.CuEnterpriseService;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.PageFactory;
+import hry.core.util.QueryFilter;
+import hry.platform.flow.service.CommonFlowService;
+import hry.platform.newuser.model.NewAppUser;
+import hry.platform.newuser.service.NewAppUserService;
+import hry.util.date.DateUtil;
+import hry.util.flowModel.FlowParams;
+import hry.util.flowModel.FlowResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * <p> CfFacilityFlowService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-06-16 16:17:44
+ */
+@Service("cfFacilityFlowService")
+public class CfFacilityFlowServiceImpl extends BaseServiceImpl<CfFacilityFlow, Long> implements CfFacilityFlowService, CommonFlowService {
+
+	@Resource(name = "cfFacilityFlowDao")
+	@Override
+	public void setDao (BaseDao<CfFacilityFlow, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Autowired
+	private CuEnterpriseService cuEnterpriseService;
+
+	@Autowired
+	private CfFacilityAmountService cfFacilityAmountService;
+
+	@Autowired
+	private NewAppUserService newAppUserService;
+
+	@Override
+	public PageResult findPageBySql(QueryFilter filter) {
+		// ----------------------分页查询头部外壳------------------------------
+		Page<CfFacilityFlow> page = PageFactory.getPage(filter);
+
+		String facilityCode = filter.getRequest().getParameter("facilityCode");
+		String sellEnterpriseName = filter.getRequest().getParameter("sellEnterpriseName");
+		String coreEnterpriseName = filter.getRequest().getParameter("coreEnterpriseName");
+		String facilityType = filter.getRequest().getParameter("facilityType");
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (!StringUtils.isEmpty(facilityType)) {
+			map.put("facilityType", facilityType);
+		}
+		if (!StringUtils.isEmpty(facilityCode)) {
+			map.put("facilityCode", "%" + facilityCode + "%");
+		}
+		if (!StringUtils.isEmpty(sellEnterpriseName)) {
+			map.put("sellEnterpriseName", "%" + sellEnterpriseName + "%");
+		}
+		if (!StringUtils.isEmpty(coreEnterpriseName)) {
+			map.put("coreEnterpriseName", "%" + coreEnterpriseName + "%");
+		}
+		((CfFacilityFlowDao) dao).findPageBySql(map);
+		return new PageResult(page, filter.getPage(), filter.getPageSize());
+	}
+
+	@Override
+	public FlowResult jzdc(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult();
+		flowResult.setSuccess(true);
+		System.out.println("授信流程---尽职调查");
+
+		//获取业务参数
+		Map<String, Object> params = flowParams.getParamsList();
+
+		//获取表单
+		JSONObject gerenbuy = (JSONObject) params.get("gerenbuy");
+
+		//企业id
+		Long enterpriseId = gerenbuy.getLong("enterpriseId");
+		//项目经理id
+		Long projectManagerId = gerenbuy.getLong("projectManagerId");
+		//授信用途
+		String facilityPurpose = gerenbuy.getString("facilityPurpose");
+		//业务方向
+		Integer businessDirection = gerenbuy.getInteger("businessDirection");
+		//授信金额
+		String facilityAmount = gerenbuy.getString("facilityAmount");
+		//周期类型
+		Integer cycleType = gerenbuy.getInteger("cycleType");
+		//开始日期
+		Date guaranteeDateStart =  gerenbuy.getDate("guaranteeDateStart");
+		//结束日期
+		Date guaranteeDateEnd = gerenbuy.getDate("guaranteeDateEnd");
+		//期限
+		Integer term = gerenbuy.getInteger("term");
+
+		//保存流程信息
+		CfFacilityFlow cfFacilityFlow = get(flowParams.getProjectId());
+		cfFacilityFlow.setFacilityPurpose(facilityPurpose);
+		cfFacilityFlow.setBusinessDirection(businessDirection);
+		cfFacilityFlow.setFacilityAmount(facilityAmount);
+		cfFacilityFlow.setCycleType(cycleType);
+		cfFacilityFlow.setGuaranteeDateStart(guaranteeDateStart);
+		cfFacilityFlow.setGuaranteeDateEnd(guaranteeDateEnd);
+		cfFacilityFlow.setTerm(term);
+
+		update(cfFacilityFlow);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult fxsh(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult();
+		flowResult.setSuccess(true);
+		System.out.println("授信流程---风险审核");
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult zzht(FlowParams flowParams) {
+		return null;
+	}
+
+	@Override
+	public FlowResult xmgd(FlowParams flowParams) {
+		return null;
+	}
+
+
+	@Override
+	public FlowResult start(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult();
+
+		//获取业务参数
+		Map<String, Object> params = flowParams.getParamsList();
+		//企业id
+		Long enterpriseId = Long.valueOf((Integer) params.get("enterpriseId"));
+		//项目经理id
+		Long projectManagerId = Long.valueOf((Integer)  params.get("projectManagerId"));
+		//企业类型
+		String type = (String) params.get("type");//sell /buy
+
+		//企业对象
+		CuEnterprise cuEnterprise = cuEnterpriseService.get(Long.valueOf(enterpriseId));
+		if(cuEnterprise==null){
+			flowResult.setSuccess(false).setMsg("enterpriseId错误");
+			return flowResult;
+		}
+
+		//项目经理
+		NewAppUser projectManager = newAppUserService.get(projectManagerId);
+
+
+		//创建流程项目
+		CfFacilityFlow cfFacilityFlow = new CfFacilityFlow();
+		//项目名称
+		String projectName = cuEnterprise.getName()+ DateUtil.dateToString(new Date(),"yyyyMMdd");
+		//授信编号
+		String facilityCode = DateUtil.dateToString(new Date(),"yyyyMMdd");
+		cfFacilityFlow.setProjectName(projectName);
+		cfFacilityFlow.setFacilityCode(facilityCode);
+		cfFacilityFlow.setProjectManagerId(projectManagerId);
+		cfFacilityFlow.setProjectManagerName(projectManager.getUserName());
+
+		if("sell".equals(type)) {//卖方授信流程  启动用户为卖方用户s
+			cfFacilityFlow.setFacilityType(1);//授信类型
+			cfFacilityFlow.setSellEnterpriseId(enterpriseId);
+			cfFacilityFlow.setSellEnterpriseName(cuEnterprise.getName());
+		}else if("buy".equals(type)){//买方授信流程 启动用户为核心用户
+			cfFacilityFlow.setFacilityType(2);//授信类型
+			cfFacilityFlow.setCoreEnterpriseId(enterpriseId);
+			cfFacilityFlow.setCoreEnterpriseName(cuEnterprise.getName());
+			cfFacilityFlow.setCoreEnterpriseCreditCode(cuEnterprise.getCreditCode());
+		}
+
+		save(cfFacilityFlow);
+
+		//设置流水号--更新流程
+		String number =String.format("%4d", cfFacilityFlow.getId()).replace(" ", "0");;
+		cfFacilityFlow.setProjectName(cfFacilityFlow.getProjectName()+number);
+		cfFacilityFlow.setFacilityCode(cfFacilityFlow.getFacilityCode()+number);
+		update(cfFacilityFlow);
+
+		//创建授信账户
+		CfFacilityAmount cfFacilityAmount = new CfFacilityAmount();
+		cfFacilityAmount.setEnterpriseId(enterpriseId);
+		cfFacilityAmount.setType(2);
+		cfFacilityAmountService.save(cfFacilityAmount);
+
+
+		flowResult.setSuccess(true);
+
+		Map<String,Object> map = new HashMap<>();
+		//项目ID
+		map.put("projectId",cfFacilityFlow.getId());
+		//项目名称
+		map.put("projectName",cfFacilityFlow.getProjectName());
+
+		flowResult.setParamsList(map);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult view(FlowParams flowParams) {
+
+		FlowResult flowResult = new FlowResult();
+
+		Map<String, Object> params = flowParams.getParamsList();
+		Long projectId = Long.valueOf((Integer) params.get("projectId"));
+		CfFacilityFlow cfFacilityFlow = get(projectId);
+
+		//回显组件
+		JSONObject jsonObject = new JSONObject();
+
+
+
+		//个人组件渲染数据
+		JSONObject geren = new JSONObject();
+		geren.put("projectName",cfFacilityFlow.getProjectName());
+		geren.put("facilityCode",cfFacilityFlow.getFacilityCode());
+
+
+		if(cfFacilityFlow.getSellEnterpriseId()!=null) {
+			CuEnterprise cuEnterprise = cuEnterpriseService.get(cfFacilityFlow.getSellEnterpriseId());
+			geren.put("sellEnterpriseId", cfFacilityFlow.getSellEnterpriseId());
+			geren.put("sellEnterpriseName", cuEnterprise.getName());
+		}
+		if(cfFacilityFlow.getCoreEnterpriseId()!=null) {
+			CuEnterprise cuEnterprise  = cuEnterpriseService.get(cfFacilityFlow.getCoreEnterpriseId());
+			geren.put("coreEnterpriseId", cfFacilityFlow.getCoreEnterpriseId());
+			geren.put("coreEnterpriseName", cuEnterprise.getName());
+		}
+
+		geren.put("projectManagerId",cfFacilityFlow.getProjectManagerId());
+		geren.put("projectManagerName",cfFacilityFlow.getProjectManagerName());
+		geren.put("facilityPurpose",cfFacilityFlow.getFacilityPurpose());
+
+
+
+		geren.put("facilityAmount",0);
+		geren.put("surplusAmount",0);
+		geren.put("coreEnterpriseCreditCode",cfFacilityFlow.getCoreEnterpriseCreditCode());
+
+
+		geren.put("facilityAmount",cfFacilityFlow.getFacilityAmount());
+		geren.put("cycleType",cfFacilityFlow.getCycleType());
+		geren.put("guaranteeDateStart",cfFacilityFlow.getGuaranteeDateStart());
+		geren.put("guaranteeDateEnd",cfFacilityFlow.getGuaranteeDateEnd());
+		geren.put("term",cfFacilityFlow.getTerm());
+
+		//配偶
+		JSONObject peiou = new JSONObject();
+		peiou.put("projectName",cfFacilityFlow.getProjectName());
+		peiou.put("facilityCode",cfFacilityFlow.getFacilityCode());
+
+
+		//卖方授信尽职调查
+		jsonObject.put("geren",geren);
+		//买方授信尽职调查
+		jsonObject.put("gerenbuy",geren);
+		//配偶信息
+		jsonObject.put("peiou",peiou);
+
+
+		//封装参数
+		Map<String,Object> map = new HashMap<>();
+		map.put("paramsList",jsonObject);
+		flowResult.setParamsList(map);
+
+		flowResult.setSuccess(true);
+		return flowResult;
+	}
+}

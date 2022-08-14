@@ -1,0 +1,43 @@
+package hry.util.flowModel;
+
+public class FlowResult extends FlowParams {
+
+    private Boolean success = false;
+
+    private String msg;
+
+    public FlowResult(){}
+
+    public FlowResult(FlowParams flowParams){
+        this.setProjectName(flowParams.getProjectName());
+        this.setProjectId(flowParams.getProjectId());
+        this.setStartUserId(flowParams.getStartUserId());
+        this.setControlName(flowParams.getControlName());
+        this.setDefineKey(flowParams.getDefineKey());
+        this.setDefineVersion(flowParams.getDefineVersion());
+        this.setPiId(flowParams.getPiId());
+        this.setNodeKey(flowParams.getNodeKey());
+        this.setBackNode(flowParams.getBackNode());
+        this.setProcessId(flowParams.getProcessId());
+        this.setTaskId(flowParams.getTaskId());
+        this.setAttributeMap(flowParams.getAllAttribute());
+    }
+
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public FlowResult setSuccess(Boolean success) {
+        this.success = success;
+        return this;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public FlowResult setMsg(String msg) {
+        this.msg = msg;
+        return this;
+    }
+}

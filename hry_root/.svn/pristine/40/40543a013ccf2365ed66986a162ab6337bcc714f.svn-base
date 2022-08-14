@@ -1,0 +1,78 @@
+package hry.business.qcc.api;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPObject;
+import hry.bean.JsonResult;
+import hry.platform.config.service.AppConfigService;
+import hry.util.StringUtil;
+import hry.util.UUIDUtil;
+import hry.util.httpRequest.HttpConnectionUtil;
+import hry.util.rsa.RSAUtil;
+import org.directwebremoting.json.types.JsonObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @Author: yaozh
+ * @Description: 企查查接口api
+ * @Date:
+ */
+public class EnterpriseSearchApi {
+
+    /**
+     * @param
+     * @Author: yaozh
+     * @Description: 企业工商数据查询 - 模糊搜索
+     * @Date: 2020/5/20 10:46
+     */
+    public JsonResult getEnterpriseInfo(Map<String, Object> map,String publicKeyUrl,String privateKeyUrl,String companyCode,String url) {
+        JsonResult jsonResult = new JsonResult();
+        String returnMsg = null;
+        try {
+
+            String paramjson = JSON.toJSONString(map);
+            //加密
+            String sign = RSAUtil.encryptByPrivateKey(paramjson, privateKeyUrl);
+
+            Map<String, String> paramMap = new HashMap<>(16);
+            paramMap.put("companyCode", companyCode);
+            paramMap.put("sign", sign);
+
+            returnMsg = HttpConnectionUtil.doPostQuery(url, paramMap);
+            //returnMsg="{\"resultCode\":\"8888\",\"reason\":\"查询成功\",\"data\":\"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\",\"jsonObject\":null,\"test\":null}";
+            //returnMsg = "{\"resultCode\":\"8888\",\"reason\":\"查询成功\",\"data\":\"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\",\"jsonObject\":null,\"test\":null}";
+            System.out.println("returnMsg:"+returnMsg);
+            if(!StringUtil.isNull(returnMsg)){
+                return jsonResult.setSuccess(false).setMsg("查询失败");
+            }
+            JSONObject jsonObject = JSONObject.parseObject(returnMsg);
+            //判断返回数据
+            if(!((String) jsonObject.get("resultCode")).equals("8888")){
+                return jsonResult.setSuccess(false).setMsg((String) jsonObject.get("reason")).setCode((String) jsonObject.get("resultCode"));
+            }
+            //响应数据解密
+            returnMsg = RSAUtil.decryptByPublicKey((String) jsonObject.get("data"), publicKeyUrl);
+            return jsonResult.setSuccess(true).setObj(returnMsg);
+            //System.out.println(returnMsg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResult;
+    }
+
+
+
+
+
+    public static void main(String[] args) throws Exception {
+        String returnMsg = "{\"resultCode\":\"8888\",\"reason\":\"查询成功\",\"data\":\"cuWhxiKHAiW1zAdEHhMc5OEAArfrgQ0887Gp2NLdcwu/Fj9TMKZ2NHbJS3dZbTuT5iVBfiTCjgpXr4DsED1lRg7bRq+bE/CiuHouiKUmycrIHo7xyhvWs71Lz+yTeWMv9dqaR6LOM3tsXfJtIBAgQuwZ12UjoUyGi0bdeWG3drAeFjzUFi5Yt+303kUu3QO06e2cm3Oz5JTP5SmxkwFIPTOiZNL2vjF6GNR2c6ZwLo2E3wztrxElwejOGFrPUrXVAENybQMAGba6e5nRsemBC/7/LcOhS9LUg/gBOTVaxCfhowphT113ur2bNArWPWlq5YNEZbmXdLvjD7XpG8r8hR45XbXyGSr++Uhme0HEOfQNGO1YGvFZSKnI8HFq4jOC51gJLq2HCdQhmcrwoa2/F95gP8LYlojG7feqMytikYKp/+SnSJL8U1+NaAARdZsUixFxNqUcK+/7+qX0e15XMd5xnp0i6+B7AlbYG5V5DDRCHYdujV78Y21+9RUxytmGGRkP8yCgwxaSBoQcMG8s7ybv95Hg1RxKFI4TeXwXHkCF4nuLAxh/Rq23Y+OpqYeGnRGoy5wmBMwqKAlwK/Kcpcm8XkPjMY2b84CU8qdsYEaC4INDtpazRHmxCPGeLuNZ+HlZw31W3syWUy5VZiNq9nYUIizhW0TC9jE138NPS5c=\",\"jsonObject\":null,\"test\":null}";
+        JSONObject jsonObject = JSONObject.parseObject(returnMsg);
+        returnMsg = RSAUtil.decryptByPublicKey((String) jsonObject.get("data"), "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCx/1YlpjsGcOHycPvINcYexVSPwcy264PHUj+y0+xzp/T4SucO9bCLom7u5gI/mVp/66l2bt2rodXG9spRH3KczzxiYtKRlgqrp5dv0TpsEScZX1Pw+WPMN2h5nE6mcRFnc3HX1fXlGQs0M8oV3aigjYpXA/Yt5KhNUiPf4K5jHQIDAQAB");
+        System.out.println(returnMsg);
+    }
+
+}

@@ -1,0 +1,15 @@
+package hry.config.remote;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@FeignClient("hry-admin")
+@RequestMapping("/adminRemoteService")
+public interface AdminRemoteService {
+
+    @GetMapping(value = "/getAppUser/{id}")
+    String getAppUser(@PathVariable("id") Long id);
+
+}

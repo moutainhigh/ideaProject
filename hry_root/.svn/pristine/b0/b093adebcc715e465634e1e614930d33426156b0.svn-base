@@ -1,0 +1,114 @@
+package hry.business.qcc.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import hry.bean.JsonResult;
+import hry.business.qcc.api.EnterpriseSearchApi;
+import hry.business.qcc.service.*;
+import hry.platform.config.model.YzyConfig;
+import hry.platform.config.service.AppConfigService;
+import hry.platform.config.service.YzyConfigService;
+import hry.util.StringUtil;
+import hry.util.UUIDUtil;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Author: yaozh
+ * @Description:
+ * @Date:
+ */
+@Service("qccApiServiceImpl")
+public class QccApiServiceImpl implements QccApiService {
+
+    @Autowired
+    private AppConfigService appConfigService;
+    @Autowired
+    private YzyConfigService yzyConfigService;
+    @Autowired
+    private QccEnterpriseBasicDetailsService qccEnterpriseBasicDetailsService;
+    @Autowired
+    private QccEnterpriseExceptionService qccEnterpriseExceptionService;
+    @Autowired
+    private QccEnterprisePartnerService qccEnterprisePartnerService;
+    @Autowired
+    private QccEnterpriseEmployeeService qccEnterpriseEmployeeService;
+    @Autowired
+    private QccEnterpriseInvestmentService qccEnterpriseInvestmentService;
+    @Autowired
+    private QccEnterpriseBranchService qccEnterpriseBranchService;
+    @Autowired
+    private QccEnterpriseChangeService qccEnterpriseChangeService;
+    @Autowired
+    private QccEnterpriseCourtnoticeService qccEnterpriseCourtnoticeService;
+
+
+    @Override
+    public JsonResult refreshBasicsByQcc(String creditCode, Long enterpriseId) {
+
+        String ordernumber = UUIDUtil.getUUID();
+        String qccIpAdrees = appConfigService.getValueByKey("qccIpAdrees");
+        String uri = null;
+        //公钥
+        String qccPublicKeyUrl = appConfigService.getValueByKey("qccPublicKeyUrl");
+        //公钥
+        String qccPrivateKeyUrl = appConfigService.getValueByKey("qccPrivateKeyUrl");
+        //商户号
+        String companyCode = appConfigService.getValueByKey("qccCompanyCode");
+        //所属平台
+        String belonged = appConfigService.getValueByKey("qccbelonged");
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("qccIpAdrees",qccIpAdrees);
+        paramMap.put("qccPublicKeyUrl",qccPublicKeyUrl);
+        paramMap.put("qccPrivateKeyUrl",qccPrivateKeyUrl);
+        paramMap.put("companyCode",companyCode);
+        paramMap.put("enterpriseId",enterpriseId);
+        paramMap.put("creditCode",creditCode);
+
+        Map<String, Object> qccMap = new HashMap<>();
+        qccMap.put("ordernumber",ordernumber);
+        qccMap.put("belonged",belonged);
+        qccMap.put("pageSize", "20");
+        qccMap.put("pageIndex", "1");
+
+        qccMap.put("searchKey", creditCode);
+        qccMap.put("keyNo", creditCode);
+        qccMap.put("keyword", creditCode);
+        //查询工商基本信息接口列表
+        List<YzyConfig> list = yzyConfigService.findYzyConfigByProductClassify(1);
+        for (YzyConfig yzyConfig : list) {
+            uri = appConfigService.getValueByKey(yzyConfig.getProductCode());
+            paramMap.put("uri",uri);
+            switch (yzyConfig.getProductCode()){
+                case "getBasicDetailsByNameUri"://工商基础信息
+                    qccEnterpriseBasicDetailsService.getQccInfo(paramMap,qccMap);
+                    break;
+                case "getOpExceptionUri"://营异常信息
+                    qccEnterpriseExceptionService.getQccInfo(paramMap,qccMap);
+                    break;
+                case "getECIPartnerListUri"://企业股东信息
+                    qccEnterprisePartnerService.getQccInfo(paramMap,qccMap);
+                    break;
+                case "getECIEmployeeListUri"://企业主要人员信息
+                    qccEnterpriseEmployeeService.getQccInfo(paramMap,qccMap);
+                    break;
+                case "getInvestmentListUri"://企业对外投资信息
+                    qccEnterpriseInvestmentService.getQccInfo(paramMap,qccMap);
+                    break;
+                case "getECIBranchListUri"://企业分支机构信息
+                    qccEnterpriseBranchService.getQccInfo(paramMap,qccMap);
+                    break;
+                case "getECIChangeListUri"://企业变更内容信息
+                    qccEnterpriseChangeService.getQccInfo(paramMap,qccMap);
+                    break;
+            }
+        }
+        return new JsonResult().setSuccess(true).setMsg("成功");
+    }
+
+}

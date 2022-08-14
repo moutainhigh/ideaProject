@@ -1,0 +1,49 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-28 16:12:18 
+ */
+package hry.platform.config.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.core.util.QueryFilter;
+import hry.platform.config.model.YzyConfig;
+import hry.platform.config.service.YzyConfigService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+/**
+ * <p> YzyConfigService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-28 16:12:18 
+ */
+@Service("yzyConfigService")
+public class YzyConfigServiceImpl extends BaseServiceImpl<YzyConfig, Long> implements YzyConfigService {
+
+	@Resource(name = "yzyConfigDao")
+	@Override
+	public void setDao (BaseDao<YzyConfig, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Override
+	public YzyConfig getYzyConfigByProductCode(String productCode) {
+		QueryFilter filter = new QueryFilter(YzyConfig.class);
+		filter.addFilter("productCode=",productCode);
+		return super.get(filter);
+	}
+
+	@Override
+	public List<YzyConfig> findYzyConfigByProductClassify(Integer productClassify) {
+		QueryFilter filter = new QueryFilter(YzyConfig.class);
+		filter.addFilter("productClassify=",productClassify);
+		filter.addFilter("isOpen=",1);
+		return super.find(filter);
+	}
+}

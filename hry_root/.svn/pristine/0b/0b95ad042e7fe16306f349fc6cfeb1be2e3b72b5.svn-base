@@ -1,0 +1,126 @@
+package hry.util.flowModel;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class FlowParams  implements Serializable {
+
+    private Long startUserId; //启动人ID
+
+    private String defineKey; //流程定义key
+
+    private String taskId; //任务ID
+
+    private String piId; //流程实例id
+
+    private String processId; //流程管理Id
+
+    private String nodeKey; //节点key
+
+    private String controlName;//控制器名称  示例:appFlowService.start
+
+    private String flowName;//流程名称
+
+    private Long projectId; //项目流程Id
+
+
+    private String backNode; //打回节点
+
+    //业务参数集合
+    private Map<String,Object> paramsList;
+
+
+    public Long getStartUserId() {
+        return startUserId;
+    }
+
+    public void setStartUserId(Long startUserId) {
+        this.startUserId = startUserId;
+    }
+
+    public String getDefineKey() {
+        return defineKey;
+    }
+
+    public void setDefineKey(String defineKey) {
+        this.defineKey = defineKey;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getNodeKey() {
+        return nodeKey;
+    }
+
+    public void setNodeKey(String nodeKey) {
+        this.nodeKey = nodeKey;
+    }
+
+    public String getControlName() {
+        return controlName;
+    }
+
+    public void setControlName(String controlName) {
+        this.controlName = controlName;
+    }
+
+    public Map<String, Object> getParamsList() {
+        if(paramsList==null){
+            synchronized (FlowParams.class){
+                this.paramsList = new HashMap<>();
+            }
+        }
+        return paramsList;
+    }
+
+    public void setParamsList(Map<String, Object> params) {
+        this.paramsList = params;
+    }
+
+    public String getFlowName() {
+        return flowName;
+    }
+
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getBackNode() {
+        return backNode;
+    }
+
+    public void setBackNode(String backNode) {
+        this.backNode = backNode;
+    }
+
+    public String getPiId() {
+        return piId;
+    }
+
+    public void setPiId(String piId) {
+        this.piId = piId;
+    }
+
+    public String getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(String processId) {
+        this.processId = processId;
+    }
+}

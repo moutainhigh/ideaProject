@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hry.business.cu.dao.CuIntentionFollowCommentDao">
+    <resultMap type="hry.business.cu.model.CuIntentionFollowComment" id="commentMap">
+        <id column="id" property="id"/>
+        <collection property="list" ofType="hry.business.cu.model.CuIntentionFollowComment" column="id" select="findCommentByParentId"/>
+    </resultMap>
+
+    <select id="findAllCommentByFollowId" resultMap="commentMap">
+		SELECT * FROM cu_intention_follow_comment WHERE intentionfollowId=#{intentionfollowId} and parentId =0
+	</select>
+
+    <select id="findCommentByParentId" resultType="hry.business.cu.model.CuIntentionFollowComment">
+		SELECT * FROM cu_intention_follow_comment WHERE parentId = #{id}
+	</select>
+</mapper>

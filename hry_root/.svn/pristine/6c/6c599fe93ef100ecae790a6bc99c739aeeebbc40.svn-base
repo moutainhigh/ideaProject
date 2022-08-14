@@ -1,0 +1,104 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:36:21 
+ */
+package hry.business.cu.service.impl;
+
+import com.github.pagehelper.Page;
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.business.cu.dao.CuEnterpriseDao;
+import hry.business.cu.dao.CuIntentionDao;
+import hry.business.cu.model.CuEnterprise;
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.business.cu.model.CuIntention;
+import hry.business.cu.service.CuIntentionService;
+import hry.core.util.PageFactory;
+import hry.core.util.QueryFilter;
+import hry.platform.newuser.model.NewAppUser;
+import hry.security.jwt.JWTContext;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * <p> CuIntentionService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:36:21 
+ */
+@Service("cuIntentionService")
+public class CuIntentionServiceImpl extends BaseServiceImpl<CuIntention, Long> implements CuIntentionService {
+
+	@Resource(name = "cuIntentionDao")
+	@Override
+	public void setDao (BaseDao<CuIntention, Long> dao) {
+		super.dao = dao;
+	}
+
+	@Override
+	public PageResult findPageBySql(QueryFilter filter) {
+		// ----------------------分页查询头部外壳------------------------------
+		Page<CuIntention> page = PageFactory.getPage(filter);
+
+		String modified_s = filter.getRequest().getParameter("created_GT");
+		String modified_e = filter.getRequest().getParameter("created_LT");
+		String status = filter.getRequest().getParameter("status");
+		String intentionCode = filter.getRequest().getParameter("intentionCode");
+		String type = filter.getRequest().getParameter("type");
+		String enterpriseContacts = filter.getRequest().getParameter("enterpriseContacts");
+		String movePhone = filter.getRequest().getParameter("movePhone");
+
+		NewAppUser user = (NewAppUser) JWTContext.getUser(NewAppUser.class);
+		if(user==null){
+			return null;
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userId", user.getId());
+		if (!StringUtils.isEmpty(status)) {
+			map.put("status", status);
+		}
+		if (!StringUtils.isEmpty(movePhone)) {
+			map.put("movePhone", "%" + movePhone + "%");
+		}
+		if (!StringUtils.isEmpty(intentionCode)) {
+			map.put("intentionCode", "%" + intentionCode + "%");
+		}
+		if (!StringUtils.isEmpty(enterpriseContacts)) {
+			map.put("enterpriseContacts", "%" + enterpriseContacts + "%");
+		}
+		if (!StringUtils.isEmpty(type)) {
+			map.put("type", type);
+		}
+		if (!StringUtils.isEmpty(modified_s)) {
+			map.put("modified_s", modified_s);
+		}
+		if (!StringUtils.isEmpty(modified_e)) {
+			map.put("modified_e", modified_e);
+		}
+		((CuIntentionDao) dao).findPageBySql(map);
+		return new PageResult(page, filter.getPage(), filter.getPageSize());
+	}
+
+	@Override
+	public JsonResult updateStatusFormal(Long id) {
+		JsonResult jsonResult = new JsonResult();
+		//查询意向客户信息
+		CuIntention cuIntention = super.get(id);
+		if (cuIntention==null){
+			jsonResult.setSuccess(false).setMsg("信息不存在");
+		}
+		CuEnterprise cuEnterprise = new CuEnterprise();
+
+
+		return null;
+	}
+}

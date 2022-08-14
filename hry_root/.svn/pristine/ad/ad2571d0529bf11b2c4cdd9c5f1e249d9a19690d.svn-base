@@ -1,0 +1,145 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: liushilei
+ * @version: V1.0
+ * @Date: 2020-05-28 12:05:59
+ */
+package hry.platform.flow.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.platform.flow.model.AppFlow;
+import hry.platform.flow.service.AppFlowService;
+import hry.platform.flow.service.CommonFlowService;
+import hry.util.UUIDUtil;
+import hry.util.flowModel.FlowParams;
+import hry.util.flowModel.FlowResult;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> AppFlowService </p>
+ *
+ * @author: liushilei
+ * @Date: 2020-05-28 12:05:59
+ */
+@Service("appFlowService")
+public class AppFlowServiceImpl extends BaseServiceImpl<AppFlow, Long> implements AppFlowService, CommonFlowService {
+
+	@Resource(name = "appFlowDao")
+	@Override
+	public void setDao (BaseDao<AppFlow, Long> dao) {
+		super.dao = dao;
+	}
+
+
+	@Override
+	public FlowResult start(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		//创建流程
+		AppFlow appFlow = new AppFlow();
+		appFlow.setName(UUIDUtil.getUUID());
+		save(appFlow);
+
+		//设置流程参数
+		flowResult.setProjectId(appFlow.getId());
+		flowResult.setProjectName(appFlow.getName());
+		flowResult.setSuccess(true);
+		return flowResult;
+
+	}
+
+	@Override
+	public FlowResult view(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+
+	@Override
+	public FlowResult oneFlowQc(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult oneFlowXl(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult oneFlowCf(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult oneFlowSb(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult oneFlowDdm(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult oneFlowXb(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult oneFlowZc(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult oneFlowZfj(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+
+	@Override
+	public FlowResult oneFlowZtc(FlowParams flowParams) {
+		FlowResult flowResult = new FlowResult(flowParams);
+
+		flowResult.setSuccess(true);
+
+		return flowResult;
+	}
+}

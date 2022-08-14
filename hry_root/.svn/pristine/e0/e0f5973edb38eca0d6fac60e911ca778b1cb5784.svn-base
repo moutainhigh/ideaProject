@@ -1,0 +1,181 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:37:17 
+ */
+package hry.business.cu.controller;
+
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.business.cu.model.CuIntention;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.business.cu.model.CuIntentionInfo;
+import hry.business.cu.service.CuIntentionInfoService;
+import hry.platform.newuser.model.NewAppUser;
+import hry.security.jwt.JWTContext;
+import hry.security.logger.ControllerLogger;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * <p> CuIntentionInfoController </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:37:17 
+ */
+@Api(value = "意向信息子表信息", tags = "意向信息子表信息", description = "意向信息子表信息")
+@RestController
+@RequestMapping("/cu/cuintentioninfo")
+public class CuIntentionInfoController extends BaseController {
+
+	@Autowired
+	private CuIntentionInfoService cuIntentionInfoService;
+
+	/**
+     * <p> 意向信息子表信息-id查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:17 
+     */
+    @ApiOperation(value = "意向信息子表信息-id查询", notes = "意向信息子表信息-id查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/get/{id}")
+    public JsonResult get (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+		CuIntentionInfo cuIntentionInfo = cuIntentionInfoService.get(id);
+        if (cuIntentionInfo != null) {
+            jsonResult.setObj(cuIntentionInfo);
+            return jsonResult.setSuccess(true);
+        }
+        return jsonResult.setSuccess(false);
+    }
+
+	/**
+     * <p> 意向信息子表信息-添加 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:17 
+     */
+    @ApiOperation(value = "意向信息子表信息-添加", notes = "意向信息子表信息-添加")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/add")
+    public JsonResult add (CuIntentionInfo cuIntentionInfo) {
+        JsonResult jsonResult = new JsonResult();
+
+        NewAppUser user = (NewAppUser) JWTContext.getUser(NewAppUser.class);
+        if(user==null){
+            return jsonResult.setSuccess(false).setMsg("请从新登录");
+        }
+        if(StringUtils.isEmpty(cuIntentionInfo.getIntentionId())){
+            return jsonResult.setSuccess(false).setMsg("意向客户不能为空");
+        }
+        cuIntentionInfo.setUserId(user.getId());
+        cuIntentionInfo.setUserName(user.getUserName());
+        cuIntentionInfoService.save(cuIntentionInfo);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向信息子表信息-修改 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:17 
+     */
+    @ApiOperation(value = "意向信息子表信息-修改", notes = "意向信息子表信息-修改")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/modify")
+    public JsonResult modify (CuIntentionInfo cuIntentionInfo) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionInfoService.update(cuIntentionInfo);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向信息子表信息-id删除 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:17 
+     */
+    @ApiOperation(value = "意向信息子表信息-id删除", notes = "意向信息子表信息-id删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/remove/{id}")
+    public JsonResult remove (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionInfoService.delete(id);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向信息子表信息-分页查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:17 
+     */
+    @ApiOperation(value = "意向信息子表信息-分页查询", notes = "意向信息子表信息-分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/list")
+    public PageResult list (
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(CuIntentionInfo.class, request);
+        return cuIntentionInfoService.findPageResult(filter);
+    }
+
+    @ApiOperation(value = "修改意向信息状态", notes = "修改意向信息状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @PostMapping(value="/updateStatus")
+    public JsonResult updateStatus(
+            @ApiParam(name = "id", value = "用户id", required = true) @RequestParam Long id,
+            @ApiParam(name = "status", value = "意向状态 1.跟进 2.排除 5.转已签", required = true) @RequestParam Integer status,
+            @ApiParam(name = "statusRemark", value = "状态变更说明", required = false) @RequestParam String statusRemark
+    ){
+        JsonResult jsonResult = new JsonResult();
+        if(StringUtils.isEmpty(status)){
+            jsonResult.setMsg("不能为空");
+            return  jsonResult;
+        }
+
+        CuIntentionInfo cuIntentionInfo = cuIntentionInfoService.get(id);
+        if (cuIntentionInfo != null) {
+            CuIntentionInfo cuIntentionInfoNew = new CuIntentionInfo();
+            cuIntentionInfoNew.setStatus(status);
+            cuIntentionInfoNew.setId(cuIntentionInfo.getId());
+            if(!StringUtils.isEmpty(statusRemark)){
+                cuIntentionInfoNew.setStatusRemark(statusRemark);
+            }
+            cuIntentionInfoService.update(cuIntentionInfoNew);
+            return jsonResult.setSuccess(true).setMsg("成功");
+        }
+
+        return jsonResult.setSuccess(false).setMsg("失败");
+    }
+
+
+
+
+}

@@ -1,0 +1,315 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:18:39
+ */
+package hry.business.cu.controller;
+
+import com.alibaba.fastjson.JSON;
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.business.cu.model.*;
+import hry.business.cu.service.*;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.platform.newuser.model.NewAppUser;
+import hry.security.jwt.JWTContext;
+import hry.security.jwt.annotation.UnAuthentication;
+import hry.security.logger.ControllerLogger;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p> CuEnterpriseController </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:18:39
+ */
+@Api(value = "企业信息", tags = "企业信息", description = "企业信息")
+@RestController
+@RequestMapping("/cu/cuenterprise")
+public class CuEnterpriseController extends BaseController {
+
+    @Autowired
+    private CuCustomerService cuCustomerService;
+    @Autowired
+    private CuEnterpriseService cuEnterpriseService;
+    @Autowired
+    private CuEnterprisePersonService cuEnterprisePersonService;
+    @Autowired
+    private CuEnterpriseUserService cuEnterpriseUserService;
+    @Autowired
+    private CuPersonService cuPersonService;
+    @Autowired
+    private CuBankService cuBankService;
+
+    /**
+     * <p> 企业信息-id查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:18:39
+     */
+    @ApiOperation(value = "企业信息-id查询", notes = "企业信息-id查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/get/{id}")
+    public JsonResult get(@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        CuEnterprise cuEnterprise = cuEnterpriseService.get(id);
+        Map<String ,Object> mapResult = new HashMap<>();
+        if (cuEnterprise == null) {
+            return jsonResult.setSuccess(false).setMsg("企业信息不存在");
+        }
+        //法人
+        CuPerson faren = cuEnterprisePersonService.getCuEnterprisePersonByEnterpriseIdAndType(cuEnterprise.getId(), 1);
+
+        mapResult.put("cuEnterprise",cuEnterprise);
+        mapResult.put("faren",faren);
+        jsonResult.setObj(mapResult);
+        return jsonResult.setSuccess(false);
+    }
+
+    /**
+     * <p> 企业信息-添加 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:18:39
+     */
+    @ApiOperation(value = "企业信息-添加", notes = "企业信息-添加")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/add")
+    public JsonResult add(CuEnterprise cuEnterprise) {
+        JsonResult jsonResult = new JsonResult();
+        return cuEnterpriseService.createEnterprise(cuEnterprise);
+    }
+
+    /**
+     * <p> 企业信息-修改 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:18:39
+     */
+    @ApiOperation(value = "企业信息-修改", notes = "企业信息-修改")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/modify")
+    public JsonResult modify(CuEnterprise cuEnterprise) {
+        JsonResult jsonResult = new JsonResult();
+        cuEnterpriseService.updateEnterprise(cuEnterprise);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 企业信息-id删除 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:18:39
+     */
+    @ApiOperation(value = "企业信息-id删除", notes = "企业信息-id删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/remove/{id}")
+    public JsonResult remove(@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        cuEnterpriseService.delete(id);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 企业信息-分页查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:18:39
+     */
+    @ApiOperation(value = "企业信息-分页查询", notes = "企业信息-分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/list")
+    public PageResult list(
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            @ApiParam(name = "status", value = "状态 1.待审核 2.已通过 3.未通过", required = true) @RequestParam int status,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(CuEnterprise.class, request);
+        if (!StringUtils.isEmpty(status)) {
+            filter.addFilter("status=", status);
+        }
+        return cuEnterpriseService.findPageResult(filter);
+    }
+
+    @ApiOperation(value = "修改审核状态", notes = "修改审核状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/updateStatus")
+    public JsonResult updateStatus(
+            @ApiParam(name = "id", value = "用户id", required = true) @RequestParam Long id,
+            @ApiParam(name = "status", value = "状态 1.待审核 2.已通过 3.未通过", required = true) @RequestParam Integer status,
+            @ApiParam(name = "rejectRemark", value = "驳回原因", required = false) @RequestParam String rejectRemark
+    ) {
+        JsonResult jsonResult = new JsonResult();
+        if (StringUtils.isEmpty(status)) {
+            jsonResult.setMsg("不能为空");
+            return jsonResult;
+        }
+
+        CuEnterprise cuEnterprise = cuEnterpriseService.get(id);
+        if (cuEnterprise != null) {
+            CuEnterprise cuEnterpriseNew = new CuEnterprise();
+            cuEnterpriseNew.setStatus(status);
+            cuEnterpriseNew.setId(cuEnterprise.getId());
+            if (!StringUtils.isEmpty(rejectRemark)) {
+                cuEnterpriseNew.setRejectRemark(rejectRemark);
+            }
+            cuEnterpriseService.update(cuEnterpriseNew);
+            return jsonResult.setSuccess(true).setMsg("成功");
+        }
+
+        return jsonResult.setSuccess(false).setMsg("失败");
+    }
+
+    /**
+     * @param null
+     * @Author: yaozh
+     * @Description: 根据条件查询企业信息
+     * @Date: 2020/5/13 11:06
+     */
+    @ApiOperation(value = "企业信息-根据条件查询企业信息", notes = "企业信息-根据条件查询企业信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/findList")
+    public PageResult findList(
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(CuEnterprise.class, request);
+        return cuEnterpriseService.findPageBySql(filter);
+    }
+
+
+    /**
+     * <p> 企业信息-customerId查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:18:39
+     */
+    @ApiOperation(value = "企业信息-customerId查询", notes = "企业信息-customerId查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/getCuEnterpriseByCustomerId/{customerId}")
+    public JsonResult getCuEnterpriseByCustomerId(
+            @ApiParam(name = "customerId", value = "用户id", required = true) @PathVariable Long customerId) {
+
+        JsonResult jsonResult = new JsonResult();
+        QueryFilter queryFilter = new QueryFilter(CuEnterprise.class);
+        queryFilter.addFilter("customerId=", customerId);
+        //查询企业信息
+        CuEnterprise cuEnterprise = cuEnterpriseService.get(queryFilter);
+        if (cuEnterprise == null) {
+            return jsonResult.setSuccess(false).setMsg("企业信息不存在");
+        }
+        CuCustomer cuCustomer = cuCustomerService.get(customerId);
+        if (cuCustomer == null) {
+            return jsonResult.setSuccess(false).setMsg("用户信息不存在");
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("cuEnterprise", cuEnterprise);
+        map.put("cuCustomer", cuCustomer);
+        //法人
+        CuPerson faren = cuEnterprisePersonService.getCuEnterprisePersonByEnterpriseIdAndType(cuEnterprise.getId(), 1);
+        //控制人
+        CuPerson kongzhiren = cuEnterprisePersonService.getCuEnterprisePersonByEnterpriseIdAndType(cuEnterprise.getId(), 2);
+        //联系人
+        CuPerson lianxiren = cuEnterprisePersonService.getCuEnterprisePersonByEnterpriseIdAndType(cuEnterprise.getId(), 3);
+
+        map.put("lianxiren", lianxiren);
+        map.put("faren", faren);
+        map.put("kongzhiren", kongzhiren);
+        jsonResult.setObj(map);
+        return jsonResult.setSuccess(true);
+    }
+
+
+    @ApiOperation(value = "企业绑定用户", notes = "企业绑定用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/bindingCustomer")
+    public JsonResult bindingCustomer(
+            @ApiParam(name = "id", value = "企业id", required = true) @RequestParam Long id,
+            @ApiParam(name = "customerId", value = "用户id", required = true) @RequestParam Long customerId
+    ) {
+        JsonResult jsonResult = new JsonResult();
+
+        CuEnterprise cuEnterprise = cuEnterpriseService.get(id);
+        if (cuEnterprise == null) {
+            return jsonResult.setSuccess(false).setMsg("企业信息不存在");
+        } else if (!StringUtils.isEmpty(cuEnterprise.getCustomerId())) {
+            return jsonResult.setSuccess(false).setMsg("企业已经绑定用户，不能重复绑定");
+        }
+        //查询用户信息
+        CuCustomer cuCustomer = cuCustomerService.get(customerId);
+        if (cuCustomer == null) {
+            return jsonResult.setSuccess(false).setMsg("用户信息不存在");
+        }
+        //查询当前用户是否绑定过企业
+        QueryFilter filter = new QueryFilter(CuEnterprise.class);
+        filter.addFilter("customerId=", customerId);
+        CuEnterprise cuE = cuEnterpriseService.get(filter);
+        if (cuE != null) {
+            return jsonResult.setSuccess(false).setMsg("用户已经绑定过企业，不能重复绑定");
+        }
+
+        CuEnterprise cuEnterpriseNew = new CuEnterprise();
+        cuEnterpriseNew.setId(cuEnterprise.getId());
+        cuEnterpriseNew.setCustomerId(customerId);
+        cuEnterpriseService.update(cuEnterpriseNew);
+        return jsonResult.setSuccess(true).setMsg("成功");
+    }
+
+    /**
+     * @param request
+     * @param response
+     * @Author: yaozh
+     * @Description: 导出excel
+     * @Date: 2020/5/25 11:13
+     */
+    @ApiOperation(value = "企业信息-导出excel", notes = "企业信息-导出excel")
+    @ControllerLogger
+    @UnAuthentication
+    @GetMapping(value = "/exportExcelEnterprise")
+    public void exportExcelEnterprise(
+            @ApiParam(name = "userId", value = "登陆用户id", required = true) @RequestParam Long userId,
+            HttpServletRequest request, HttpServletResponse response) {
+        cuEnterpriseService.exportExcelEnterprise(request, response);
+    }
+
+}

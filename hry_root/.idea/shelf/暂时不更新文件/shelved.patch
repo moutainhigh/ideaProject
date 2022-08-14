@@ -1,0 +1,109 @@
+Index: hry_application/hry_admin/src/main/java/hry/platform/login/controller/AuthController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- hry_application/hry_admin/src/main/java/hry/platform/login/controller/AuthController.java	(revision 552)
++++ hry_application/hry_admin/src/main/java/hry/platform/login/controller/AuthController.java	(date 1590378800500)
+@@ -1,6 +1,4 @@
+ package hry.platform.login.controller;
+-
+-
+ import com.alibaba.fastjson.JSON;
+ import com.alibaba.fastjson.JSONObject;
+ import hry.bean.JsonResult;
+@@ -115,14 +113,14 @@
+                             @ApiParam(name = "uKeyCode", value = "uKey验证码", required = false) @RequestParam String uKeyCode,
+                             HttpServletRequest request) {
+         // 图形验证码
+-        if(StringUtils.isEmpty(graphicCode)){
++        /*if(StringUtils.isEmpty(graphicCode)){
+             return new JsonResult(false).setMsg("图形验证码不能为空");
+         }
+         // 验证图形验证码
+         String loginCode1 = redisService.get("Mobile:regCode"+uid);
+         if(loginCode1 == null || !graphicCode.equals(loginCode1.toString())){
+             return new JsonResult(false).setMsg("图形验证码错误");
+-        }
++        }*/
+         //验证用户是否存在
+         NewAppUser user = newAppUserService.checkUsername(userName);
+         if (user == null) {
+@@ -172,6 +170,8 @@
+             // 将token存储到redis中作为刷新token的凭证，并设置key的过期时间作为刷新有效期
+             redisService.save(JWTUtil.getManageRefreshTimeKey(token),JSON.toJSONString(user), JWTUtil.REFRESH_TIME);
+             redisService.save(JWTUtil.getManageUserKey(token), JSON.toJSONString(user),JWTUtil.EXPIRE_TIME);
++            // 将用户权限存储到redis中
++            redisService.save(JWTUtil.getManageShiroUrlsKey(token), JSON.toJSONString(shiroUrls),JWTUtil.EXPIRE_TIME);
+             return new JsonResult().setSuccess(true).setObj(jsonObject);
+         }
+ 
+Index: hry_boot/hry_common/hry_common_security/src/main/java/hry/security/jwt/JWTUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- hry_boot/hry_common/hry_common_security/src/main/java/hry/security/jwt/JWTUtil.java	(revision 552)
++++ hry_boot/hry_common/hry_common_security/src/main/java/hry/security/jwt/JWTUtil.java	(date 1590375577815)
+@@ -173,6 +173,9 @@
+     public static String getManageUserKey(String token) {
+         return "JWT:token:"+JWTToken.SOURCE_PC+":manage:user:" +getSignId(token);
+     }
++    public static String getManageShiroUrlsKey(String token) {
++        return "JWT:token:"+JWTToken.SOURCE_PC+":manage:shiroUrls:" +getSignId(token);
++    }
+ 
+     public static String md5Id(String token){
+        return DigestUtils.md5Hex(getUsername(token));
+Index: hry_boot/hry_common/hry_common_security/src/main/java/hry/security/LoginInterceptor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- hry_boot/hry_common/hry_common_security/src/main/java/hry/security/LoginInterceptor.java	(revision 552)
++++ hry_boot/hry_common/hry_common_security/src/main/java/hry/security/LoginInterceptor.java	(date 1590390725573)
+@@ -1,7 +1,10 @@
+ package hry.security;
+ 
+ import com.alibaba.fastjson.JSONObject;
++import hry.redis.RedisService;
+ import hry.security.jwt.JWTContext;
++import hry.security.jwt.JWTSpringUtil;
++import hry.security.jwt.JWTToken;
+ import hry.security.jwt.annotation.UnAuthentication;
+ import lombok.extern.slf4j.Slf4j;
+ import org.springframework.util.StringUtils;
+@@ -11,6 +14,8 @@
+ import javax.servlet.http.HttpServletRequest;
+ import javax.servlet.http.HttpServletResponse;
+ import java.io.PrintWriter;
++import java.util.HashSet;
++import java.util.Set;
+ 
+ /**
+  * ManageToken JWT登录拦截器
+@@ -67,7 +72,23 @@
+                     writer.close();
+                     return false;
+                 }
+-
++                // 校验该请求是否有请求权限
++                /*String URI = request.getRequestURI();
++                URI = URI.substring(0,URI.lastIndexOf("/"));
++                JWTToken tokenStr = new JWTToken(token);
++                RedisService redisService = JWTSpringUtil.getBean("redisService");
++                String shiroUrls = redisService.get("JWT:token:" + tokenStr.getSource() + ":" + tokenStr.getType() + ":shiroUrls:" + tokenStr.getSignId());
++                if (shiroUrls.indexOf(URI) == -1) {
++                    PrintWriter writer = response.getWriter();
++                    response.reset();
++                    JSONObject jsonObject = new JSONObject();
++                    jsonObject.put("msg",  "insufficient privileges");
++                    jsonObject.put("success", false);
++                    writer.print(jsonObject.toJSONString());
++                    writer.flush();
++                    writer.close();
++                    return false;
++                }*/
+             }
+         } catch (Exception e) {
+             e.printStackTrace();

@@ -1,0 +1,34 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: zengzhiyan
+ * @version: V1.0
+ * @Date: 2020-07-08 14:45:12 
+ */
+package hry.scm.quota.service;
+
+import hry.bean.PageResult;
+import hry.core.mvc.service.BaseService;
+import hry.core.util.QueryFilter;
+import hry.scm.quota.model.EnterpriseQuota;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p> EnterpriseQuotaService </p>
+ *
+ * @author: zengzhiyan
+ * @Date: 2020-07-08 14:45:12 
+ */
+public interface EnterpriseQuotaService extends BaseService<EnterpriseQuota, Long> {
+
+       public void initEnterpriseQuota(Long enterpriseId,Long fundSupportId,String fundSupportName);
+
+       public void initEnterpriseQuota(Long enterpriseId);
+
+       public EnterpriseQuota getEnterpriseSumQuota(Long enterpriseId);
+
+       PageResult getEnterpriseQuotaList(QueryFilter filter, Map<String, Object> map);
+
+}

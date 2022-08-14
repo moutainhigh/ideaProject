@@ -1,0 +1,115 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:31:54 
+ */
+package hry.business.cu.model;
+
+import hry.bean.BaseModel;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.*;
+
+
+/**
+ * <p> CuHouse </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:31:54 
+ */
+@Data
+@ApiModel(value = "房产信息实体类")
+@Table(name="cu_house")
+public class CuHouse extends BaseModel {
+
+	/**
+	* 
+	*/
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", unique = true, nullable = false)
+    @ApiModelProperty(value = "")
+	private String id;
+
+	/**
+	* 主体id type=1 personId，type=2 enterpriseId
+	*/
+	@Column(name= "subjectId")
+    @ApiModelProperty(value = "主体id type=1 personId，type=2 enterpriseId")
+	private String subjectId;
+
+	/**
+	* 客户类型 1.个人 2.企业
+	*/
+	@Column(name= "type")
+    @ApiModelProperty(value = "客户类型 1.个人 2.企业")
+	private Integer type;
+
+	/**
+	* 产权人
+	*/
+	@Column(name= "propertyOwnerName")
+    @ApiModelProperty(value = "产权人")
+	private String propertyOwnerName;
+
+	/**
+	* 产权证号
+	*/
+	@Column(name= "titleCertificateCode")
+    @ApiModelProperty(value = "产权证号")
+	private String titleCertificateCode;
+
+	/**
+	* 房屋类型
+	*/
+	@Column(name= "houseType")
+    @ApiModelProperty(value = "房屋类型")
+	private Integer houseType;
+
+	/**
+	* 房屋大小(平米)
+	*/
+	@Column(name= "houseSize")
+    @ApiModelProperty(value = "房屋大小(平米)")
+	private String houseSize;
+
+	/**
+	* 房屋地址
+	*/
+	@Column(name= "houseAddress")
+    @ApiModelProperty(value = "房屋地址")
+	private String houseAddress;
+
+	/**
+	* 房产总值（万元）
+	*/
+	@Column(name= "housePrice")
+    @ApiModelProperty(value = "房产总值（万元）")
+	private String housePrice;
+
+	/**
+	* 贷款余额（万元）
+	*/
+	@Column(name= "loanBalance")
+    @ApiModelProperty(value = "贷款余额（万元）")
+	private String loanBalance;
+
+	/**
+	* 贷款年限
+	*/
+	@Column(name= "loanTerm")
+    @ApiModelProperty(value = "贷款年限")
+	private Integer loanTerm;
+
+	/**
+	* 月供（元）
+	*/
+	@Column(name= "monthlySupply")
+    @ApiModelProperty(value = "月供（元）")
+	private String monthlySupply;
+
+}

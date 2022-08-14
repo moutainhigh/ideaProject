@@ -1,0 +1,133 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-04-26 15:37:51 
+ */
+package hry.business.cu.controller;
+
+import hry.bean.JsonResult;
+import hry.bean.PageResult;
+import hry.core.mvc.controller.BaseController;
+import hry.core.util.QueryFilter;
+import hry.business.cu.model.CuIntentionFollow;
+import hry.business.cu.service.CuIntentionFollowService;
+import hry.security.logger.ControllerLogger;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * <p> CuIntentionFollowController </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-04-26 15:37:51 
+ */
+@Api(value = "意向跟进信息", tags = "意向跟进信息", description = "意向跟进信息")
+@RestController
+@RequestMapping("/cu/cuintentionfollow")
+public class CuIntentionFollowController extends BaseController {
+
+	@Autowired
+	private CuIntentionFollowService cuIntentionFollowService;
+
+	/**
+     * <p> 意向跟进信息-id查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:51 
+     */
+    @ApiOperation(value = "意向跟进信息-id查询", notes = "意向跟进信息-id查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @GetMapping(value = "/get/{id}")
+    public JsonResult get (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+		CuIntentionFollow cuIntentionFollow = cuIntentionFollowService.get(id);
+        if (cuIntentionFollow != null) {
+            jsonResult.setObj(cuIntentionFollow);
+            return jsonResult.setSuccess(true);
+        }
+        return jsonResult.setSuccess(false);
+    }
+
+	/**
+     * <p> 意向跟进信息-添加 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:51 
+     */
+    @ApiOperation(value = "意向跟进信息-添加", notes = "意向跟进信息-添加")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/add")
+    public JsonResult add (CuIntentionFollow cuIntentionFollow) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionFollowService.save(cuIntentionFollow);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向跟进信息-修改 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:51 
+     */
+    @ApiOperation(value = "意向跟进信息-修改", notes = "意向跟进信息-修改")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/modify")
+    public JsonResult modify (CuIntentionFollow cuIntentionFollow) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionFollowService.update(cuIntentionFollow);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向跟进信息-id删除 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:51 
+     */
+    @ApiOperation(value = "意向跟进信息-id删除", notes = "意向跟进信息-id删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/remove/{id}")
+    public JsonResult remove (@ApiParam(name = "id", value = "id", required = true) @PathVariable Long id) {
+        JsonResult jsonResult = new JsonResult();
+        cuIntentionFollowService.delete(id);
+        return jsonResult.setSuccess(true);
+    }
+
+    /**
+     * <p> 意向跟进信息-分页查询 </p>
+     *
+     * @author: yaoz
+     * @Date: 2020-04-26 15:37:51 
+     */
+    @ApiOperation(value = "意向跟进信息-分页查询", notes = "意向跟进信息-分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token令牌", required = true, paramType = "header"),
+    })
+    @ControllerLogger
+    @PostMapping(value = "/list")
+    public PageResult list (
+            @ApiParam(name = "page", value = "当前页码", required = true) @RequestParam String page,
+            @ApiParam(name = "pageSize", value = "每页条数", required = true) @RequestParam String pageSize,
+            HttpServletRequest request) {
+        QueryFilter filter = new QueryFilter(CuIntentionFollow.class, request);
+        return cuIntentionFollowService.findPageResult(filter);
+    }
+
+}

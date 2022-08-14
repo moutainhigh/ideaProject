@@ -1,0 +1,50 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: luyue
+ * @version: V1.0
+ * @Date: 2020-07-13 19:03:52 
+ */
+package hry.scm.project.service;
+
+import hry.bean.JsonResult;
+import hry.core.mvc.service.BaseService;
+import hry.scm.project.model.MortgageProject;
+
+import java.util.Map;
+
+/**
+ * <p> MortgageProjectService </p>
+ *
+ * @author: luyue
+ * @Date: 2020-07-13 19:03:52 
+ */
+public interface MortgageProjectService extends BaseService<MortgageProject, Long> {
+    /**
+     * 生成项目编号
+     * @return
+     */
+    public String createNumber();
+
+    /**
+     * 融资申请处理方法
+     * @param map
+     * @return
+     */
+    public JsonResult apply(Map<String, String> map);
+
+    /**
+     * 融资申请订单处理下一步
+     * @param map
+     * @return
+     */
+    public JsonResult nextStep(Map<String, String> map);
+
+    /**
+     * 确认质押审批-保存质押物明细
+     * @param map
+     * @return
+     */
+    public JsonResult confirmMortgage(Map<String, String> map);
+
+}

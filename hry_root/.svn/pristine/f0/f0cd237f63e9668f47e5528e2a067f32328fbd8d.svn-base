@@ -1,0 +1,59 @@
+package hry.platform.rmq;
+
+import com.alibaba.fastjson.JSONObject;
+import com.rabbitmq.client.Channel;
+import hry.platform.config.model.RequestLogRecord;
+import hry.platform.config.service.RequestLogRecordService;
+import hry.util.SpringUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+/**
+ * @author zhouming
+ * @date 2020/6/24 16:34
+ * @Version 1.0
+ */
+@Component
+@Slf4j
+public class MsgReceiverRetryListener {
+    /**
+     *  @author: zhouming
+     *  @Date: 2020/5/22 10:30
+     *  @Description: 消息消费
+     *  @RabbitHandler 代表此方法为接受到消息后的处理方法，并实现了RabbitMq的重试机制
+     *  queuesToDeclare = @Queue(value="requestLogger", durable="true" )
+     *  自动创建对列并设置是否持久化
+     * */
+    @RabbitListener(queuesToDeclare = @Queue(value="requestLogger", durable="true" ))
+    public void process(Message message, Channel channel) throws IOException {
+        // 消息处理
+        String msg = new String(message.getBody(), Charset.defaultCharset());
+        RequestLogRecordService requestLogRecordService = SpringUtil.getBean("requestLogRecordService");
+        log.info("接收处理队列当中的消息：{}", msg);
+        if (StringUtils.isNotEmpty(msg)) {
+            RequestLogRecord logRecord = JSONObject.parseObject(msg, RequestLogRecord.class);
+            // 参数截取
+            if (logRecord.getArgs() != null && logRecord.getArgs().length() > 1000) {
+                String ags = logRecord.getArgs().substring(0, 1000);
+                logRecord.setArgs(ags);
+            }
+            int i = 1/0;
+            requestLogRecordService.save(logRecord);
+            // 向es添加请求日志
+            try {
+                logRecord.setCreatedTime(System.currentTimeMillis());
+                requestLogRecordService.saveToEs(logRecord);
+            } catch (Exception e) {
+                e.getLocalizedMessage();
+            }
+            log.info("日志保存入库成功");
+        }
+    }
+}

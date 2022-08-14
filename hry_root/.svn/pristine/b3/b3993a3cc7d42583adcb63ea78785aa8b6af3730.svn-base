@@ -1,0 +1,33 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-06-19 09:55:05 
+ */
+package hry.business.cf.service.impl;
+
+import hry.core.mvc.dao.BaseDao;
+import hry.core.mvc.service.impl.BaseServiceImpl;
+import hry.business.cf.model.CfFacilityAmount;
+import hry.business.cf.service.CfFacilityAmountService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+/**
+ * <p> CfFacilityAmountService </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-06-19 09:55:05 
+ */
+@Service("cfFacilityAmountService")
+public class CfFacilityAmountServiceImpl extends BaseServiceImpl<CfFacilityAmount, Long> implements CfFacilityAmountService {
+
+	@Resource(name = "cfFacilityAmountDao")
+	@Override
+	public void setDao (BaseDao<CfFacilityAmount, Long> dao) {
+		super.dao = dao;
+	}
+
+}

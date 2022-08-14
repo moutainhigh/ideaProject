@@ -1,0 +1,33 @@
+/**
+ * Copyright: 互融云
+ *
+ * @author: yaoz
+ * @version: V1.0
+ * @Date: 2020-05-13 14:31:34 
+ */
+package hry.business.cu.dao;
+
+import hry.business.cu.model.CuEnterprisePerson;
+import hry.core.mvc.dao.BaseDao;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p> CuEnterprisePersonDao </p>
+ *
+ * @author: yaoz
+ * @Date: 2020-05-13 14:31:34 
+ */
+@Mapper
+public interface CuEnterprisePersonDao extends BaseDao<CuEnterprisePerson, Long> {
+
+    /**
+     * 新sql分页查询
+     * @param map
+     * @return
+     */
+    List<CuEnterprisePerson> findPageBySql(Map<String,Object> map);
+
+}
